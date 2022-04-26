@@ -1,7 +1,22 @@
 {
   "name": "bolaocopa22",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "author": "Felipe Zanon do Nascimento",
+  "bugs": {
+    "url": "https://github.com/FelipeZNascimento/bolaocopa22/issues"
+  },
+  "homepage": "https://github.com/FelipeZNascimento/bolaocopa22#readme",
+  "keywords": [
+    "Copa do Mundo",
+    "Copa",
+    "Bolão",
+    "Aposta",
+    "2022",
+    "Qatar",
+    "Catar",
+    "Hepta"
+  ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.1.1",
@@ -13,14 +28,30 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.1",
+    "typeface-roboto": "^1.1.13",
     "typescript": "^4.6.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test --watchAll=false --coverage .",
+    "test-watch": "react-scripts test --coverage .",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --max-warnings=0"
+  },
+  "lint-staged": {
+    "src/**/*.tsx": [
+      "npm run lint -- --fix",
+      "npm run test"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/path/to/dir/"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +70,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "eslint": "^8.14.0",
+    "eslint-plugin-react": "^7.29.4",
+    "lint-staged": "^12.4.1",
+    "prettier": "^2.6.2"
   }
 }
