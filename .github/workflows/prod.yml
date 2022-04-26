@@ -1,6 +1,6 @@
 name: 🔨 Build & 🧪 Test
 on:
-  pull_request:
+  push:
     branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
