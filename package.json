@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": false,
   "author": "Felipe Zanon do Nascimento",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FelipeZNascimento/bolaocopa22.git"
+  },
   "bugs": {
     "url": "https://github.com/FelipeZNascimento/bolaocopa22/issues"
   },
-  "homepage": "https://github.com/FelipeZNascimento/bolaocopa22#readme",
   "keywords": [
     "Copa do Mundo",
     "Copa",
@@ -36,6 +39,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false --coverage .",
+    "test:ci": "react-scripts test --watchAll=false --runInBand --coverage",
     "test-watch": "react-scripts test --coverage .",
     "eject": "react-scripts eject",
     "lint": "eslint src --max-warnings=0"
