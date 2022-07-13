@@ -1,18 +1,52 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import { Navbar } from 'components/index';
+import { Home } from 'sections/index';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+
+import ROUTES from 'constants/routes';
+import './index.scss';
 import 'typeface-roboto';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path={`${ROUTES.HOME.url}/*`} element={<Home />} />
+        <Route path={'/'} element={<Home />} />
+        <Route path={'*'} element={<Home />} />
+      </Routes>
+    </Router>
   </React.StrictMode>
 );
+
+serviceWorkerRegistration.register({
+  onUpdate: (registration) => {
+    const waitingServiceWorker = registration.waiting;
+    if (waitingServiceWorker) {
+      waitingServiceWorker.addEventListener('statechange', (event) => {
+        const target = event.target as any;
+        if (target.state && target.state === 'activated') {
+          if (
+            window.confirm(
+              'O app foi atualizado! Por favor, atualize a página.'
+            )
+          ) {
+            window.location.reload();
+          }
+        }
+      });
+      waitingServiceWorker.postMessage({ type: 'SKIP_WAITING' });
+    }
+  }
+});
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

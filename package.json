@@ -21,16 +21,14 @@
     "Hepta"
   ],
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.4.1",
     "@types/node": "^16.11.29",
     "@types/react": "^18.0.7",
     "@types/react-dom": "^18.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "sass": "^1.51.0",
     "typeface-roboto": "^1.1.13",
     "typescript": "^4.6.3",
     "web-vitals": "^2.1.4"
@@ -42,7 +40,8 @@
     "test:ci": "react-scripts test --watchAll=false --runInBand --coverage",
     "test-watch": "react-scripts test --coverage .",
     "eject": "react-scripts eject",
-    "lint": "eslint src --max-warnings=0"
+    "lint": "eslint src --max-warnings=0",
+    "link": "npm link ../omegafox-components/"
   },
   "lint-staged": {
     "src/**/*.tsx": [
@@ -53,8 +52,8 @@
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
-      "!<rootDir>/node_modules/",
-      "!<rootDir>/path/to/dir/"
+      "!src/constants/*",
+      "!src/index.tsx"
     ]
   },
   "eslintConfig": {
@@ -76,6 +75,10 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
     "eslint": "^8.14.0",
