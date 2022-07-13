@@ -1,16 +1,12 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Home } from './Home';
 
 describe('Home', () => {
-  it('should render', () => {
-    const { container } = render(<Home />);
-    expect(container).toMatchSnapshot();
-  });
+  const renderComponent = ({}) => render(<Home />);
 
-  it('renders learn react link', () => {
-    render(<Home />);
-    const linkElement = screen.getByText(/learn react/i);
-    expect(linkElement).toBeInTheDocument();
+  it('should render', () => {
+    const { container } = renderComponent({});
+    expect(container).toMatchSnapshot();
   });
 });

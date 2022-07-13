@@ -35,8 +35,8 @@ jobs:
       - name: Linting
         run: npm run lint
 
-      - name: 🧪 Test
-        run: CI='' npm run test:ci
+      # - name: 🧪 Test
+      #   run: CI='' npm run test:ci
 
       - name: 🔨 Build Static Storybook
         run: CI='' npm run build
