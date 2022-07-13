@@ -1,0 +1,64 @@
+<ifModule mod_rewrite.c>
+
+
+  #######################################################################
+  # GENERAL                                                             #
+  #######################################################################
+
+  # Make apache follow sym links to files
+  Options +FollowSymLinks
+  # If somebody opens a folder, hide all files from the resulting folder list
+  IndexIgnore */*
+
+
+  #######################################################################
+  # REWRITING                                                           #
+  #######################################################################
+
+  # Enable rewriting
+  RewriteEngine On
+
+  # If its not HTTPS
+  RewriteCond %{HTTPS} off
+
+  # Comment out the RewriteCond above, and uncomment the RewriteCond below if you're using a load balancer (e.g. CloudFlare) for SSL
+  # RewriteCond %{HTTP:X-Forwarded-Proto} !https
+
+  # Redirect to the same URL with https://, ignoring all further rules if this one is in effect
+  RewriteRule ^(.*) https://%{HTTP_HOST}/$1 [R,L]
+
+  # If we get to here, it means we are on https://
+
+  # If the file with the specified name in the browser doesn't exist
+  RewriteCond %{REQUEST_FILENAME} !-f
+
+  # and the directory with the specified name in the browser doesn't exist
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # and we are not opening the root already (otherwise we get a redirect loop)
+  RewriteCond %{REQUEST_FILENAME} !\/$
+
+  # Rewrite all requests to the root
+  RewriteRule ^(.*) /
+
+</ifModule>
+
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+    <filesmatch "\.(ico|flv|gif|swf|eot|woff|otf|ttf|svg)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </filesmatch>
+    <filesmatch "\.(jpg|jpeg|png)$">
+        Header set Cache-Control "max-age=1209600, public"
+    </filesmatch>
+    # css and js should use private for proxy caching https://developers.google.com/speed/docs/best-practices/caching#LeverageProxyCaching
+    <filesmatch "\.(css)$">
+        Header set Cache-Control "max-age=31536000, private"
+    </filesmatch>
+    <filesmatch "\.(js)$">
+        Header set Cache-Control "max-age=1209600, private"
+    </filesmatch>
+    <filesMatch "\.(x?html?|php)$">
+        Header set Cache-Control "max-age=600, private, must-revalidate"
+      </filesMatch>
+</IfModule>

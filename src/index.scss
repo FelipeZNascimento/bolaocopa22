@@ -1,0 +1,18 @@
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/globals.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+@import "styles/variables.scss";
+
+body {
+  @include bg-colored($color-grey5);
+
+  background-position: top;
+  background-repeat: repeat;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

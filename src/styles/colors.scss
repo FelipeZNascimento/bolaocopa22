@@ -1,0 +1,46 @@
+@import "styles/variables.scss";
+
+@each $name, $hexa in $colors {
+    .#{$name}-to-black {
+        background: linear-gradient(#{$hexa}, black);
+    }
+    .#{$name}-to-white {
+        background: linear-gradient(#{$hexa}, white);
+    }
+}
+
+@each $name, $hexa in $colors {
+    .#{$name} {
+        color: #{$hexa} !important;
+    }
+
+    .#{$name}-bg {
+        background-color: #{$hexa};
+    }
+}
+
+@mixin bordered($color, $width) {
+    border: $width solid $color;
+}
+
+@mixin font-colored($color) {
+    color: $color;
+}
+
+@mixin bg-colored($color) {
+    background-color: $color;
+}
+
+@mixin bg-rgba-colored($color, $opacity) {
+    background-color: rgba($color, $opacity);
+}
+
+@mixin shadowed($opacity) {
+    -webkit-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, $opacity);
+    box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, $opacity);
+}
+
+.drop-shadowed {
+    filter: drop-shadow(10px 10px 20px #222);
+    text-shadow: 2px 2px 5px #222, -2px -2px 5px #222;
+}
