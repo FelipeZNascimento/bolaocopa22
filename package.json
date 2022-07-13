@@ -40,7 +40,7 @@
     "test:ci": "react-scripts test --watchAll=false --runInBand --coverage",
     "test-watch": "react-scripts test --coverage .",
     "eject": "react-scripts eject",
-    "lint": "eslint src --max-warnings=0",
+    "lint": "eslint src --max-warnings=10",
     "link": "npm link ../omegafox-components/"
   },
   "lint-staged": {

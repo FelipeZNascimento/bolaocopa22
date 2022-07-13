@@ -5,7 +5,7 @@ import { Navbar as Nav, TNavbarButton } from '@omegafox/components';
 import logo from 'img/spinner.png';
 import ROUTES from 'constants/routes';
 
-const navButtons = Object.entries(ROUTES).map(([name, obj]) => ({ ...obj }));
+const navButtons = Object.entries(ROUTES).map(([_, obj]) => ({ ...obj }));
 
 export const Navbar = () => {
   const navigate = useNavigate();
