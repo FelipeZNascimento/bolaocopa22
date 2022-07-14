@@ -4,16 +4,16 @@ export const ROUTES = {
     text: 'Início',
     url: '/inicio'
   },
-  BETS: {
+  RESULTS: {
     id: 1,
+    text: 'Resultados',
+    url: '/resultados'
+  },
+  BETS: {
+    id: 2,
     text: 'Apostar',
     url: '/apostar',
     withCredentials: true
-  },
-  RESULTS: {
-    id: 2,
-    text: 'Resultados',
-    url: '/resultados',
   },
   EXTRAS: {
     id: 3,
@@ -24,7 +24,7 @@ export const ROUTES = {
   RANKING: {
     id: 4,
     text: 'Ranking',
-    url: '/ranking',
+    url: '/ranking'
   },
   PRIZES: {
     id: 5,
@@ -40,7 +40,7 @@ export const ROUTES = {
     id: 7,
     text: 'Blog',
     url: '/blog'
-  },
+  }
 };
 
 export default ROUTES;
