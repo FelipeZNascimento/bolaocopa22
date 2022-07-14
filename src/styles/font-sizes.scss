@@ -1,11 +1,23 @@
-@import "styles/variables.scss";
+$font-sizes: (
+  "s3": 6px,
+  "s2": 8px,
+  "s1": 12px,
+  "s": 12px,
+  "m": 14px,
+  "l": 16px,
+  "l1": 16px,
+  "l2": 20px,
+  "l3": 24px,
+  "l4": 36px,
+  "l5": 48px,
+);
 
 @each $name, $pixels in $font-sizes {
-    .font-size-#{$name} {
-        font-size: #{$pixels};
-    }
+  .font-size-#{$name} {
+    font-size: #{$pixels};
+  }
 }
 
 @mixin font-sized($size) {
-    @extend .font-size-#{$size};
+  @extend .font-size-#{$size};
 }
