@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navbar } from 'components/index';
-import { Home } from 'sections/index';
+import { Home, Results } from 'sections/index';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -20,6 +20,7 @@ root.render(
       <Navbar />
       <Routes>
         <Route path={`${ROUTES.HOME.url}/*`} element={<Home />} />
+        <Route path={`${ROUTES.RESULTS.url}/*`} element={<Results />} />
         <Route path={'/'} element={<Home />} />
         <Route path={'*'} element={<Home />} />
       </Routes>

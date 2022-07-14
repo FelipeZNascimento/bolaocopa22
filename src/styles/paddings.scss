@@ -1,45 +1,64 @@
-@import "styles/variables.scss";
+$paddings: (
+  "none": 0px,
+  "zero": 0px,
+  "s3": 2px,
+  "s2": 4px,
+  "s1": 8px,
+  "s": 8px,
+  "m": 12px,
+  "l": 16px,
+  "l1": 16px,
+  "l2": 20px,
+  "l3": 24px,
+  "l4": 50px,
+);
 
-@each $name, $pixels in $padding {
-    .top-padding-#{$name} {
-        padding-top: #{$pixels};
-    }
+@each $name, $pixels in $paddings {
+  .top-padding-#{$name} {
+    padding-top: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $padding {
-    .left-padding-#{$name} {
-        padding-left: #{$pixels};
-    }
+@each $name, $pixels in $paddings {
+  .left-padding-#{$name} {
+    padding-left: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $padding {
-    .right-padding-#{$name} {
-        padding-right: #{$pixels};
-    }
+@each $name, $pixels in $paddings {
+  .right-padding-#{$name} {
+    padding-right: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $padding {
-    .bottom-padding-#{$name} {
-        padding-bottom: #{$pixels};
-    }
+@each $name, $pixels in $paddings {
+  .bottom-padding-#{$name} {
+    padding-bottom: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $padding {
-    .padding-#{$name} {
-        padding: #{$pixels};
-    }
+@each $name, $pixels in $paddings {
+  .all-padding-#{$name} {
+    padding: #{$pixels};
+  }
 }
 
 @mixin padded($direction, $size) {
-    @if $direction == top {
-        @extend .top-padding-#{$size};
-    } @else if $direction == right {
-        @extend .right-padding-#{$size};
-    } @else if $direction == bottom {
-        @extend .bottom-padding-#{$size};
-    } @else if $direction == left {
-        @extend .left-padding-#{$size};
-    } @else {
-        @extend .padding-#{$size}
-    }
+  @if $direction == top {
+    @extend .top-padding-#{$size};
+  } @else if $direction == right {
+    @extend .right-padding-#{$size};
+  } @else if $direction == bottom {
+    @extend .bottom-padding-#{$size};
+  } @else if $direction == left {
+    @extend .left-padding-#{$size};
+  } @else if $direction == vertical {
+    @extend .top-padding-#{$size};
+    @extend .bottom-padding-#{$size};
+  } @else if $direction == horizontal {
+    @extend .left-padding-#{$size};
+    @extend .right-padding-#{$size};
+  } @else if $direction == all {
+    @extend .all-padding-#{$size};
+  }
 }

@@ -1,1 +1,2 @@
-export { Home } from 'sections/home/Home';
+export { Home } from 'sections/Home/Home';
+export { Results } from 'sections/Results/Results';

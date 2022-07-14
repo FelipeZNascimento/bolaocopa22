@@ -1,45 +1,70 @@
-@import "styles/variables.scss";
+$margins: (
+  "none": 0px,
+  "zero": 0px,
+  "s3": 2px,
+  "s2": 4px,
+  "s1": 8px,
+  "s": 8px,
+  "m": 12px,
+  "l": 16px,
+  "l1": 16px,
+  "l2": 20px,
+  "l3": 24px,
+  "l4": 50px,
+);
 
-@each $name, $pixels in $margin {
-    .top-margin-#{$name} {
-        margin-top: #{$pixels};
-    }
+@each $name, $pixels in $margins {
+  .top-margin-#{$name} {
+    margin-top: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $margin {
-    .left-margin-#{$name} {
-        margin-left: #{$pixels};
-    }
+@each $name, $pixels in $margins {
+  .left-margin-#{$name} {
+    margin-left: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $margin {
-    .right-margin-#{$name} {
-        margin-right: #{$pixels};
-    }
+@each $name, $pixels in $margins {
+  .right-margin-#{$name} {
+    margin-right: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $margin {
-    .bottom-margin-#{$name} {
-        margin-bottom: #{$pixels};
-    }
+@each $name, $pixels in $margins {
+  .bottom-margin-#{$name} {
+    margin-bottom: #{$pixels};
+  }
 }
 
-@each $name, $pixels in $margin {
-    .margin-#{$name} {
-        margin: #{$pixels};
-    }
+@each $name, $pixels in $margins {
+  .margin-#{$name} {
+    margin: #{$pixels};
+  }
+}
+
+@each $name, $pixels in $margins {
+  .all-margin-#{$name} {
+    margin: #{$pixels};
+  }
 }
 
 @mixin marged($direction, $size) {
-    @if $direction == top {
-        @extend .top-margin-#{$size};
-    } @else if $direction == right {
-        @extend .right-margin-#{$size};
-    } @else if $direction == bottom {
-        @extend .bottom-margin-#{$size};
-    } @else if $direction == left {
-        @extend .left-margin-#{$size};
-    } @else {
-        @extend .margin-#{$size}
-    }
+  @if $direction == top {
+    @extend .top-margin-#{$size};
+  } @else if $direction == right {
+    @extend .right-margin-#{$size};
+  } @else if $direction == bottom {
+    @extend .bottom-margin-#{$size};
+  } @else if $direction == left {
+    @extend .left-margin-#{$size};
+  } @else if $direction == vertical {
+    @extend .top-margin-#{$size};
+    @extend .bottom-margin-#{$size};
+  } @else if $direction == horizontal {
+    @extend .left-margin-#{$size};
+    @extend .right-margin-#{$size};
+  } @else if $direction == all {
+    @extend .all-margin-#{$size};
+  }
 }
