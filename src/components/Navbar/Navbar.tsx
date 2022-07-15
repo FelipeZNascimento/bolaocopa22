@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 
@@ -13,18 +13,36 @@ const navButtons = Object.entries(ROUTES).map(([_, obj]) => ({ ...obj }));
 
 export const Navbar = () => {
   const [isSidenavOpen, setIsSidenavOpen] = useState<boolean>(false);
-
+  const [selectedNavId, setSelectedNavId] = useState<number>(0);
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname === '/') {
+      setSelectedNavId(ROUTES.HOME.id);
+    } else {
+      const routesArray = Object.values(ROUTES);
+      const currentPath = routesArray.find((item) =>
+        pathname.includes(item.url)
+      );
+
+      if (currentPath) {
+        setSelectedNavId(currentPath.id);
+      }
+    }
+  }, [pathname]);
+
   const navigate = useNavigate();
   const onButtonClick = (navButton: TNavbarButton) => {
     if (isMobile) {
       if (isSidenavOpen) {
         setIsSidenavOpen(false);
         navigate(navButton.url);
+        setSelectedNavId(navButton.id);
       } else {
         setIsSidenavOpen(true);
       }
     } else {
+      setSelectedNavId(navButton.id);
       navigate(navButton.url);
     }
   };
@@ -51,10 +69,12 @@ export const Navbar = () => {
             }
           ]}
           platform="copa"
+          selectedId={0}
           onClick={onButtonClick}
         />
         <Sidenav
           isOpen={isSidenavOpen}
+          selectedId={selectedNavId}
           sidenavButtons={navButtons}
           onClick={onButtonClick}
           onClose={() => setIsSidenavOpen(false)}
@@ -69,6 +89,7 @@ export const Navbar = () => {
         logo={logo}
         navbarButtons={navButtons}
         platform="copa"
+        selectedId={selectedNavId}
         onClick={onButtonClick}
       />
     );

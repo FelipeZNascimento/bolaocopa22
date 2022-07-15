@@ -5,7 +5,7 @@
 @import "styles/paddings.scss";
 
 body {
-  @include bg-colored($color-grey3);
+  @include bg-colored($color-grey2);
 	background-image: url("img/background3.png");
 	background-position: top;
 	background-repeat: repeat;
