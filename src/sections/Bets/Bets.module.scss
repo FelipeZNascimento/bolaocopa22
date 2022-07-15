@@ -1,0 +1,44 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
+.container {
+  @include padded(top, l);
+  display: flex;
+  flex: 1;
+
+  &Browser {
+    @include padded(horizontal, l);
+  }
+
+  &Mobile {
+    @include padded(horizontal, none);
+  }
+}
+
+.leftSection {
+  display: flex;
+  flex: 2;
+  flex-direction: column;
+
+  &Browser {
+    @include padded(horizontal, m);
+  }
+
+  &Mobile {
+    @include padded(horizontal, none);
+  }
+}
+
+.match {
+  @include padded(bottom, m);
+}
+
+.rightSection {
+  @include padded(horizontal, m);
+
+  display: flex;
+  flex: 1;
+}
