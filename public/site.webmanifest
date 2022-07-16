@@ -1,0 +1,14 @@
+{
+    "name": "Bol\u00e3o",
+    "short_name": "Bol\u00e3o",
+    "icons": [
+        {
+            "src": "/android-chrome-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#c0c0c0",
+    "background_color": "#c0c0c0",
+    "display": "standalone"
+}
