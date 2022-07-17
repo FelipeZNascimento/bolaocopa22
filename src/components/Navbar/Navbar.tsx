@@ -2,19 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 
-import { Sidenav, Navbar as TopNav, TNavbarButton } from '@omegafox/components';
+import {
+  Button,
+  Sidenav,
+  Navbar as TopNav,
+  TNavbarButton,
+  Modal
+} from '@omegafox/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 import logo from 'img/spinner.png';
 import ROUTES from 'constants/routes';
-
-const navButtons = Object.entries(ROUTES).map(([_, obj]) => ({ ...obj }));
+import { navbarButtons, loginButton } from 'constants/navbarButtons';
+import styles from './Navbar.module.scss';
 
 export const Navbar = () => {
   const [isSidenavOpen, setIsSidenavOpen] = useState<boolean>(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [selectedNavId, setSelectedNavId] = useState<number>(0);
-  const { pathname } = useLocation();
+  const { hash, pathname } = useLocation();
 
   useEffect(() => {
     if (pathname === '/') {
@@ -29,7 +36,18 @@ export const Navbar = () => {
         setSelectedNavId(currentPath.id);
       }
     }
-  }, [pathname]);
+  }, [hash, pathname]);
+
+  const onModalOpen = () => {
+    document.body.classList.add('modal-open');
+    setIsLoginModalOpen(true);
+  };
+
+  const onModalClose = () => {
+    document.body.classList.remove('modal-open');
+    navigate(pathname);
+    setIsLoginModalOpen(false);
+  };
 
   const navigate = useNavigate();
   const onButtonClick = (navButton: TNavbarButton) => {
@@ -47,12 +65,16 @@ export const Navbar = () => {
     }
   };
 
-  const renderIcon = () => {
+  const renderLoginButton = () => {
     return (
-      <div>
-        <FontAwesomeIcon icon={faBars} />
-      </div>
+      <Button variant="primary" onClick={onModalOpen}>
+        Entrar
+      </Button>
     );
+  };
+
+  const renderIcon = () => {
+    return <FontAwesomeIcon className={styles.icon} icon={faBars} />;
   };
 
   const renderMobileView = () => {
@@ -60,7 +82,7 @@ export const Navbar = () => {
       <>
         <TopNav
           logo={logo}
-          navbarButtons={[
+          navbarLeft={[
             {
               id: 0,
               text: '',
@@ -74,8 +96,9 @@ export const Navbar = () => {
         />
         <Sidenav
           isOpen={isSidenavOpen}
+          renderBottom={renderLoginButton}
           selectedId={selectedNavId}
-          sidenavButtons={navButtons}
+          sidenavButtons={navbarButtons}
           onClick={onButtonClick}
           onClose={() => setIsSidenavOpen(false)}
         />
@@ -87,7 +110,8 @@ export const Navbar = () => {
     return (
       <TopNav
         logo={logo}
-        navbarButtons={navButtons}
+        navbarLeft={navbarButtons}
+        navbarRight={[{ ...loginButton, renderingFunction: renderLoginButton }]}
         platform="copa"
         selectedId={selectedNavId}
         onClick={onButtonClick}
@@ -99,6 +123,9 @@ export const Navbar = () => {
     <>
       {isMobile && renderMobileView()}
       {!isMobile && renderBrowserView()}
+      <Modal isOpen={isLoginModalOpen} title="Entrar" onClose={onModalClose}>
+        Conteudo
+      </Modal>
     </>
   );
 };

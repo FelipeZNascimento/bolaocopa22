@@ -8,10 +8,6 @@ html {
     box-sizing: inherit;
 }
 
-h1 {
-    font-size: 36px;
-    font-variant: small-caps;
-}
 h1,
 h2,
 h3,
@@ -48,4 +44,8 @@ a {
 
 .small-caps {
     font-variant: small-caps;
+}
+
+.modal-open {
+  overflow: hidden;
 }
