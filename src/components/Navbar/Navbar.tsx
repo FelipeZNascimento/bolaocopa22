@@ -6,9 +6,9 @@ import {
   Button,
   Sidenav,
   Navbar as TopNav,
-  TNavbarButton,
-  Modal
+  TNavbarButton
 } from '@omegafox/components';
+import { LoginModal } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
@@ -123,9 +123,7 @@ export const Navbar = () => {
     <>
       {isMobile && renderMobileView()}
       {!isMobile && renderBrowserView()}
-      <Modal isOpen={isLoginModalOpen} title="Entrar" onClose={onModalClose}>
-        Conteudo
-      </Modal>
+      <LoginModal isOpen={isLoginModalOpen} onClose={onModalClose} />
     </>
   );
 };
