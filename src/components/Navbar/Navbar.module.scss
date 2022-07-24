@@ -6,4 +6,5 @@
 
 .icon {
   @include font-colored($color-grey4);
+  @include font-sized(l2);
 }

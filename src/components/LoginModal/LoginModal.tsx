@@ -28,7 +28,18 @@ const emptyForm: TFormInput[] = [
       value !== null && value.length >= 6
   },
   {
-    description: 'Entre 6 e 14 caracteres',
+    description: '6+ caracteres',
+    isValid: true,
+    isVisible: false,
+    key: 'confirmPassword',
+    placeholder: 'Confirme sua senha',
+    type: 'password',
+    value: null,
+    validationFunction: (value: string | null) =>
+      value !== null && value.length >= 6
+  },
+  {
+    description: 'Entre 4 e 14 caracteres',
     isValid: true,
     isVisible: false,
     key: 'nickname',
@@ -36,33 +47,44 @@ const emptyForm: TFormInput[] = [
     type: 'text',
     value: null,
     validationFunction: (value: string | null) =>
-      value !== null && value.length >= 6 && value.length <= 14
+      value !== null && value.length >= 4 && value.length <= 14
   }
 ];
 
 export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
   const [form, setForm] = useState<TFormInput[]>(cloneDeep(emptyForm));
-  const [isRegister, setIsRegister] = useState<boolean>(false);
+  const [status, setStatus] = useState<'login' | 'register' | 'forgotPassword'>(
+    'login'
+  );
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
+  const passwordsMatch = (value: string) => {
+    const password = form.find((item) => item.key === 'password')?.value;
+    return password === value;
+  };
   const isFormValid = () => {
     let isValid = true;
     setForm(
-      form.map((element) => {
-        if (element.isVisible) {
-          if (element.value === null) {
+      form.map((item) => {
+        if (item.isVisible) {
+          if (item.value === null) {
             isValid = false;
           } else {
-            const isElementValid = element.validationFunction(element.value);
-            element.isValid = isElementValid;
+            const isitemValid = item.validationFunction(item.value);
 
-            if (isValid && !isElementValid) {
-              isValid = isElementValid;
+            if (item.key === 'confirmPassword') {
+              item.isValid = isitemValid && passwordsMatch(item.value);
+            } else {
+              item.isValid = isitemValid;
+            }
+
+            if (isValid && !item.isValid) {
+              isValid = item.isValid;
             }
           }
         }
 
-        return element;
+        return item;
       })
     );
 
@@ -74,12 +96,12 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
     const formValue = e.target.value;
 
     setForm(
-      form.map((element) => {
-        if (element.key === formKey) {
-          element.value = formValue;
+      form.map((item) => {
+        if (item.key === formKey) {
+          item.value = formValue;
         }
 
-        return element;
+        return item;
       })
     );
 
@@ -88,7 +110,7 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
 
   const handleClose = () => {
     setForm(cloneDeep(emptyForm));
-    setIsRegister(false);
+    setStatus('login');
     setIsDisabled(true);
     onClose();
   };
@@ -100,24 +122,89 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
     if (isDisabled) {
       return;
     }
+
+    if (status === 'login') {
+      console.log('login');
+    } else if (status === 'register') {
+      console.log('register');
+    } else if (status === 'forgotPassword') {
+      console.log('forgotPassword');
+    }
   };
 
-  const handleRegister = (flag: boolean) => {
-    setIsRegister(flag);
+  const handleLogin = () => {
+    setStatus('login');
     setForm(
-      form.map((element) => {
-        if (element.key === 'nickname') {
-          element.isVisible = flag;
+      form.map((item) => {
+        if (item.key === 'email' || item.key === 'password') {
+          item.isVisible = true;
+        } else {
+          item.isVisible = false;
         }
 
-        return element;
+        return item;
+      })
+    );
+
+    setIsDisabled(!isFormValid());
+  };
+
+  const handleRegister = () => {
+    setStatus('register');
+    setForm(
+      form.map((item) => {
+        if (
+          item.key === 'email' ||
+          item.key === 'password' ||
+          item.key === 'nickname' ||
+          item.key === 'confirmPassword'
+        ) {
+          item.isVisible = true;
+        } else {
+          item.isVisible = false;
+        }
+
+        return item;
+      })
+    );
+
+    setIsDisabled(!isFormValid());
+  };
+
+  const handleForgotPassword = () => {
+    setStatus('forgotPassword');
+
+    setForm(
+      form.map((item) => {
+        if (item.key === 'email') {
+          item.isVisible = true;
+        } else {
+          item.isVisible = false;
+        }
+
+        return item;
       })
     );
   };
 
+  const renderTitle = () => {
+    if (status === 'login') {
+      return 'Entrar';
+    } else if (status === 'register') {
+      return 'Registrar';
+    } else {
+      return 'Esqueci a senha';
+    }
+  };
+
   return (
     <>
-      <Modal size="small" isOpen={isOpen} title="Entrar" onClose={handleClose}>
+      <Modal
+        size="small"
+        isOpen={isOpen}
+        title={renderTitle()}
+        onClose={handleClose}
+      >
         {form.map((item) => {
           if (!item.isVisible) {
             return null;
@@ -150,12 +237,12 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
           </Button>
         </div>
         <div className={styles.extraOptions}>
-          <a>Esqueci a senha</a>
-          {!isRegister && (
-            <a onClick={() => handleRegister(true)}>Registre-se</a>
+          <a onClick={handleForgotPassword}>Esqueci a senha</a>
+          {status !== 'register' && (
+            <a onClick={() => handleRegister()}>Registre-se</a>
           )}
-          {isRegister && (
-            <a onClick={() => handleRegister(false)}>Já tenho uma conta</a>
+          {status !== 'login' && (
+            <a onClick={() => handleLogin()}>Já tenho uma conta</a>
           )}
         </div>
       </Modal>
