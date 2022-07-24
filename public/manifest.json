@@ -1,5 +1,5 @@
 {
-  "short_name": "Bolão22",
+  "short_name": "Bolão 2022",
   "name": "Bolão da Copa do Mundo 2022",
   "icons": [
     {
@@ -8,12 +8,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "android-chrome-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "android-chrome-384x384.png",
       "type": "image/png",
       "sizes": "512x512"
     }
