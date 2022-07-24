@@ -37,7 +37,7 @@ export const Bets = () => {
   };
 
   return (
-    <div className={containerClass}>
+    <main className={containerClass}>
       <div className={leftSectionClass}>{renderNMatches(10)}</div>
       {!isMobile && (
         <div className={styles.rightSection}>
@@ -49,6 +49,6 @@ export const Bets = () => {
           />
         </div>
       )}
-    </div>
+    </main>
   );
 };

@@ -36,7 +36,7 @@ export const Results = () => {
   };
 
   return (
-    <div className={containerClass}>
+    <main className={containerClass}>
       <div className={leftSectionClass}>{renderNMatches(10)}</div>
       {!isMobile && (
         <div className={styles.rightSection}>
@@ -48,6 +48,6 @@ export const Results = () => {
           />
         </div>
       )}
-    </div>
+    </main>
   );
 };
