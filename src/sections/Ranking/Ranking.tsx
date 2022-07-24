@@ -14,7 +14,7 @@ export const Ranking = () => {
   });
 
   return (
-    <div className={containerClass}>
+    <main className={containerClass}>
       <div className={styles.rankingContainer}>
         <Rank
           isHeader
@@ -23,6 +23,6 @@ export const Ranking = () => {
           rows={tableConfig.rows}
         />
       </div>
-    </div>
+    </main>
   );
 };

@@ -5,8 +5,8 @@ import logo from 'img/spinner.png';
 
 export const Home = () => {
   return (
-    <div className={styles.app}>
+    <main className={styles.app}>
       <Loading image={logo} text="" />
-    </div>
+    </main>
   );
 };

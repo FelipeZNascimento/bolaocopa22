@@ -66,8 +66,13 @@ export const Navbar = () => {
   };
 
   const renderLoginButton = () => {
+    const handleModalOpen = () => {
+      setIsSidenavOpen(false);
+      onModalOpen();
+    };
+
     return (
-      <Button variant="primary" onClick={onModalOpen}>
+      <Button variant="primary" onClick={handleModalOpen}>
         Entrar
       </Button>
     );
