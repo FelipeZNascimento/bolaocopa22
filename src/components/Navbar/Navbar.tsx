@@ -4,24 +4,41 @@ import { isMobile } from 'react-device-detect';
 
 import {
   Button,
-  Sidenav,
   Navbar as TopNav,
+  Sidenav,
   TNavbarButton
 } from '@omegafox/components';
-import { LoginModal } from '../index';
+import { LoginModal, UserModal } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import logo from 'img/spinner.png';
 import ROUTES from 'constants/routes';
 import { navbarButtons, loginButton } from 'constants/navbarButtons';
 import styles from './Navbar.module.scss';
+import classNames from 'classnames';
+
+// Redux
+import { useSelector } from 'react-redux';
+
+// Store
+import type { RootState } from 'store/index';
+import { TUser } from 'store/user/types';
 
 export const Navbar = () => {
   const [isSidenavOpen, setIsSidenavOpen] = useState<boolean>(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState<boolean>(false);
   const [selectedNavId, setSelectedNavId] = useState<number>(0);
   const { hash, pathname } = useLocation();
+
+  const loginLoading = useSelector(
+    (state: RootState) => state.user.loginLoading
+  ) as boolean;
+
+  const loggedUser = useSelector(
+    (state: RootState) => state.user.loggedUser
+  ) as unknown as TUser;
 
   useEffect(() => {
     if (pathname === '/') {
@@ -38,15 +55,20 @@ export const Navbar = () => {
     }
   }, [hash, pathname]);
 
-  const onModalOpen = () => {
+  const onModalOpen = (type: 'user' | 'login') => {
     document.body.classList.add('modal-open');
-    setIsLoginModalOpen(true);
+    if (type === 'login') {
+      setIsLoginModalOpen(true);
+    } else if (type === 'user') {
+      setIsUserModalOpen(true);
+    }
   };
 
   const onModalClose = () => {
     document.body.classList.remove('modal-open');
     navigate(pathname);
     setIsLoginModalOpen(false);
+    setIsUserModalOpen(false);
   };
 
   const navigate = useNavigate();
@@ -65,21 +87,59 @@ export const Navbar = () => {
     }
   };
 
+  const mountUserSection = () => {
+    if (!loggedUser) {
+      return [{ ...loginButton, renderingFunction: renderLoginButton }];
+    }
+
+    return [{ ...loginButton, renderingFunction: renderUserButton }];
+  };
+
   const renderLoginButton = () => {
     const handleModalOpen = () => {
       setIsSidenavOpen(false);
-      onModalOpen();
+      onModalOpen('login');
     };
 
     return (
-      <Button variant="primary" onClick={handleModalOpen}>
+      <Button
+        isDisabled={loginLoading}
+        variant="primary"
+        onClick={handleModalOpen}
+      >
         Entrar
+      </Button>
+    );
+  };
+
+  const renderUserButton = () => {
+    const handleModalOpen = () => {
+      setIsSidenavOpen(false);
+      onModalOpen('user');
+    };
+
+    return (
+      <Button
+        icon={<FontAwesomeIcon className={styles.iconGrey} icon={faUser} />}
+        variant="primary"
+        onClick={handleModalOpen}
+      >
+        {loggedUser?.nickname}
       </Button>
     );
   };
 
   const renderIcon = () => {
     return <FontAwesomeIcon className={styles.icon} icon={faBars} />;
+  };
+
+  const renderRight = () => {
+    const iconClass = classNames({
+      [styles.iconRed]: loggedUser,
+      [styles.iconGrey]: !loggedUser
+    });
+
+    return <FontAwesomeIcon className={iconClass} icon={faUser} />;
   };
 
   const renderMobileView = () => {
@@ -95,13 +155,21 @@ export const Navbar = () => {
               renderingFunction: renderIcon
             }
           ]}
+          navbarRight={[
+            {
+              id: 0,
+              text: '',
+              url: '',
+              renderingFunction: renderRight
+            }
+          ]}
           platform="copa"
           selectedId={0}
           onClick={onButtonClick}
         />
         <Sidenav
           isOpen={isSidenavOpen}
-          renderBottom={renderLoginButton}
+          renderBottom={loggedUser ? renderUserButton : renderLoginButton}
           selectedId={selectedNavId}
           sidenavButtons={navbarButtons}
           onClick={onButtonClick}
@@ -116,7 +184,7 @@ export const Navbar = () => {
       <TopNav
         logo={logo}
         navbarLeft={navbarButtons}
-        navbarRight={[{ ...loginButton, renderingFunction: renderLoginButton }]}
+        navbarRight={mountUserSection()}
         platform="copa"
         selectedId={selectedNavId}
         onClick={onButtonClick}
@@ -129,6 +197,7 @@ export const Navbar = () => {
       {isMobile && renderMobileView()}
       {!isMobile && renderBrowserView()}
       <LoginModal isOpen={isLoginModalOpen} onClose={onModalClose} />
+      <UserModal isOpen={isUserModalOpen} onClose={onModalClose} />
     </>
   );
 };
