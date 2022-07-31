@@ -1,0 +1,34 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
+.icon {
+  @include font-colored($color-grey4);
+}
+
+.buttonContainer {
+  @include flex-aligned(center, center);
+  @include marged(bottom, s);
+}
+
+.extraOptions {
+  @include flex-aligned(center, center);
+  @include padded(top, s2);
+
+  flex-direction: column;
+  flex: 1;
+
+  a {
+    @include padded(top, s2);
+    @include padded(bottom, s2);
+
+    text-decoration: underline;
+    transition: color 0.2s;
+
+    &:hover {
+      @include font-colored($color-qatar-blue);
+    }
+  }
+}
