@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navbar, Startup } from 'components/index';
-import { Bets, Home, Ranking, Results } from 'sections/index';
+import { Bets, Extras, Home, Ranking, Results } from 'sections/index';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -29,6 +29,7 @@ root.render(
             <Route path={`${ROUTES.RESULTS.url}/*`} element={<Results />} />
             <Route path={`${ROUTES.BETS.url}/*`} element={<Bets />} />
             <Route path={`${ROUTES.RANKING.url}/*`} element={<Ranking />} />
+            <Route path={`${ROUTES.EXTRAS.url}/*`} element={<Extras />} />
             <Route path={'/'} element={<Home />} />
             <Route path={'*'} element={<Home />} />
           </Routes>

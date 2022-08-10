@@ -4,7 +4,9 @@ import { useDispatch } from 'react-redux';
 // Store
 import { useGetConfigQuery } from 'store/base/baseSplit';
 import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
+import { matchesLoading, matchesSet } from 'store/matches/reducer';
 import { IStartup } from './types';
+import { QueryHandler } from 'services/queryHandler';
 
 export const Startup = ({ children }: IStartup) => {
   const { data, error, isLoading } = useGetConfigQuery();
@@ -12,10 +14,14 @@ export const Startup = ({ children }: IStartup) => {
 
   useEffect(() => {
     dispatch(userLoginLoading(isLoading));
+    dispatch(matchesLoading(isLoading));
 
     if (!error && !isLoading && data) {
-      dispatch(userLoggedIn(data.loggedUser));
-      console.log(data.loggedUser);
+      const result = QueryHandler(data);
+      if (result) {
+        dispatch(userLoggedIn(result.loggedUser));
+        dispatch(matchesSet(result.matches));
+      }
     }
   }, [data, isLoading]);
 
