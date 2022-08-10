@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useOnLogoutMutation } from 'store/user/actions';
 import { userLoggedOut } from 'store/user/reducer';
 import { TUser } from 'store/user/types';
+import { QueryHandler } from 'services/queryHandler';
 
 const emptyForm: TFormInput[] = [
   {
@@ -90,13 +91,13 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
   }, [loggedUser]);
 
   useEffect(() => {
-    if (
-      logoutResult.isSuccess &&
-      !logoutResult.isLoading &&
-      logoutResult.data === true
-    ) {
-      dispatch(userLoggedOut());
-      handleClose();
+    if (logoutResult.isSuccess && !logoutResult.isLoading) {
+      const result = QueryHandler(logoutResult.data);
+
+      if (result) {
+        dispatch(userLoggedOut());
+        handleClose();
+      }
     }
   }, [logoutResult]);
 
@@ -144,12 +145,6 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
 
     return isValid;
   };
-
-  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === 'Enter') {
-  //     handleConfirm();
-  //   }
-  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formKey = e.target.name;

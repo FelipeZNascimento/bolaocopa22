@@ -7,21 +7,11 @@ import {
   logout as logoutEndpoint,
   register as registerEndpoint
 } from 'services/endpoints';
+import { TQuery } from 'store/base/types';
 
 const extendedApi = baseSplitApi.injectEndpoints({
   endpoints: (builder) => ({
-    onAutologin: builder.query<TUser, { email: string; password: string }>({
-      query: (arg) => {
-        const { email, password } = arg;
-        return {
-          url: loginEndpoint(),
-          method: 'post',
-          body: { email, password: sha256(password) },
-          credentials: 'include'
-        };
-      }
-    }),
-    onLogin: builder.mutation<TUser, { email: string; password: string }>({
+    onLogin: builder.mutation<TQuery, { email: string; password: string }>({
       query: (arg) => {
         const { email, password } = arg;
         return {
@@ -52,7 +42,7 @@ const extendedApi = baseSplitApi.injectEndpoints({
         };
       }
     }),
-    onLogout: builder.mutation<boolean, void>({
+    onLogout: builder.mutation<TQuery, void>({
       query: () => {
         return {
           url: logoutEndpoint(),
@@ -68,7 +58,6 @@ const extendedApi = baseSplitApi.injectEndpoints({
 });
 
 export const {
-  useOnAutologinQuery,
   useOnLoginMutation,
   useOnLogoutMutation,
   useOnRegisterMutation

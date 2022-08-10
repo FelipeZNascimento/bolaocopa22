@@ -1,0 +1,26 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
+.container {
+  @include padded(vertical, l);
+  @include flex-aligned(center, center);
+
+  flex-direction: column;
+  flex: 1;
+
+  &Browser {
+    @include padded(horizontal, l);
+  }
+
+  &Mobile {
+    @include padded(horizontal, none);
+  }
+}
+
+.rankingContainer {
+  flex: 1;
+  max-width: 1024px;
+}

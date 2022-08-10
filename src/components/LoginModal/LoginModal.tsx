@@ -14,6 +14,7 @@ import type { RootState } from 'store/index';
 // Store
 import { useOnLoginMutation, useOnRegisterMutation } from 'store/user/actions';
 import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
+import { QueryHandler } from 'services/queryHandler';
 
 const emptyForm: TFormInput[] = [
   {
@@ -81,7 +82,8 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
     dispatch(userLoginLoading(loginResult.isLoading));
 
     if (loginResult.isSuccess && !loginResult.isLoading) {
-      dispatch(userLoggedIn(loginResult.data));
+      const result = QueryHandler(loginResult.data);
+      dispatch(userLoggedIn(result.loggedUser));
       handleClose();
     }
   }, [loginResult]);
@@ -126,12 +128,6 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
 
     return isValid;
   };
-
-  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === 'Enter') {
-  //     handleConfirm();
-  //   }
-  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formKey = e.target.name;
