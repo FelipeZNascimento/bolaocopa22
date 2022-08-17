@@ -41,7 +41,6 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
       !updateBetResult.isUninitialized &&
       (!updateBetResult.isSuccess || !updateBetResult.data.isSuccess)
     ) {
-      console.log('wat');
       setIsError(true);
     }
   }, [updateBetResult]);
@@ -63,7 +62,6 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
     };
 
     updateBetTrigger(betObject);
-    // setCurrentBet(betObject);
     onChange(betObject);
   };
 
@@ -94,7 +92,7 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
       {shownDate && <h2>{shownDate.toLocaleDateString()}</h2>}
       <div className={styles.match}>
         <MatchOmegafox
-          isEditable={!isError}
+          isEditable
           isError={isError}
           isLoading={isLoading}
           clock={{ time: 0, status: match.status }}
