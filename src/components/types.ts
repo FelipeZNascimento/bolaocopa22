@@ -1,5 +1,6 @@
-export type TFormInput = {
+export type TModalTextField = {
   description?: string;
+  isDisabled?: boolean;
   isValid: boolean;
   isVisible: boolean;
   key: string;
@@ -9,7 +10,7 @@ export type TFormInput = {
   validationFunction: (param: string | null) => boolean;
 };
 
-export interface ILoginModalProps {
+export interface IModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
