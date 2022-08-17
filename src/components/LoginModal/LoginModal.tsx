@@ -3,20 +3,20 @@ import { Button, Loading, Modal, TextField } from '@omegafox/components';
 import { cloneDeep } from 'lodash';
 
 import { validateEmail } from 'services/helpers';
-import { ILoginModalProps, TFormInput } from './types';
+import { TModalTextField, IModalProps } from 'components/types';
 import styles from './LoginModal.module.scss';
 import logo from 'img/spinner.png';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from 'store/index';
 
 // Store
 import { useOnLoginMutation, useOnRegisterMutation } from 'store/user/actions';
 import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
-import { QueryHandler } from 'services/queryHandler';
+import { TError, TQuery } from 'store/base/types';
+import type { RootState } from 'store/index';
 
-const emptyForm: TFormInput[] = [
+const emptyForm: TModalTextField[] = [
   {
     isValid: true,
     isVisible: true,
@@ -61,14 +61,15 @@ const emptyForm: TFormInput[] = [
   }
 ];
 
-export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
+export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
   // Mutation Triggers
   const [loginTrigger, loginResult] = useOnLoginMutation();
   const [registerTrigger, registerResult] = useOnRegisterMutation();
 
   // UseState
-  const [form, setForm] = useState<TFormInput[]>(cloneDeep(emptyForm));
+  const [form, setForm] = useState<TModalTextField[]>(cloneDeep(emptyForm));
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [isError, setIsError] = useState<TError[]>([]);
   const [status, setStatus] = useState<'login' | 'register' | 'forgotPassword'>(
     'login'
   );
@@ -82,9 +83,14 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
     dispatch(userLoginLoading(loginResult.isLoading));
 
     if (loginResult.isSuccess && !loginResult.isLoading) {
-      const result = QueryHandler(loginResult.data);
-      dispatch(userLoggedIn(result.loggedUser));
-      handleClose();
+      const queryData: TQuery = loginResult.data;
+
+      if (queryData.isSuccess) {
+        dispatch(userLoggedIn(queryData.result.loggedUser));
+        handleClose();
+      } else {
+        setIsError(queryData.result.errors);
+      }
     }
   }, [loginResult]);
 
@@ -130,6 +136,8 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsError([]);
+
     const formKey = e.target.name;
     const formValue = e.target.value;
 
@@ -150,13 +158,16 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
     setForm(cloneDeep(emptyForm));
     setStatus('login');
     setIsDisabled(true);
+    setIsError([]);
     onClose();
   };
 
   const onLogin = () => {
-    const email = form.find((item: TFormInput) => item.key === 'email')?.value;
+    const email = form.find(
+      (item: TModalTextField) => item.key === 'email'
+    )?.value;
     const password = form.find(
-      (item: TFormInput) => item.key === 'password'
+      (item: TModalTextField) => item.key === 'password'
     )?.value;
 
     loginTrigger({
@@ -166,12 +177,14 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
   };
 
   const onRegister = () => {
-    const email = form.find((item: TFormInput) => item.key === 'email')
+    const email = form.find((item: TModalTextField) => item.key === 'email')
       ?.value as string;
-    const password = form.find((item: TFormInput) => item.key === 'password')
-      ?.value as string;
-    const nickname = form.find((item: TFormInput) => item.key === 'nickname')
-      ?.value as string;
+    const password = form.find(
+      (item: TModalTextField) => item.key === 'password'
+    )?.value as string;
+    const nickname = form.find(
+      (item: TModalTextField) => item.key === 'nickname'
+    )?.value as string;
 
     registerTrigger({
       email: email,
@@ -181,9 +194,11 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
   };
 
   const handleConfirm = () => {
-    setIsDisabled(!isFormValid());
+    const isFormDisabled = !isFormValid();
+    setIsDisabled(isFormDisabled);
+    setIsError([]);
 
-    if (isDisabled) {
+    if (isFormDisabled) {
       return;
     }
 
@@ -269,7 +284,7 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
         title={renderTitle()}
         onClose={handleClose}
       >
-        {loginLoading && <Loading image={logo} />}
+        {loginLoading && <Loading text="" image={logo} />}
         {!loginLoading &&
           form.map((item) => {
             if (!item.isVisible) {
@@ -278,6 +293,7 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
 
             return (
               <TextField
+                defaultValue={item.value || ''}
                 isError={!item.isValid}
                 description={item.description ? item.description : ''}
                 inputName={item.key}
@@ -289,7 +305,9 @@ export const LoginModal = ({ isOpen, onClose }: ILoginModalProps) => {
               />
             );
           })}
-
+        <p className={styles.messageError}>
+          {isError.length > 0 && isError[0].message}&nbsp;
+        </p>
         <div className={styles.buttonContainer}>
           <Button isShadowed={false} variant="neutral" onClick={handleClose}>
             Cancelar

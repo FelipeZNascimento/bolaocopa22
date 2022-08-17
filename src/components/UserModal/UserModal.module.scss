@@ -32,3 +32,17 @@
     }
   }
 }
+
+.message {
+  @include aligned(center);
+  @include font-sized(m);
+  @include marged(top, zero);
+
+  &Error {
+    @include font-colored($color-qatar-red);
+  }
+
+  &Success {
+    @include font-colored($color-qatar-blue);
+  }
+}
