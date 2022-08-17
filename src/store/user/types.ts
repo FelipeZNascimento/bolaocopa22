@@ -1,7 +1,9 @@
 export type TUser = {
-  id: string;
+  id: number;
   nickname: string;
   name: string;
   email: string;
+  password?: string;
+  newPassword?: string;
   isActive: boolean;
 };

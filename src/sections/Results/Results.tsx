@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { Match, Ranking, ITeamProps, Loading } from '@omegafox/components';
 import { tableConfig } from 'constants/mocks';
 import { RootState } from 'store';
-import { TMatch } from 'store/matches/types';
+import { TMatch } from 'store/match/types';
 
 // Styles and images
 import styles from './Results.module.scss';
