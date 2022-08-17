@@ -1,22 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, TextField } from '@omegafox/components';
 import { cloneDeep } from 'lodash';
-// import { useDispatch } from 'react-redux';
-
 import { validateEmail } from 'services/helpers';
-import { IUserModalProps, TFormInput } from './types';
+
+// Components and styles
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSave,
+  faCancel,
+  faKey,
+  faUser,
+  faArrowRightFromBracket
+} from '@fortawesome/free-solid-svg-icons';
+
+import { Button, Loading, Modal, TextField } from '@omegafox/components';
+import { TModalTextField, IModalProps } from 'components/types';
 import styles from './UserModal.module.scss';
-// import { userLoggedIn } from 'store/user/reducer';
 
 // Redux
 import type { RootState } from 'store/index';
 import { useDispatch, useSelector } from 'react-redux';
-import { useOnLogoutMutation } from 'store/user/actions';
-import { userLoggedOut } from 'store/user/reducer';
+import {
+  useOnLogoutMutation,
+  useOnUpdateInfoMutation,
+  useOnUpdatePassMutation
+} from 'store/user/actions';
+import { userLoggedIn, userLoggedOut } from 'store/user/reducer';
 import { TUser } from 'store/user/types';
-import { QueryHandler } from 'services/queryHandler';
+import logo from 'img/spinner.png';
+import { TError, TQuery } from 'store/base/types';
+import classNames from 'classnames';
 
-const emptyForm: TFormInput[] = [
+const emptyForm: TModalTextField[] = [
   {
     isDisabled: true,
     isValid: true,
@@ -27,31 +41,8 @@ const emptyForm: TFormInput[] = [
     value: '',
     validationFunction: (value: string | null) => validateEmail(value)
   },
-  // {
-  //   description: '6+ caracteres',
-  //   isValid: true,
-  //   isVisible: true,
-  //   key: 'password',
-  //   placeholder: 'Senha',
-  //   type: 'password',
-  //   value: null,
-  //   validationFunction: (value: string | null) =>
-  //     value !== null && value.length >= 6
-  // },
-  // {
-  //   description: '6+ caracteres',
-  //   isValid: true,
-  //   isVisible: false,
-  //   key: 'confirmPassword',
-  //   placeholder: 'Confirme sua senha',
-  //   type: 'password',
-  //   value: null,
-  //   validationFunction: (value: string | null) =>
-  //     value !== null && value.length >= 6
-  // },
   {
     description: 'Entre 4 e 14 caracteres',
-    isDisabled: false,
     isValid: true,
     isVisible: true,
     key: 'nickname',
@@ -62,7 +53,6 @@ const emptyForm: TFormInput[] = [
       value !== null && value.length >= 4 && value.length <= 14
   },
   {
-    isDisabled: false,
     isValid: true,
     isVisible: true,
     key: 'name',
@@ -70,17 +60,64 @@ const emptyForm: TFormInput[] = [
     type: 'text',
     value: '',
     validationFunction: (value: string | null) => value !== null
+  },
+  {
+    description: '6+ caracteres',
+    isValid: true,
+    isVisible: false,
+    key: 'password',
+    placeholder: 'Senha atual',
+    type: 'password',
+    value: null,
+    validationFunction: (value: string | null) =>
+      value !== null && value.length >= 6
+  },
+  {
+    description: '6+ caracteres',
+    isValid: true,
+    isVisible: false,
+    key: 'newPassword',
+    placeholder: 'Nova senha',
+    type: 'password',
+    value: null,
+    validationFunction: (value: string | null) =>
+      value !== null && value.length >= 6
+  },
+  {
+    description: '6+ caracteres',
+    isValid: true,
+    isVisible: false,
+    key: 'confirmPassword',
+    placeholder: 'Confirme a nova senha',
+    type: 'password',
+    value: null,
+    validationFunction: (value: string | null) =>
+      value !== null && value.length >= 6
   }
 ];
 
-export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
+export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   const [logoutTrigger, logoutResult] = useOnLogoutMutation();
-  const [form, setForm] = useState<TFormInput[]>(cloneDeep(emptyForm));
+  const [updateInfoTrigger, updateInfoResult] = useOnUpdateInfoMutation();
+  const [updatePassTrigger, updatePassResult] = useOnUpdatePassMutation();
+
+  const [form, setForm] = useState<TModalTextField[]>(cloneDeep(emptyForm));
+  const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [isError, setIsError] = useState<TError[]>([]);
+  // const [loggedUser, setLoggedUser] = useState<TUser | null>(null);
 
   const loggedUser: TUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
+  const isLoading = updateInfoResult.isLoading || updatePassResult.isLoading;
+  const isSuccess =
+    (!updateInfoResult.isUninitialized &&
+      !updateInfoResult.isLoading &&
+      updateInfoResult.isSuccess) ||
+    (!updatePassResult.isUninitialized &&
+      !updatePassResult.isLoading &&
+      updatePassResult.isSuccess);
 
   const dispatch = useDispatch();
 
@@ -92,45 +129,72 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
 
   useEffect(() => {
     if (logoutResult.isSuccess && !logoutResult.isLoading) {
-      const result = QueryHandler(logoutResult.data);
+      const queryData: TQuery = logoutResult.data;
 
-      if (result) {
+      if (queryData.isSuccess) {
         dispatch(userLoggedOut());
         handleClose();
+      } else {
+        setIsError(queryData.result.errors);
       }
     }
   }, [logoutResult]);
+
+  useEffect(() => {
+    if (updateInfoResult.isSuccess && !updateInfoResult.isLoading) {
+      const queryData: TQuery = updateInfoResult.data;
+
+      if (queryData.isSuccess) {
+        dispatch(userLoggedIn(queryData.result.loggedUser));
+      } else {
+        setIsError(queryData.result.errors);
+      }
+    }
+  }, [updateInfoResult]);
+
+  useEffect(() => {
+    if (updatePassResult.isSuccess && !updatePassResult.isLoading) {
+      const queryData: TQuery = updatePassResult.data;
+
+      if (!queryData.isSuccess) {
+        setIsError(queryData.result.errors);
+      }
+    }
+  }, [updatePassResult]);
 
   const fillFormWithUserDetails = () => {
     setForm(
       form.map((item) => {
         const itemKey = item.key as keyof TUser;
-        item.value = loggedUser[itemKey] as string;
+        item.value = (loggedUser[itemKey] as string) || null;
 
         return item;
       })
     );
   };
 
-  const passwordsMatch = (value: string) => {
-    const password = form.find((item) => item.key === 'password')?.value;
-    return password === value;
+  const passwordsMatch = () => {
+    const newPassword = form.find((item) => item.key === 'newPassword')?.value;
+    const confirmNewPassword = form.find(
+      (item) => item.key === 'confirmPassword'
+    )?.value;
+    return newPassword === confirmNewPassword;
   };
 
   const isFormValid = () => {
     let isValid = true;
     setForm(
       form.map((item) => {
-        if (item.isVisible) {
+        if (item.isVisible && !item.isDisabled) {
           if (item.value === null) {
             isValid = false;
           } else {
-            const isitemValid = item.validationFunction(item.value);
+            const isItemValid = item.validationFunction(item.value);
 
-            if (item.key === 'confirmPassword') {
-              item.isValid = isitemValid && passwordsMatch(item.value);
+            if (item.key === 'confirmPassword' || item.key === 'newPassword') {
+              item.isValid = isItemValid && passwordsMatch();
             } else {
-              item.isValid = isitemValid;
+              item.isValid = isItemValid;
             }
 
             if (isValid && !item.isValid) {
@@ -147,6 +211,9 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsError([]);
+    setIsDisabled(false);
+
     const formKey = e.target.name;
     const formValue = e.target.value;
 
@@ -164,8 +231,8 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
   };
 
   const handleClose = () => {
-    fillFormWithUserDetails();
     setIsDisabled(true);
+    setIsChangePassword(false);
     onClose();
   };
 
@@ -174,12 +241,66 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
   };
 
   const handleConfirm = () => {
-    setIsDisabled(!isFormValid());
+    const isFormDisabled = !isFormValid();
+    setIsDisabled(isFormDisabled);
+    setIsError([]);
 
-    if (isDisabled) {
+    if (isFormDisabled || !loggedUser) {
       return;
     }
+
+    if (isChangePassword) {
+      const password = form.find((item) => item.key === 'password');
+      const newPassword = form.find((item) => item.key === 'newPassword');
+
+      updatePassTrigger({
+        id: loggedUser.id,
+        password: password?.value || '',
+        newPassword: newPassword?.value || ''
+      });
+    } else {
+      const name = form.find((item) => item.key === 'name');
+      const nickname = form.find((item) => item.key === 'nickname');
+
+      updateInfoTrigger({
+        id: loggedUser.id,
+        name: name?.value || '',
+        nickname: nickname?.value || ''
+      });
+    }
   };
+
+  const handleChangeInputs = () => {
+    const renderPasswordInputs = !isChangePassword;
+    setIsChangePassword(renderPasswordInputs);
+    setIsDisabled(true);
+    setIsError([]);
+    if (renderPasswordInputs) {
+      fillFormWithUserDetails();
+    }
+
+    setForm(
+      form.map((item) => {
+        if (item.key === 'email') {
+          item.isVisible = true;
+        } else if (
+          item.key === 'password' ||
+          item.key === 'newPassword' ||
+          item.key === 'confirmPassword'
+        ) {
+          item.isVisible = renderPasswordInputs;
+        } else {
+          item.isVisible = !renderPasswordInputs;
+        }
+        return item;
+      })
+    );
+  };
+
+  const messageClass = classNames(styles.message, {
+    [styles.messageError]: isError.length > 0,
+    [styles.messageSuccess]: isSuccess && isError.length === 0
+  });
 
   return (
     <>
@@ -189,32 +310,59 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
         title={'Área do Usuário'}
         onClose={handleClose}
       >
-        {form.map((item) => {
-          if (!item.isVisible) {
-            return null;
-          }
+        {isLoading && <Loading text="" image={logo} />}
+        {!isLoading &&
+          form.map((item) => {
+            if (!item.isVisible) {
+              return null;
+            }
 
-          return (
-            <TextField
-              // isDisabled={item.isDisabled}
-              isError={!item.isValid}
-              description={item.description ? item.description : ''}
-              inputName={item.key}
-              key={item.key}
-              placeholder={item.placeholder}
-              type={item.type}
-              defaultValue={item.value}
-              onChange={handleChange}
-              // onKeyDown={handleKeyDown}
-            />
-          );
-        })}
+            return (
+              <TextField
+                isDisabled={item.isDisabled}
+                isError={!item.isValid}
+                description={item.description || ''}
+                inputName={item.key}
+                key={item.key}
+                placeholder={item.placeholder}
+                type={item.type}
+                defaultValue={item.value || ''}
+                onChange={handleChange}
+                onEnter={handleConfirm}
+              />
+            );
+          })}
+        <p className={messageClass}>
+          {isError.length > 0 && isError[0].message}&nbsp;
+          {isSuccess && isError.length === 0 && 'Operação feita com sucesso'}
+        </p>
         <div className={styles.buttonContainer}>
-          <Button isShadowed={false} variant="neutral" onClick={handleClose}>
+          <Button
+            icon={
+              <FontAwesomeIcon
+                icon={isChangePassword ? faUser : faKey}
+                size="lg"
+              />
+            }
+            isShadowed={false}
+            variant="primary"
+            onClick={handleChangeInputs}
+          >
+            {isChangePassword ? 'Alterar dados' : 'Alterar senha'}
+          </Button>
+        </div>
+        <div className={styles.buttonContainer}>
+          <Button
+            icon={<FontAwesomeIcon icon={faCancel} size="lg" />}
+            isShadowed={false}
+            variant="neutral"
+            onClick={handleClose}
+          >
             Cancelar
           </Button>
           &nbsp;
           <Button
+            icon={<FontAwesomeIcon icon={faSave} size="lg" />}
             isDisabled={isDisabled}
             isShadowed={false}
             variant="confirm"
@@ -225,7 +373,14 @@ export const UserModal = ({ isOpen, onClose }: IUserModalProps) => {
         </div>
         &nbsp;
         <div className={styles.buttonContainer}>
-          <Button isShadowed={false} variant="danger" onClick={onLogout}>
+          <Button
+            icon={
+              <FontAwesomeIcon icon={faArrowRightFromBracket} size="lg" />
+            }
+            isShadowed={false}
+            variant="danger"
+            onClick={onLogout}
+          >
             Logout
           </Button>
         </div>

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 // Store
 import { useGetConfigQuery } from 'store/base/baseSplit';
 import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
-import { matchesLoading, matchesSet } from 'store/matches/reducer';
+import { matchesLoading, matchesSet } from 'store/match/reducer';
 import { IStartup } from './types';
 import { QueryHandler } from 'services/queryHandler';
 

@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { baseSplitApi } from 'store/base/baseSplit';
 import { userSlice } from 'store/user/reducer';
-import { matchesSlice } from './matches/reducer';
+import { matchesSlice } from './match/reducer';
 
 const store = configureStore({
   reducer: {

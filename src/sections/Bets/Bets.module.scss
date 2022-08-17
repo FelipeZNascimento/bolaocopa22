@@ -32,10 +32,6 @@
   }
 }
 
-.match {
-  @include padded(bottom, m);
-}
-
 .rightSection {
   @include padded(horizontal, m);
 

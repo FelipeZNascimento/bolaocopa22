@@ -1,19 +1,27 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 
-import { Match, Ranking, ITeamProps, Loading } from '@omegafox/components';
+import { Ranking, Loading } from '@omegafox/components';
 import { tableConfig } from 'constants/mocks';
+import { MatchForBets } from 'components';
+import { IBetObject } from 'components/MatchForBets/types';
+
+// Store
 import { RootState } from 'store';
-import { TMatch } from 'store/matches/types';
+import { TMatch } from 'store/match/types';
+import { matchesUpdated } from 'store/match/reducer';
 
 // Styles and images
 import styles from './Bets.module.scss';
 import logo from 'img/logo_translucid10.png';
 import spinner from 'img/spinner.png';
+import { cloneDeep } from 'lodash';
 
 export const Bets = () => {
+  const dispatch = useDispatch();
+
   const isLoading = useSelector(
     (state: RootState) => state.matches.matchesLoading
   ) as boolean;
@@ -32,6 +40,24 @@ export const Bets = () => {
     [styles.leftSectionMobile]: isMobile
   });
 
+  const updateStoreWithNewBets = (betObject: IBetObject) => {
+    const updatedMatches = cloneDeep(matches).map((match) => {
+      if (match.id === betObject.matchId) {
+        return {
+          ...match,
+          loggedUserBets: {
+            goalsAway: betObject.goalsAway,
+            goalsHome: betObject.goalsHome
+          }
+        };
+      }
+
+      return match;
+    });
+
+    dispatch(matchesUpdated(updatedMatches));
+  };
+
   const renderMatches = () => {
     if (!matches) {
       return null;
@@ -41,6 +67,10 @@ export const Bets = () => {
     let isDate: boolean;
 
     return matches.map((match) => {
+      if (match.awayTeam.id === 0 || match.homeTeam.id === 0) {
+        return null;
+      }
+
       const newDate = new Date(match.timestamp);
       if (!shownDate || newDate.getDate() !== shownDate.getDate()) {
         shownDate = new Date(match.timestamp);
@@ -49,44 +79,13 @@ export const Bets = () => {
         isDate = false;
       }
 
-      const homeTeam: ITeamProps = {
-        id: match.homeTeam.id,
-        align: 'left',
-        colors: match.homeTeam.colors,
-        isEditable: true,
-        logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
-        name: match.homeTeam.name,
-        nameShort: match.homeTeam.abbreviation,
-        score: match.loggedUserBets ? match.loggedUserBets.goalsHome : null
-      };
-
-      const awayTeam: ITeamProps = {
-        id: match.awayTeam.id,
-        align: 'right',
-        colors: match.awayTeam.colors,
-        isEditable: true,
-        logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
-        name: match.awayTeam.name,
-        nameShort: match.awayTeam.abbreviation,
-        score: match.loggedUserBets ? match.loggedUserBets.goalsAway : null
-      };
-
       return (
-        <>
-          {isDate && <h2>{shownDate.toLocaleDateString()}</h2>}
-
-          <div key={match.id} className={styles.match}>
-            <Match
-              key={match.id}
-              isEditable={true}
-              clock={{ time: 0, status: match.status }}
-              timestamp={parseInt(
-                (new Date(match.timestamp).getTime() / 1000).toFixed(0)
-              )}
-              teams={[homeTeam, awayTeam]}
-            />
-          </div>
-        </>
+        <MatchForBets
+          key={match.id}
+          match={match}
+          shownDate={isDate ? shownDate : null}
+          onChange={updateStoreWithNewBets}
+        />
       );
     });
   };

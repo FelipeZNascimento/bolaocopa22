@@ -1,0 +1,9 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
+.match {
+  @include padded(bottom, m);
+}

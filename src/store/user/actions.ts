@@ -1,11 +1,12 @@
 import { baseSplitApi } from 'store/base/baseSplit';
-import { TUser } from './types';
 import sha256 from 'crypto-js/sha256';
 
 import {
   login as loginEndpoint,
   logout as logoutEndpoint,
-  register as registerEndpoint
+  register as registerEndpoint,
+  updateInfo as updateInfoEndpoint,
+  updatePass as updatePassEndpoint
 } from 'services/endpoints';
 import { TQuery } from 'store/base/types';
 
@@ -26,7 +27,7 @@ const extendedApi = baseSplitApi.injectEndpoints({
       }
     }),
     onRegister: builder.mutation<
-      TUser,
+      TQuery,
       { email: string; password: string; nickname: string }
     >({
       query: (arg) => {
@@ -53,6 +54,48 @@ const extendedApi = baseSplitApi.injectEndpoints({
           credentials: 'include'
         };
       }
+    }),
+    onUpdateInfo: builder.mutation<
+      TQuery,
+      { id: number; name: string; nickname: string }
+    >({
+      query: (arg) => {
+        const { id, name, nickname } = arg;
+        return {
+          url: updateInfoEndpoint(),
+          method: 'post',
+          body: {
+            id,
+            name,
+            nickname
+          },
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          credentials: 'include'
+        };
+      }
+    }),
+    onUpdatePass: builder.mutation<
+      TQuery,
+      { id: number; password: string; newPassword: string }
+    >({
+      query: (arg) => {
+        const { id, password, newPassword } = arg;
+        return {
+          url: updatePassEndpoint(),
+          method: 'post',
+          body: {
+            id,
+            password: sha256(password).toString(),
+            newPassword: sha256(newPassword).toString()
+          },
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          credentials: 'include'
+        };
+      }
     })
   })
 });
@@ -60,5 +103,7 @@ const extendedApi = baseSplitApi.injectEndpoints({
 export const {
   useOnLoginMutation,
   useOnLogoutMutation,
-  useOnRegisterMutation
+  useOnRegisterMutation,
+  useOnUpdateInfoMutation,
+  useOnUpdatePassMutation
 } = extendedApi;
