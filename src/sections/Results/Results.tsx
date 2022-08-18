@@ -41,6 +41,10 @@ export const Results = () => {
     let isDate: boolean;
 
     return matches.map((match) => {
+      if (match.awayTeam.id === 0 || match.homeTeam.id === 0) {
+        return null;
+      }
+
       const newDate = new Date(match.timestamp);
       if (!shownDate || newDate.getDate() !== shownDate.getDate()) {
         shownDate = new Date(match.timestamp);
@@ -72,11 +76,10 @@ export const Results = () => {
       };
 
       return (
-        <>
+        <span key={match.id}>
           {isDate && <h2>{shownDate.toLocaleDateString()}</h2>}
-          <div key={match.id} className={styles.match}>
+          <div className={styles.match}>
             <Match
-              key={match.id}
               isExpandable
               isEditable={false}
               expandableContent={() => {
@@ -101,7 +104,7 @@ export const Results = () => {
               teams={[homeTeam, awayTeam]}
             />
           </div>
-        </>
+        </span>
       );
     });
   };

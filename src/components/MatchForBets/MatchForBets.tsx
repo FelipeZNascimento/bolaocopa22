@@ -46,6 +46,11 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
   }, [updateBetResult]);
 
   const handleScoreChange = (newScore: IScoreId[]) => {
+    if (!loggedUser) {
+      setIsError(true);
+      return;
+    }
+
     const homeTeamScore = newScore.find(
       (item) => item.id === match.homeTeam.id
     )?.score;
@@ -92,7 +97,7 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
       {shownDate && <h2>{shownDate.toLocaleDateString()}</h2>}
       <div className={styles.match}>
         <MatchOmegafox
-          isEditable
+          isEditable={!!loggedUser}
           isError={isError}
           isLoading={isLoading}
           clock={{ time: 0, status: match.status }}
