@@ -59,6 +59,7 @@ export const Results = () => {
         colors: match.homeTeam.colors,
         isEditable: false,
         logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
+        matchId: match.id,
         name: match.homeTeam.name,
         nameShort: match.homeTeam.abbreviation,
         score: match.homeTeam.goals
@@ -70,6 +71,7 @@ export const Results = () => {
         colors: match.awayTeam.colors,
         isEditable: false,
         logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
+        matchId: match.id,
         name: match.awayTeam.name,
         nameShort: match.awayTeam.abbreviation,
         score: match.awayTeam.goals
@@ -81,6 +83,7 @@ export const Results = () => {
           <div className={styles.match}>
             <Match
               isExpandable
+              id={match.id}
               isEditable={false}
               expandableContent={() => {
                 return (
