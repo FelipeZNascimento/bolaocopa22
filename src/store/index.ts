@@ -1,16 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { baseSplitApi } from 'store/base/baseSplit';
+import { baseApi } from 'store/base/base';
 import { userSlice } from 'store/user/reducer';
 import { matchesSlice } from './match/reducer';
+import { teamsSlice } from './team/reducer';
 
 const store = configureStore({
   reducer: {
-    [baseSplitApi.reducerPath]: baseSplitApi.reducer,
+    [baseApi.reducerPath]: baseApi.reducer,
     user: userSlice.reducer,
-    matches: matchesSlice.reducer
+    matches: matchesSlice.reducer,
+    teams: teamsSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseSplitApi.middleware)
+    getDefaultMiddleware().concat(baseApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

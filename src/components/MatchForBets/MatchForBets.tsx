@@ -15,6 +15,7 @@ import { TMatch } from 'store/match/types';
 import { TUser } from 'store/user/types';
 
 import styles from './MatchForBets.module.scss';
+import { WEEKDAY } from 'constants/weekdays';
 
 interface IMatch {
   shownDate: Date | null;
@@ -24,7 +25,6 @@ interface IMatch {
 
 export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
   const [isError, setIsError] = useState<boolean>(false);
-  //   const [currentBet, setCurrentBet] = useState<IBetObject | null>(null);
 
   const [updateBetTrigger, updateBetResult] = useOnUpdateBetMutation();
 
@@ -75,7 +75,7 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
     align: 'left',
     colors: match.homeTeam.colors,
     isEditable: true,
-    logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
+    logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
     matchId: match.id,
     name: match.homeTeam.name,
     nameShort: match.homeTeam.abbreviation,
@@ -87,7 +87,7 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
     align: 'right',
     colors: match.awayTeam.colors,
     isEditable: true,
-    logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
+    logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
     matchId: match.id,
     name: match.awayTeam.name,
     nameShort: match.awayTeam.abbreviation,
@@ -96,7 +96,11 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
 
   return (
     <>
-      {shownDate && <h2>{shownDate.toLocaleDateString()}</h2>}
+      {shownDate && (
+        <h2>
+          {WEEKDAY[shownDate.getDay()]}, {shownDate.toLocaleDateString()}
+        </h2>
+      )}
       <div className={styles.match}>
         <MatchOmegafox
           id={match.id}

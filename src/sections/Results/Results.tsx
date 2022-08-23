@@ -12,6 +12,7 @@ import { TMatch } from 'store/match/types';
 import styles from './Results.module.scss';
 import spinner from 'img/spinner.png';
 import logo from 'img/logo_translucid10.png';
+import { WEEKDAY } from 'constants/weekdays';
 
 export const Results = () => {
   const isLoading = useSelector(
@@ -58,7 +59,7 @@ export const Results = () => {
         align: 'left',
         colors: match.homeTeam.colors,
         isEditable: false,
-        logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
+        logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
         matchId: match.id,
         name: match.homeTeam.name,
         nameShort: match.homeTeam.abbreviation,
@@ -70,7 +71,7 @@ export const Results = () => {
         align: 'right',
         colors: match.awayTeam.colors,
         isEditable: false,
-        logo: 'https://teamcolorcodes.com/wp-content/uploads/2021/12/Brazil-National-Football-Team-Logo-211x300.png',
+        logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
         matchId: match.id,
         name: match.awayTeam.name,
         nameShort: match.awayTeam.abbreviation,
@@ -79,7 +80,11 @@ export const Results = () => {
 
       return (
         <span key={match.id}>
-          {isDate && <h2>{shownDate.toLocaleDateString()}</h2>}
+          {isDate && (
+            <h2>
+              {WEEKDAY[shownDate.getDay()]}, {shownDate.toLocaleDateString()}
+            </h2>
+          )}
           <div className={styles.match}>
             <Match
               isExpandable

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 // Store
-import { useGetConfigQuery } from 'store/base/baseSplit';
+import { useGetConfigQuery } from 'store/base/base';
 import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
 import { matchesLoading, matchesSet } from 'store/match/reducer';
 import { IStartup } from './types';

@@ -1,10 +1,10 @@
-import { baseSplitApi } from 'store/base/baseSplit';
+import { baseApi } from 'store/base/base';
 // import { TMatch } from './types';
 
 import { updateBet as updateBetEndpoint } from 'services/endpoints';
 import { TQuery } from 'store/base/types';
 
-const extendedApi = baseSplitApi.injectEndpoints({
+const extendedApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     onUpdateBet: builder.mutation<
       TQuery,

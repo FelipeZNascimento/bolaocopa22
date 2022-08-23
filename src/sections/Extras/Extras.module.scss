@@ -7,9 +7,7 @@
 .container {
   @include padded(vertical, l);
   @include flex-aligned(center, center);
-
   flex-direction: column;
-  flex: 1;
 
   &Browser {
     @include padded(horizontal, l);
@@ -23,4 +21,18 @@
 .rankingContainer {
   flex: 1;
   max-width: 1024px;
+}
+
+.teamsContainer {
+  @include flex-aligned(center, center);
+  @include padded(vertical, l);
+
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.team {
+  @include padded(all, s2);
+
+  width: 200px;
 }

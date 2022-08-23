@@ -1,4 +1,4 @@
-import { baseSplitApi } from 'store/base/baseSplit';
+import { baseApi } from 'store/base/base';
 import sha256 from 'crypto-js/sha256';
 
 import {
@@ -10,7 +10,7 @@ import {
 } from 'services/endpoints';
 import { TQuery } from 'store/base/types';
 
-const extendedApi = baseSplitApi.injectEndpoints({
+const extendedApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     onLogin: builder.mutation<TQuery, { email: string; password: string }>({
       query: (arg) => {
