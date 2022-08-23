@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { TQuery } from './types';
 import { apiBaseUrl, config as configEndpoint } from 'services/endpoints';
 
-export const baseSplitApi = createApi({
+export const baseApi = createApi({
   reducerPath: 'bolaoApi',
   baseQuery: fetchBaseQuery({ baseUrl: apiBaseUrl }),
   endpoints: (builder) => ({
@@ -15,4 +15,4 @@ export const baseSplitApi = createApi({
   })
 });
 
-export const { useGetConfigQuery } = baseSplitApi;
+export const { useGetConfigQuery } = baseApi;

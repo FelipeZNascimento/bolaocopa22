@@ -1,16 +1,5 @@
+import { ITeam } from 'store/team/types';
 import { TUser } from 'store/user/types';
-
-interface ITeam {
-  id: number;
-  goals: number;
-  penalties: number;
-  name: string;
-  nameEn: string;
-  colors: string[];
-  abbreviation: string;
-  confederation: IConfederation;
-  group: string;
-}
 
 interface IStadium {
   id: number;
@@ -19,13 +8,6 @@ interface IStadium {
   capacity: number;
   latitude: string;
   longitude: string;
-}
-
-interface IConfederation {
-  id: number;
-  abbreviation: string;
-  name: string;
-  nameEn: string;
 }
 
 interface ICountry {
