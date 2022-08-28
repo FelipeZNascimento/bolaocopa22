@@ -105,11 +105,11 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isError, setIsError] = useState<TError[]>([]);
-  // const [loggedUser, setLoggedUser] = useState<TUser | null>(null);
 
   const loggedUser: TUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
+
   const isLoading = updateInfoResult.isLoading || updatePassResult.isLoading;
   const isSuccess =
     (!updateInfoResult.isUninitialized &&
@@ -374,9 +374,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
         &nbsp;
         <div className={styles.buttonContainer}>
           <Button
-            icon={
-              <FontAwesomeIcon icon={faArrowRightFromBracket} size="lg" />
-            }
+            icon={<FontAwesomeIcon icon={faArrowRightFromBracket} size="lg" />}
             isShadowed={false}
             variant="danger"
             onClick={onLogout}

@@ -23,11 +23,11 @@ export const Bets = () => {
   const dispatch = useDispatch();
 
   const isLoading = useSelector(
-    (state: RootState) => state.matches.matchesLoading
+    (state: RootState) => state.match.matchesLoading
   ) as boolean;
 
   const matches = useSelector(
-    (state: RootState) => state.matches.matches
+    (state: RootState) => state.match.matches
   ) as unknown as TMatch[];
 
   const containerClass = classNames(styles.container, {

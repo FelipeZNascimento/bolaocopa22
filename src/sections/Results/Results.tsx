@@ -16,11 +16,11 @@ import { WEEKDAY } from 'constants/weekdays';
 
 export const Results = () => {
   const isLoading = useSelector(
-    (state: RootState) => state.matches.matchesLoading
+    (state: RootState) => state.match.matchesLoading
   ) as boolean;
 
   const matches = useSelector(
-    (state: RootState) => state.matches.matches
+    (state: RootState) => state.match.matches
   ) as unknown as TMatch[];
 
   const containerClass = classNames(styles.container, {

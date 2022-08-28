@@ -6,8 +6,9 @@
 
 .container {
   @include padded(vertical, l);
-  @include flex-aligned(center, center);
+  @include flex-aligned(flex-start, center);
   flex-direction: column;
+  min-height: calc(100vh - 64px);
 
   &Browser {
     @include padded(horizontal, l);
@@ -23,12 +24,69 @@
   max-width: 1024px;
 }
 
+.topSection {
+  @include flex-aligned(center, center);
+
+  display: flex;
+  flex: 0;
+  flex-direction: column;
+  width: 100%;
+
+  .title {
+    @include aligned(center);
+    @include font-sized(l2);
+    @include marged(all, none);
+  }
+}
+
+.cardsContainer {
+  @include flex-aligned(center, center);
+  @include padded(bottom, l);
+
+  flex-wrap: wrap;
+  flex: 0;
+
+  h1,
+  h2 {
+    width: 100%;
+  }
+}
+
+.card {
+  @include padded(all, s);
+}
+
+.status {
+  width: 140px;
+}
+
 .teamsContainer {
   @include flex-aligned(center, center);
-  @include padded(vertical, l);
 
+  border-top: 2px solid $color-grey3;
   flex-direction: row;
   flex-wrap: wrap;
+  width: 100%;
+
+  .titleContainer {
+    @include aligned(center);
+    @include padded(all, l);
+    @include marged(all, l);
+
+    width: 100%;
+
+    .title {
+      @include aligned(center);
+      @include bg-rgba-colored($color-grey3, 0.3);
+      @include font-sized(l3);
+      @include font-colored($color-black);
+      @include padded(all, l);
+
+      border: 2px solid $color-grey3;
+      border-radius: 16px;
+      border-bottom-left-radius: 0;
+    }
+  }
 }
 
 .team {
@@ -39,17 +97,4 @@
   &Mobile {
     width: 160px;
   }
-}
-
-.cardsContainer {
-  @include flex-aligned(center, center);
-  flex-wrap: wrap;
-}
-
-.card {
-  @include padded(all, s);
-}
-
-.status {
-  width: 140px;
 }

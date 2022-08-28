@@ -1,18 +1,31 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { cloneDeep } from 'lodash';
 
+// Components
 import { Card, Loading, TeamButton } from '@omegafox/components';
-import spinner from 'img/spinner.png';
 import { QueryHandler } from 'services/queryHandler';
+import { ExtrasTeams } from './ExtrasTeams';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 // Store
-import { useOnListAllQuery } from 'store/team/actions';
-import { teamsLoading, teamsSet } from 'store/team/reducer';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
+import { useOnListAllTeamsQuery as listAllTeamsQuery } from 'store/team/actions';
+import {
+  useOnListAllExtrasQuery as listAllBetsQuery,
+  useOnUpdateExtraBetMutation as updateExtraBetMutation
+} from 'store/bet/actions';
+import { teamsLoading, teamsSet } from 'store/team/reducer';
+import { betsLoading, betsSet } from 'store/bet/reducer';
 
-import styles from './Extras.module.scss';
+// Types
 import { ITeam } from 'store/team/types';
-import { ExtrasTeams } from './ExtrasTeams';
+import { TUser } from 'store/user/types';
+
+// Styles
+import styles from './Extras.module.scss';
+import spinner from 'img/spinner.png';
 
 enum EXTRA_TYPES {
   CHAMPION,
@@ -23,6 +36,7 @@ enum EXTRA_TYPES {
 
 const extrasInfo = [
   { id: EXTRA_TYPES.CHAMPION, title: 'Campeão', status: null },
+  { id: EXTRA_TYPES.STRIKER, title: 'Artilheiro', status: null },
   {
     id: EXTRA_TYPES.OFFENSE,
     title: 'Melhor Ataque',
@@ -34,8 +48,7 @@ const extrasInfo = [
     title: 'Melhor Defesa',
     subtitle: 'Apenas primeira fase',
     status: null
-  },
-  { id: EXTRA_TYPES.STRIKER, title: 'Artilheiro', status: null }
+  }
 ];
 
 type TExtraBets = {
@@ -53,43 +66,124 @@ const emptyExtraBets: TExtraBets = {
 
 export const Extras = () => {
   const [selectedExtra, setSelectedExtra] = useState<number | null>(null);
+  const [updateExtraTrigger, updateExtraResult] = updateExtraBetMutation();
+
   const [extraBets, setExtraBets] = useState(emptyExtraBets);
 
-  const { data, error, isLoading } = useOnListAllQuery();
+  const allBetsQueryResult = listAllBetsQuery();
+  const allTeamsQueryResult = listAllTeamsQuery();
   const dispatch = useDispatch();
 
   const teams = useSelector(
-    (state: RootState) => state.teams.teams
+    (state: RootState) => state.team.teams
   ) as unknown as ITeam[];
 
-  useEffect(() => {
-    dispatch(teamsLoading(isLoading));
+  const loggedUser: TUser = useSelector(
+    (state: RootState) => state.user.loggedUser
+  ) as unknown as TUser;
 
-    if (!error && !isLoading && data) {
-      const result = QueryHandler(data);
+  useEffect(() => {
+    dispatch(teamsLoading(allTeamsQueryResult.isLoading));
+
+    if (
+      !allTeamsQueryResult.error &&
+      !allTeamsQueryResult.isLoading &&
+      allTeamsQueryResult.data
+    ) {
+      const result = QueryHandler(allTeamsQueryResult.data);
       if (result) {
         dispatch(teamsSet(result));
       }
     }
-  }, [data, isLoading]);
+  }, [allTeamsQueryResult.data, allTeamsQueryResult.isLoading]);
+
+  useEffect(() => {
+    dispatch(betsLoading(allBetsQueryResult.isLoading));
+
+    if (
+      !allBetsQueryResult.error &&
+      !allBetsQueryResult.isLoading &&
+      allBetsQueryResult.data
+    ) {
+      const result = QueryHandler(allBetsQueryResult.data);
+      if (result) {
+        dispatch(betsSet(result));
+        const updatedExtraBets = cloneDeep(extraBets);
+
+        if (result.loggedUserExtraBets.length > 0) {
+          result.loggedUserExtraBets.forEach((bet) => {
+            if (bet.idExtraType === 0) {
+              updatedExtraBets.champion = bet.team;
+            } else if (bet.idExtraType === EXTRA_TYPES.CHAMPION) {
+              updatedExtraBets.champion = bet.team;
+            } else if (bet.idExtraType === EXTRA_TYPES.OFFENSE) {
+              updatedExtraBets.offense = bet.team;
+            } else if (bet.idExtraType === EXTRA_TYPES.DEFENSE) {
+              updatedExtraBets.defense = bet.team;
+            } else if (bet.idExtraType === EXTRA_TYPES.STRIKER) {
+              updatedExtraBets.striker = null;
+            }
+          });
+
+          setExtraBets(updatedExtraBets);
+        }
+      }
+    }
+  }, [allBetsQueryResult.data, allBetsQueryResult.isLoading]);
 
   const handleTeamClick = (team: ITeam) => {
     switch (selectedExtra) {
-      case EXTRA_TYPES.CHAMPION:
-        setExtraBets({ ...extraBets, champion: team });
+      case EXTRA_TYPES.CHAMPION: {
+        const updatedExtraBets = { ...extraBets, champion: team };
+        updateExtraTrigger({
+          betId: null,
+          extraType: EXTRA_TYPES.CHAMPION,
+          userId: loggedUser.id,
+          teamId: team.id,
+          playerId: null
+        });
+
+        setExtraBets(updatedExtraBets);
         break;
-      case EXTRA_TYPES.OFFENSE:
-        setExtraBets({ ...extraBets, offense: team });
+      }
+      case EXTRA_TYPES.OFFENSE: {
+        const updatedExtraBets = { ...extraBets, offense: team };
+        updateExtraTrigger({
+          betId: null,
+          extraType: EXTRA_TYPES.OFFENSE,
+          userId: loggedUser.id,
+          teamId: team.id,
+          playerId: null
+        });
+
+        setExtraBets(updatedExtraBets);
         break;
-      case EXTRA_TYPES.DEFENSE:
-        setExtraBets({ ...extraBets, defense: team });
+      }
+      case EXTRA_TYPES.DEFENSE: {
+        const updatedExtraBets = { ...extraBets, defense: team };
+        updateExtraTrigger({
+          betId: null,
+          extraType: EXTRA_TYPES.DEFENSE,
+          userId: loggedUser.id,
+          teamId: team.id,
+          playerId: null
+        });
+
+        setExtraBets(updatedExtraBets);
         break;
+      }
     }
+  };
+
+  const renderLoading = () => {
+    return <Loading image={spinner} size="small" isOverlay />;
   };
 
   const renderTeam = (team: ITeam | null) => {
     if (!team) {
-      return null;
+      return <FontAwesomeIcon icon={faQuestionCircle} size="lg" />;
+    } else if (team && updateExtraResult.isLoading) {
+      return renderLoading();
     } else {
       return (
         <div className={styles.status}>
@@ -107,6 +201,11 @@ export const Extras = () => {
   };
 
   const renderStatus = (extraType: number) => {
+    // return renderLoading();
+    if (!allBetsQueryResult.isUninitialized && allBetsQueryResult.isLoading) {
+      return renderLoading();
+    }
+
     switch (extraType) {
       case EXTRA_TYPES.CHAMPION:
         return renderTeam(extraBets.champion);
@@ -121,47 +220,77 @@ export const Extras = () => {
 
   return (
     <main className={styles.container}>
-      <h2>Escolha uma categoria</h2>
-      <div className={styles.cardsContainer}>
-        {extrasInfo.map((item) => {
-          return (
-            <div className={styles.card} key={item.id}>
-              <Card
-                isSelected={selectedExtra === item.id}
-                title={item.title}
-                subtitle={item.subtitle}
-                onClick={() => setSelectedExtra(item.id)}
-                renderingStatusFunction={() => renderStatus(item.id)}
-              />
-            </div>
-          );
-        })}
+      <div className={styles.topSection}>
+        <p className={styles.title}>
+          Escolha um campeão, os melhores ataque e defesa (considerando apenas a
+          primeira fase) e um artilheiro.
+        </p>
+
+        <div className={styles.cardsContainer}>
+          {extrasInfo.map((item) => {
+            return (
+              <div className={styles.card} key={item.id}>
+                <Card
+                  isSelected={selectedExtra === item.id}
+                  title={item.title}
+                  subtitle={item.subtitle}
+                  onClick={() => setSelectedExtra(item.id)}
+                  renderingStatusFunction={() => renderStatus(item.id)}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
       <div className={styles.teamsContainer}>
-        {isLoading && <Loading image={spinner} />}
+        {selectedExtra !== null && allTeamsQueryResult.isLoading && (
+          <Loading image={spinner} />
+        )}
         {teams && selectedExtra === 0 && (
-          <ExtrasTeams
-            options={teams}
-            isLoading={isLoading}
-            selectedTeam={extraBets.champion}
-            onClick={handleTeamClick}
-          />
+          <>
+            <p className={styles.titleContainer}>
+              <span className={styles.title}>Campeão</span>
+            </p>
+            <ExtrasTeams
+              options={teams}
+              isLoading={allTeamsQueryResult.isLoading}
+              selectedTeam={extraBets.champion}
+              onClick={handleTeamClick}
+            />
+          </>
         )}
         {teams && selectedExtra === 1 && (
-          <ExtrasTeams
-            options={teams}
-            isLoading={isLoading}
-            selectedTeam={extraBets.offense}
-            onClick={handleTeamClick}
-          />
+          <>
+            <p className={styles.titleContainer}>
+              <span className={styles.title}>Melhor Ataque</span>
+            </p>
+            <ExtrasTeams
+              options={teams}
+              isLoading={allTeamsQueryResult.isLoading}
+              selectedTeam={extraBets.offense}
+              onClick={handleTeamClick}
+            />
+          </>
         )}
         {teams && selectedExtra === 2 && (
-          <ExtrasTeams
-            options={teams}
-            isLoading={isLoading}
-            selectedTeam={extraBets.defense}
-            onClick={handleTeamClick}
-          />
+          <>
+            <p className={styles.titleContainer}>
+              <span className={styles.title}>Melhor Defesa</span>
+            </p>
+            <ExtrasTeams
+              options={teams}
+              isLoading={allTeamsQueryResult.isLoading}
+              selectedTeam={extraBets.defense}
+              onClick={handleTeamClick}
+            />
+          </>
+        )}
+        {teams && selectedExtra === 3 && (
+          <>
+            <p className={styles.titleContainer}>
+              <span className={styles.title}>Artilheiro</span>
+            </p>
+          </>
         )}
       </div>
     </main>

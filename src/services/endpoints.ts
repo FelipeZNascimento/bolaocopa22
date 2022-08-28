@@ -11,7 +11,9 @@ export const updateInfo = () => '/user/updateInfo';
 export const updatePass = () => '/user/updatePassword';
 
 // Match & Bet
-export const updateBet = () => '/bet/update';
+export const updateBet = () => '/bet';
+export const listAllExtraBets = () => '/extraBets';
+export const updateExtraBet = () => '/extraBets';
 
 // Team
 export const listAllTeams = () => '/team/';
