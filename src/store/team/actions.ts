@@ -8,7 +8,7 @@ import { TQuery } from 'store/base/types';
 
 const extendedApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    onListAll: builder.query<TQuery, void>({
+    onListAllTeams: builder.query<TQuery, void>({
       query: () => {
         return {
           url: listAllTeamsEndpoint(),
@@ -36,4 +36,4 @@ const extendedApi = baseApi.injectEndpoints({
   })
 });
 
-export const { useOnListAllQuery, useOnListByIdMutation } = extendedApi;
+export const { useOnListAllTeamsQuery, useOnListByIdMutation } = extendedApi;

@@ -5,8 +5,8 @@ const initialState = {
   matchesLoading: false
 };
 
-export const matchesSlice = createSlice({
-  name: 'matches',
+export const matchSlice = createSlice({
+  name: 'match',
   initialState: initialState,
   reducers: {
     matchesLoading: (state, action) => {
@@ -22,5 +22,5 @@ export const matchesSlice = createSlice({
 });
 
 export const { matchesLoading, matchesSet, matchesUpdated } =
-  matchesSlice.actions;
-export default matchesSlice.reducer;
+matchSlice.actions;
+export default matchSlice.reducer;

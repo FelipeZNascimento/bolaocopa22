@@ -1,5 +1,5 @@
 import { ITeam } from 'store/team/types';
-import { TUser } from 'store/user/types';
+import { TBet } from 'store/bet/types';
 
 interface IStadium {
   id: number;
@@ -24,22 +24,13 @@ interface IReferee {
   country: ICountry;
 }
 
-interface IBet {
-  id: number;
-  idMatch: number;
-  goalsHome: number;
-  goalsAway: number;
-  timestamp: number;
-  user: TUser;
-}
-
 export type TMatch = {
   id: number;
   timestamp: number;
   round: number;
   status: number;
-  bets: IBet[];
-  loggedUserBets: IBet | null;
+  bets: TBet[];
+  loggedUserBets: TBet | null;
   homeTeam: ITeam;
   awayTeam: ITeam;
   stadium: IStadium;

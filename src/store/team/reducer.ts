@@ -5,8 +5,8 @@ const initialState = {
   teamsLoading: false
 };
 
-export const teamsSlice = createSlice({
-  name: 'teams',
+export const teamSlice = createSlice({
+  name: 'team',
   initialState: initialState,
   reducers: {
     teamsLoading: (state, action) => {
@@ -18,5 +18,5 @@ export const teamsSlice = createSlice({
   }
 });
 
-export const { teamsLoading, teamsSet } = teamsSlice.actions;
-export default teamsSlice.reducer;
+export const { teamsLoading, teamsSet } = teamSlice.actions;
+export default teamSlice.reducer;
