@@ -10,7 +10,7 @@ import { IBetObject } from './types';
 
 // Store
 import { RootState } from 'store';
-import { useOnUpdateBetMutation } from 'store/match/actions';
+import { useOnUpdateBetMutation } from 'store/bet/actions';
 import { TMatch } from 'store/match/types';
 import { TUser } from 'store/user/types';
 
