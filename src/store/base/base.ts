@@ -4,7 +4,7 @@ import { TQuery } from './types';
 import {
   apiBaseUrl,
   config as configEndpoint,
-  listRanking as listRankingEndpoing
+  listRanking as listRankingEndpoint
 } from 'services/endpoints';
 
 export const baseApi = createApi({
@@ -23,7 +23,7 @@ export const baseApi = createApi({
     }),
     getRanking: builder.query<TQuery, null>({
       query: () => {
-        return { url: listRankingEndpoing(), credentials: 'include' };
+        return { url: listRankingEndpoint(), credentials: 'include' };
       }
     })
   })

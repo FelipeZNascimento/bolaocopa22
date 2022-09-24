@@ -4,7 +4,6 @@ import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 
 import { Loading } from '@omegafox/components';
-import { tableConfig } from 'constants/mocks';
 import { MatchForBets } from 'components';
 import { IBetObject } from 'components/MatchForBets/types';
 import { Ranking } from 'sections/index';
@@ -139,15 +138,7 @@ export const Bets = () => {
     <main className={containerClass}>
       {isLoading && <Loading image={spinner} />}
       {!isLoading && <div className={leftSectionClass}>{renderMatches()}</div>}
-      {!isMobile && (
-        <Ranking
-          isHeader
-          isMinified
-          backgroundImage={logo}
-          columns={tableConfig.columns}
-          rows={tableConfig.rows}
-        />
-      )}
+      {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>
   );
 };

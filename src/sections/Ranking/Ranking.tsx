@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 
-import { Loading, Ranking as Rank, TRankingColumn } from '@omegafox/components';
-import { tableConfig } from 'constants/mocks';
+import {
+  Loading,
+  Ranking as Rank,
+  TRankingColumn,
+  TRankingRow
+} from '@omegafox/components';
 import styles from './Ranking.module.scss';
 import spinner from 'img/spinner.png';
 import logo from 'img/logo_translucid10.png';
@@ -15,7 +19,7 @@ export const Ranking = ({
   isHeader = true,
   isMinified = false
 }: TRankingProps) => {
-  const [rows, setRows] = useState(tableConfig.rows);
+  const [rows, setRows] = useState<TRankingRow[]>([]);
   const { data, error, isLoading } = useGetRankingQuery(null, {
     pollingInterval: 10000
   });
