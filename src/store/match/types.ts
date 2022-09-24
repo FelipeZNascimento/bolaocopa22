@@ -1,6 +1,11 @@
 import { ITeam } from 'store/team/types';
 import { TBet } from 'store/bet/types';
 
+export type TInitialState = {
+  matches: null | TMatch[];
+  matchesLoading: boolean;
+};
+
 interface IStadium {
   id: number;
   name: string;

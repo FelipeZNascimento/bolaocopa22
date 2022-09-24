@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { cloneDeep } from 'lodash';
 import { validateEmail } from 'services/helpers';
 
-// Components and styles
+// Components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSave,
@@ -14,7 +14,6 @@ import {
 
 import { Button, Loading, Modal, TextField } from '@omegafox/components';
 import { TModalTextField, IModalProps } from 'components/types';
-import styles from './UserModal.module.scss';
 
 // Redux
 import type { RootState } from 'store/index';
@@ -24,10 +23,15 @@ import {
   useOnUpdateInfoMutation,
   useOnUpdatePassMutation
 } from 'store/user/actions';
+import { extraBetsUserLoggedOut } from 'store/bet/reducer';
 import { userLoggedIn, userLoggedOut } from 'store/user/reducer';
+import { matchesUserLoggedOut } from 'store/match/reducer';
 import { TUser } from 'store/user/types';
-import logo from 'img/spinner.png';
 import { TError, TQuery } from 'store/base/types';
+
+// Styles & Images
+import styles from './UserModal.module.scss';
+import logo from 'img/spinner.png';
 import classNames from 'classnames';
 
 const emptyForm: TModalTextField[] = [
@@ -133,6 +137,8 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
 
       if (queryData.isSuccess) {
         dispatch(userLoggedOut());
+        dispatch(matchesUserLoggedOut());
+        dispatch(extraBetsUserLoggedOut());
         handleClose();
       } else {
         setIsError(queryData.result.errors);
@@ -233,6 +239,8 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   const handleClose = () => {
     setIsDisabled(true);
     setIsChangePassword(false);
+    setForm(cloneDeep(emptyForm));
+
     onClose();
   };
 

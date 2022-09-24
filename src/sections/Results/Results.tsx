@@ -1,23 +1,40 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
+import { QueryHandler } from 'services/queryHandler';
 
-import { Match, Ranking, ITeamProps, Loading } from '@omegafox/components';
-import { tableConfig } from 'constants/mocks';
+// Components
+import { Match, ITeamProps, Loading } from '@omegafox/components';
+import { Ranking } from 'sections/index';
+
+// Store
 import { RootState } from 'store';
+import { useOnListAllMatchesQuery } from 'store/match/actions';
 import { TMatch } from 'store/match/types';
+import { matchesSet } from 'store/match/reducer';
 
 // Styles and images
 import styles from './Results.module.scss';
 import spinner from 'img/spinner.png';
 import logo from 'img/logo_translucid10.png';
+
+// Constants
 import { WEEKDAY } from 'constants/weekdays';
 
 export const Results = () => {
-  const isLoading = useSelector(
-    (state: RootState) => state.match.matchesLoading
-  ) as boolean;
+  const dispatch = useDispatch();
+
+  const { data, error, isLoading } = useOnListAllMatchesQuery(null, {
+    pollingInterval: 10000
+  });
+
+  useEffect(() => {
+    if (!isLoading && !error && data) {
+      const result = QueryHandler(data);
+      dispatch(matchesSet(result));
+    }
+  }, [data, isLoading]);
 
   const matches = useSelector(
     (state: RootState) => state.match.matches
@@ -121,16 +138,7 @@ export const Results = () => {
     <main className={containerClass}>
       {isLoading && <Loading image={spinner} />}
       {!isLoading && <div className={leftSectionClass}>{renderMatches()}</div>}
-      {!isMobile && (
-        <div className={styles.rightSection}>
-          <Ranking
-            isHeader
-            backgroundImage={logo}
-            columns={tableConfig.columns}
-            rows={tableConfig.rows}
-          />
-        </div>
-      )}
+      {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>
   );
 };
