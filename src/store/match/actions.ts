@@ -1,11 +1,26 @@
 import { baseApi } from 'store/base/base';
 // import { TMatch } from './types';
 
-import { updateBet as updateBetEndpoint } from 'services/endpoints';
+import {
+  updateBet as updateBetEndpoint,
+  listAllMatchesWithUserBets as listAllMatchesWithUserBetsEndpoint
+} from 'services/endpoints';
 import { TQuery } from 'store/base/types';
 
 const extendedApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    onListAllMatchesWithUserBets: builder.mutation<TQuery, void>({
+      query: () => {
+        return {
+          url: listAllMatchesWithUserBetsEndpoint(),
+          method: 'get',
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          credentials: 'include'
+        };
+      }
+    }),
     onUpdateBet: builder.mutation<
       TQuery,
       {
@@ -38,4 +53,7 @@ const extendedApi = baseApi.injectEndpoints({
   })
 });
 
-export const { useOnUpdateBetMutation } = extendedApi;
+export const {
+  useOnUpdateBetMutation,
+  useOnListAllMatchesWithUserBetsMutation
+} = extendedApi;

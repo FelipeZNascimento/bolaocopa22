@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { TInitialState, TMatch } from 'store/match/types';
 
-const initialState = {
+const initialState: TInitialState = {
   matches: null,
   matchesLoading: false
 };
@@ -17,10 +18,21 @@ export const matchSlice = createSlice({
     },
     matchesUpdated: (state, action) => {
       state.matches = action.payload;
+    },
+    matchesUserLoggedOut: (state) => {
+      state.matches = state.matches
+        ? (state.matches as TMatch[]).map((match) => {
+            return { ...match, loggedUserBets: null };
+          })
+        : null;
     }
   }
 });
 
-export const { matchesLoading, matchesSet, matchesUpdated } =
-matchSlice.actions;
+export const {
+  matchesLoading,
+  matchesSet,
+  matchesUpdated,
+  matchesUserLoggedOut
+} = matchSlice.actions;
 export default matchSlice.reducer;

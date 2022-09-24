@@ -7,6 +7,7 @@ import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
 import { matchesLoading, matchesSet } from 'store/match/reducer';
 import { IStartup } from './types';
 import { QueryHandler } from 'services/queryHandler';
+import { teamsSet } from 'store/team/reducer';
 
 export const Startup = ({ children }: IStartup) => {
   const { data, error, isLoading } = useGetConfigQuery();
@@ -21,6 +22,7 @@ export const Startup = ({ children }: IStartup) => {
       if (result) {
         dispatch(userLoggedIn(result.loggedUser));
         dispatch(matchesSet(result.matches));
+        dispatch(teamsSet(result.teams));
       }
     }
   }, [data, isLoading]);

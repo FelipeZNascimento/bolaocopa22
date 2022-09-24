@@ -11,13 +11,11 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 // Store
 import { RootState } from 'store';
-import { useOnListAllTeamsQuery as listAllTeamsQuery } from 'store/team/actions';
 import {
   useOnListAllExtrasQuery as listAllBetsQuery,
   useOnUpdateExtraBetMutation as updateExtraBetMutation
 } from 'store/bet/actions';
-import { teamsLoading, teamsSet } from 'store/team/reducer';
-import { betsLoading, betsSet } from 'store/bet/reducer';
+import { extraBetsLoading, extraBetsSet } from 'store/bet/reducer';
 
 // Types
 import { ITeam } from 'store/team/types';
@@ -26,6 +24,7 @@ import { TUser } from 'store/user/types';
 // Styles
 import styles from './Extras.module.scss';
 import spinner from 'img/spinner.png';
+import { TExtraBet } from 'store/bet/types';
 
 enum EXTRA_TYPES {
   CHAMPION,
@@ -69,67 +68,61 @@ export const Extras = () => {
   const [updateExtraTrigger, updateExtraResult] = updateExtraBetMutation();
 
   const [extraBets, setExtraBets] = useState(emptyExtraBets);
-
-  const allBetsQueryResult = listAllBetsQuery();
-  const allTeamsQueryResult = listAllTeamsQuery();
+  const { data, error, isLoading, isUninitialized } = listAllBetsQuery();
   const dispatch = useDispatch();
 
   const teams = useSelector(
     (state: RootState) => state.team.teams
   ) as unknown as ITeam[];
 
-  const loggedUser: TUser = useSelector(
+  const teamsLoading = useSelector(
+    (state: RootState) => state.team.teamsLoading
+  ) as unknown as boolean;
+
+  const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
 
-  useEffect(() => {
-    dispatch(teamsLoading(allTeamsQueryResult.isLoading));
+  // const allExtraBets = useSelector(
+  //   (state: RootState) => state.bet.extraBets
+  // ) as unknown as TExtraBet[];
 
-    if (
-      !allTeamsQueryResult.error &&
-      !allTeamsQueryResult.isLoading &&
-      allTeamsQueryResult.data
-    ) {
-      const result = QueryHandler(allTeamsQueryResult.data);
+  const loggedUserExtraBets = useSelector(
+    (state: RootState) => state.bet.loggedUserExtraBets
+  ) as unknown as TExtraBet[];
+
+  useEffect(() => {
+    dispatch(extraBetsLoading(isLoading));
+
+    if (!error && !isLoading && data) {
+      const result = QueryHandler(data);
       if (result) {
-        dispatch(teamsSet(result));
+        dispatch(extraBetsSet(result));
       }
     }
-  }, [allTeamsQueryResult.data, allTeamsQueryResult.isLoading]);
+  }, [data, isLoading]);
 
   useEffect(() => {
-    dispatch(betsLoading(allBetsQueryResult.isLoading));
-
-    if (
-      !allBetsQueryResult.error &&
-      !allBetsQueryResult.isLoading &&
-      allBetsQueryResult.data
-    ) {
-      const result = QueryHandler(allBetsQueryResult.data);
-      if (result) {
-        dispatch(betsSet(result));
-        const updatedExtraBets = cloneDeep(extraBets);
-
-        if (result.loggedUserExtraBets.length > 0) {
-          result.loggedUserExtraBets.forEach((bet) => {
-            if (bet.idExtraType === 0) {
-              updatedExtraBets.champion = bet.team;
-            } else if (bet.idExtraType === EXTRA_TYPES.CHAMPION) {
-              updatedExtraBets.champion = bet.team;
-            } else if (bet.idExtraType === EXTRA_TYPES.OFFENSE) {
-              updatedExtraBets.offense = bet.team;
-            } else if (bet.idExtraType === EXTRA_TYPES.DEFENSE) {
-              updatedExtraBets.defense = bet.team;
-            } else if (bet.idExtraType === EXTRA_TYPES.STRIKER) {
-              updatedExtraBets.striker = null;
-            }
-          });
-
-          setExtraBets(updatedExtraBets);
+    const updatedExtraBets = cloneDeep(extraBets);
+    if (loggedUserExtraBets === null) {
+      setExtraBets(emptyExtraBets);
+    } else if (loggedUserExtraBets.length > 0) {
+      loggedUserExtraBets.forEach((bet) => {
+        if (bet.idExtraType === 0) {
+          updatedExtraBets.champion = bet.team;
+        } else if (bet.idExtraType === EXTRA_TYPES.CHAMPION) {
+          updatedExtraBets.champion = bet.team;
+        } else if (bet.idExtraType === EXTRA_TYPES.OFFENSE) {
+          updatedExtraBets.offense = bet.team;
+        } else if (bet.idExtraType === EXTRA_TYPES.DEFENSE) {
+          updatedExtraBets.defense = bet.team;
+        } else if (bet.idExtraType === EXTRA_TYPES.STRIKER) {
+          updatedExtraBets.striker = null;
         }
-      }
+      });
+      setExtraBets(updatedExtraBets);
     }
-  }, [allBetsQueryResult.data, allBetsQueryResult.isLoading]);
+  }, [loggedUserExtraBets]);
 
   const handleTeamClick = (team: ITeam) => {
     switch (selectedExtra) {
@@ -201,8 +194,7 @@ export const Extras = () => {
   };
 
   const renderStatus = (extraType: number) => {
-    // return renderLoading();
-    if (!allBetsQueryResult.isUninitialized && allBetsQueryResult.isLoading) {
+    if (!isUninitialized && isLoading) {
       return renderLoading();
     }
 
@@ -243,9 +235,7 @@ export const Extras = () => {
         </div>
       </div>
       <div className={styles.teamsContainer}>
-        {selectedExtra !== null && allTeamsQueryResult.isLoading && (
-          <Loading image={spinner} />
-        )}
+        {selectedExtra !== null && teamsLoading && <Loading image={spinner} />}
         {teams && selectedExtra === 0 && (
           <>
             <p className={styles.titleContainer}>
@@ -253,7 +243,7 @@ export const Extras = () => {
             </p>
             <ExtrasTeams
               options={teams}
-              isLoading={allTeamsQueryResult.isLoading}
+              isLoading={teamsLoading}
               selectedTeam={extraBets.champion}
               onClick={handleTeamClick}
             />
@@ -266,7 +256,7 @@ export const Extras = () => {
             </p>
             <ExtrasTeams
               options={teams}
-              isLoading={allTeamsQueryResult.isLoading}
+              isLoading={teamsLoading}
               selectedTeam={extraBets.offense}
               onClick={handleTeamClick}
             />
@@ -279,7 +269,7 @@ export const Extras = () => {
             </p>
             <ExtrasTeams
               options={teams}
-              isLoading={allTeamsQueryResult.isLoading}
+              isLoading={teamsLoading}
               selectedTeam={extraBets.defense}
               onClick={handleTeamClick}
             />
