@@ -11,6 +11,7 @@ export const updateInfo = () => '/user/updateInfo';
 export const updatePass = () => '/user/updatePassword';
 
 // Match & Bet
+export const listAllMatchesWithUserBets = () => '/match/userBets';
 export const updateBet = () => '/bet';
 export const listAllExtraBets = () => '/extraBets';
 export const updateExtraBet = () => '/extraBets';
@@ -18,3 +19,7 @@ export const updateExtraBet = () => '/extraBets';
 // Team
 export const listAllTeams = () => '/team/';
 export const listTeamById = (id: number) => `/team/${id}`;
+
+// Ranking
+export const listRanking = () => '/ranking/';
+export const listRankingByRound = (round: number) => `/ranking/${round}`;

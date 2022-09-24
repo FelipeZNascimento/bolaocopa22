@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 
-import { Match, Ranking, ITeamProps, Loading } from '@omegafox/components';
+import { Match, ITeamProps, Loading } from '@omegafox/components';
 import { tableConfig } from 'constants/mocks';
 import { RootState } from 'store';
 import { TMatch } from 'store/match/types';
-
+import { Ranking } from 'sections/index';
 // Styles and images
 import styles from './Results.module.scss';
 import spinner from 'img/spinner.png';
@@ -122,14 +122,13 @@ export const Results = () => {
       {isLoading && <Loading image={spinner} />}
       {!isLoading && <div className={leftSectionClass}>{renderMatches()}</div>}
       {!isMobile && (
-        <div className={styles.rightSection}>
-          <Ranking
-            isHeader
-            backgroundImage={logo}
-            columns={tableConfig.columns}
-            rows={tableConfig.rows}
-          />
-        </div>
+        <Ranking
+          isHeader
+          isMinified
+          backgroundImage={logo}
+          columns={tableConfig.columns}
+          rows={tableConfig.rows}
+        />
       )}
     </main>
   );

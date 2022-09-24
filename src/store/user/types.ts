@@ -7,3 +7,10 @@ export type TUser = {
   newPassword?: string;
   isActive: boolean;
 };
+
+export type TUserRanking = TUser & {
+  points: number;
+  full: number;
+  half: number;
+  minimun: number;
+};

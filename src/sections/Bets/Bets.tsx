@@ -1,34 +1,79 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 
-import { Ranking, Loading } from '@omegafox/components';
+import { Loading } from '@omegafox/components';
 import { tableConfig } from 'constants/mocks';
 import { MatchForBets } from 'components';
 import { IBetObject } from 'components/MatchForBets/types';
+import { Ranking } from 'sections/index';
 
 // Store
 import { RootState } from 'store';
 import { TMatch } from 'store/match/types';
-import { matchesUpdated } from 'store/match/reducer';
+import {
+  matchesLoading,
+  matchesSet,
+  matchesUpdated
+} from 'store/match/reducer';
+import { TUser } from 'store/user/types';
+import { useOnListAllMatchesWithUserBetsMutation } from 'store/match/actions';
 
 // Styles and images
 import styles from './Bets.module.scss';
 import logo from 'img/logo_translucid10.png';
 import spinner from 'img/spinner.png';
 import { cloneDeep } from 'lodash';
+import { QueryHandler } from 'services/queryHandler';
 
 export const Bets = () => {
   const dispatch = useDispatch();
+  const [listAllMatchesTrigger, listAllMatchesResult] =
+    useOnListAllMatchesWithUserBetsMutation();
 
-  const isLoading = useSelector(
+  const loggedUser = useSelector(
+    (state: RootState) => state.user.loggedUser
+  ) as unknown as TUser;
+
+  const isMatchesLoading = useSelector(
     (state: RootState) => state.match.matchesLoading
   ) as boolean;
 
   const matches = useSelector(
     (state: RootState) => state.match.matches
   ) as unknown as TMatch[];
+
+  const isThereUserBets =
+    matches && matches.some((match) => match.loggedUserBets !== null);
+
+  const isLoading =
+    isMatchesLoading ||
+    listAllMatchesResult.isLoading ||
+    (loggedUser && listAllMatchesResult.isUninitialized && !isThereUserBets);
+
+  useEffect(() => {
+    if (
+      !isMatchesLoading &&
+      loggedUser &&
+      !isThereUserBets &&
+      listAllMatchesResult.isUninitialized
+    ) {
+      listAllMatchesTrigger();
+    }
+  }, [isMatchesLoading, matches, loggedUser]);
+
+  useEffect(() => {
+    dispatch(matchesLoading(listAllMatchesResult.isLoading));
+
+    if (listAllMatchesResult.isSuccess && !listAllMatchesResult.isLoading) {
+      const result = QueryHandler(listAllMatchesResult.data);
+
+      if (result) {
+        dispatch(matchesSet(result));
+      }
+    }
+  }, [listAllMatchesResult]);
 
   const containerClass = classNames(styles.container, {
     [styles.containerBrowser]: !isMobile,
@@ -95,14 +140,13 @@ export const Bets = () => {
       {isLoading && <Loading image={spinner} />}
       {!isLoading && <div className={leftSectionClass}>{renderMatches()}</div>}
       {!isMobile && (
-        <div className={styles.rightSection}>
-          <Ranking
-            isHeader
-            backgroundImage={logo}
-            columns={tableConfig.columns}
-            rows={tableConfig.rows}
-          />
-        </div>
+        <Ranking
+          isHeader
+          isMinified
+          backgroundImage={logo}
+          columns={tableConfig.columns}
+          rows={tableConfig.rows}
+        />
       )}
     </main>
   );
