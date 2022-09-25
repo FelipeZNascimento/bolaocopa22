@@ -35,3 +35,95 @@
 .match {
   @include padded(bottom, m);
 }
+
+.expandable {
+  &NotStarted {
+    @include flex-aligned(center, flex-start);
+    @include padded(all, s);
+    width: 100%;
+
+    &Content {
+      flex: 1;
+
+      p {
+        @include padded(all, none);
+        @include marged(all, none);
+      }
+
+      img {
+        width: 150px;
+      }
+    }
+  }
+
+  &Started {
+    @include flex-aligned(center, flex-start);
+    @include padded(vertical, s);
+
+    width: 100%;
+
+    &Stadium {
+      @include flex-aligned(flex-start, flex-start);
+
+      flex: 0;
+      flex-direction: column;
+
+      img {
+        width: 54px;
+      }
+    }
+
+    &Bets {
+      flex: 1;
+    }
+  }
+}
+
+.singleBet {
+  &Container {
+    @include flex-aligned(center, flex-start);
+    @include padded(horizontal, s);
+
+    width: 100%;
+
+    &:nth-child(even) {
+      @include bg-rgba-colored($color-grey2, 0.4);
+      border-radius: 16px;
+    }
+
+    &User {
+      font-weight: bold;
+    }
+  }
+
+  &Owner {
+    flex: 1;
+    text-align: left;
+  }
+  &Points {
+    flex: 1;
+    text-align: right;
+  }
+
+  &Score {
+    flex: 1;
+    font-weight: bold;
+  }
+
+  &Green {
+    @include font-colored($color-mint);
+    font-weight: bold;
+  }
+  &Blue {
+    @include font-colored($color-qatar-blue);
+    font-weight: bold;
+  }
+  &LightBlue {
+    @include font-colored($color-qatar-lightblue);
+    font-weight: bold;
+  }
+  &Red {
+    @include font-colored($color-qatar-red);
+    font-weight: bold;
+  }
+}

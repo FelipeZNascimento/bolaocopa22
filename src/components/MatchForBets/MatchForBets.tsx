@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import {
   Match as MatchOmegafox,
   ITeamProps,
-  IScoreId
+  IScoreId,
+  TBetStatus
 } from '@omegafox/components';
 import { IBetObject } from './types';
 
@@ -16,14 +17,21 @@ import { TUser } from 'store/user/types';
 
 import styles from './MatchForBets.module.scss';
 import { WEEKDAY } from 'constants/weekdays';
+import { getBetPoints, getBetStatus } from 'services/betCalculator';
 
-interface IMatch {
+interface IMatchForBets {
+  isEditable?: boolean;
   shownDate: Date | null;
   match: TMatch;
   onChange: (currentBet: IBetObject) => void;
 }
 
-export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
+export const MatchForBets = ({
+  isEditable = false,
+  match,
+  shownDate,
+  onChange
+}: IMatchForBets) => {
   const [isError, setIsError] = useState<boolean>(false);
 
   const [updateBetTrigger, updateBetResult] = useOnUpdateBetMutation();
@@ -33,6 +41,12 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
   const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
+
+  let betStatus: TBetStatus = 'neutral';
+  if (loggedUser && match.loggedUserBets) {
+    const points = getBetPoints(match.loggedUserBets, match);
+    betStatus = getBetStatus(points);
+  }
 
   useEffect(() => {
     // If something went wrong, show error and block match. As user to refresh the page.
@@ -103,8 +117,9 @@ export const MatchForBets = ({ match, shownDate, onChange }: IMatch) => {
       )}
       <div className={styles.match}>
         <MatchOmegafox
+          betStatus={betStatus}
           id={match.id}
-          isEditable={!!loggedUser}
+          isEditable={isEditable}
           isError={isError}
           isLoading={isLoading}
           clock={{ time: 0, status: match.status }}
