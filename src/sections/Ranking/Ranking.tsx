@@ -39,7 +39,9 @@ export const Ranking = ({
             id: 3,
             renderingFunction: () => (
               <div>
-                {user.full} | {user.half} | {user.minimun}
+                <span className={styles.green}>{user.full}</span> |{' '}
+                <span className={styles.blue}>{user.half}</span> |{' '}
+                <span className={styles.lightBlue}>{user.minimun}</span>
               </div>
             )
           }

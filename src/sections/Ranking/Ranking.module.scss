@@ -38,3 +38,20 @@
   height: 100%;
   max-height: 85vh;
 }
+
+.green {
+  @include font-colored($color-mint);
+  font-weight: bold;
+}
+.blue {
+  @include font-colored($color-qatar-blue);
+  font-weight: bold;
+}
+.lightBlue {
+  @include font-colored($color-qatar-lightblue);
+  font-weight: bold;
+}
+.red {
+  @include font-colored($color-qatar-red);
+  font-weight: bold;
+}
