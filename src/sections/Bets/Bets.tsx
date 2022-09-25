@@ -123,8 +123,11 @@ export const Bets = () => {
         isDate = false;
       }
 
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      const matchTimestamp = Math.floor(newDate.getTime() / 1000);
       return (
         <MatchForBets
+          isEditable={loggedUser !== null && currentTimestamp < matchTimestamp}
           key={match.id}
           match={match}
           shownDate={isDate ? shownDate : null}
