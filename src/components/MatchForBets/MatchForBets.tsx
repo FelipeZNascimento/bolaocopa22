@@ -4,8 +4,7 @@ import { useSelector } from 'react-redux';
 import {
   Match as MatchOmegafox,
   ITeamProps,
-  IScoreId,
-  TBetStatus
+  IBetId
 } from '@omegafox/components';
 import { IBetObject } from './types';
 
@@ -17,7 +16,7 @@ import { TUser } from 'store/user/types';
 
 import styles from './MatchForBets.module.scss';
 import { WEEKDAY } from 'constants/weekdays';
-import { getBetPoints, getBetStatus } from 'services/betCalculator';
+import { getBetPoints } from 'services/betCalculator';
 
 interface IMatchForBets {
   isEditable?: boolean;
@@ -42,10 +41,9 @@ export const MatchForBets = ({
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
 
-  let betStatus: TBetStatus = 'neutral';
+  let points = null;
   if (loggedUser && match.loggedUserBets) {
-    const points = getBetPoints(match.loggedUserBets, match);
-    betStatus = getBetStatus(points);
+    points = getBetPoints(match.loggedUserBets, match);
   }
 
   useEffect(() => {
@@ -56,28 +54,35 @@ export const MatchForBets = ({
       (!updateBetResult.isSuccess || !updateBetResult.data.isSuccess)
     ) {
       setIsError(true);
+    } else if (
+      !updateBetResult.isLoading &&
+      !updateBetResult.isUninitialized &&
+      updateBetResult.isSuccess &&
+      updateBetResult.data.isSuccess
+    ) {
+      setIsError(false);
     }
   }, [updateBetResult]);
 
-  const handleScoreChange = (newScore: IScoreId[]) => {
+  const handleScoreChange = (newBet: IBetId[]) => {
     if (!loggedUser) {
       setIsError(true);
       return;
     }
 
-    const homeTeamScore = newScore.find(
+    const homeTeamBet = newBet.find(
       (item) => item.id === match.homeTeam.id
-    )?.score;
-    const awayTeamScore = newScore.find(
+    )?.bet;
+    const awayTeamBet = newBet.find(
       (item) => item.id === match.awayTeam.id
-    )?.score;
+    )?.bet;
 
     const betObject = {
       betId: match.loggedUserBets ? match.loggedUserBets.id : null,
       matchId: match.id,
       userId: loggedUser.id,
-      goalsHome: homeTeamScore === undefined ? null : homeTeamScore,
-      goalsAway: awayTeamScore === undefined ? null : awayTeamScore
+      goalsHome: homeTeamBet === undefined ? null : homeTeamBet,
+      goalsAway: awayTeamBet === undefined ? null : awayTeamBet
     };
 
     updateBetTrigger(betObject);
@@ -87,37 +92,39 @@ export const MatchForBets = ({
   const homeTeam: ITeamProps = {
     id: match.homeTeam.id,
     align: 'left',
+    bet: match.loggedUserBets ? match.loggedUserBets.goalsHome : null,
     colors: match.homeTeam.colors,
     isEditable: true,
     logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
     matchId: match.id,
     name: match.homeTeam.name,
     nameShort: match.homeTeam.abbreviation,
-    score: match.loggedUserBets ? match.loggedUserBets.goalsHome : null
+    score: match.homeTeam.goals
   };
 
   const awayTeam: ITeamProps = {
     id: match.awayTeam.id,
     align: 'right',
+    bet: match.loggedUserBets ? match.loggedUserBets.goalsAway : null,
     colors: match.awayTeam.colors,
     isEditable: true,
     logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
     matchId: match.id,
     name: match.awayTeam.name,
     nameShort: match.awayTeam.abbreviation,
-    score: match.loggedUserBets ? match.loggedUserBets.goalsAway : null
+    score: match.awayTeam.goals
   };
 
   return (
     <>
       {shownDate && (
-        <h2>
+        <p className={styles.date}>
           {WEEKDAY[shownDate.getDay()]}, {shownDate.toLocaleDateString()}
-        </h2>
+        </p>
       )}
       <div className={styles.match}>
         <MatchOmegafox
-          betStatus={betStatus}
+          betValue={points}
           id={match.id}
           isEditable={isEditable}
           isError={isError}

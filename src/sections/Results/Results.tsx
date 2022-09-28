@@ -3,17 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 import { QueryHandler } from 'services/queryHandler';
-import { getBetPoints, getBetStatus } from 'services/betCalculator';
+import { getBetPoints } from 'services/betCalculator';
 
 // Components
 import {
   Match,
-  ITeamProps,
   Loading,
-  Selector,
-  TBetStatus,
-  FOOTBALL_MATCH_STATUS
+  FOOTBALL_MATCH_STATUS,
+  TBET_VALUES,
+  ITeamProps,
+  TBetValues
 } from '@omegafox/components';
+import { Selector } from 'components/index';
 import { Ranking } from 'sections/index';
 
 // Store
@@ -31,15 +32,24 @@ import logo from 'img/logo_translucid10.png';
 
 // Constants
 import { WEEKDAY } from 'constants/weekdays';
-import { BET_VALUES } from 'constants/bets';
+
+export const BET_VALUES: TBET_VALUES = {
+  FULL: 5,
+  HALF: 3,
+  MINIMUN: 2,
+  MISS: 0
+};
 
 export const Results = () => {
   const [selectedRound, setSelectedRound] = useState(1);
   const dispatch = useDispatch();
 
-  const { data, error, isLoading } = useOnListAllMatchesQuery(null, {
-    pollingInterval: 10000
-  });
+  const { data, error, isLoading, isUninitialized } = useOnListAllMatchesQuery(
+    null,
+    {
+      pollingInterval: 10000
+    }
+  );
 
   let currentTimestamp = new Date().getTime() / 1000;
   setInterval(function () {
@@ -47,7 +57,7 @@ export const Results = () => {
   }, 1000); // 60 * 1000 milsec
 
   useEffect(() => {
-    if (!isLoading && !error && data) {
+    if (!isLoading && !error && data && !isUninitialized) {
       const result = QueryHandler(data);
       dispatch(matchesSet(result));
     }
@@ -80,6 +90,7 @@ export const Results = () => {
     let isDate: boolean;
 
     return matches.map((match) => {
+      let points: TBetValues | null = null;
       if (
         match.awayTeam.id === 0 ||
         match.homeTeam.id === 0 ||
@@ -90,11 +101,9 @@ export const Results = () => {
       const loggedUserBet: TBet | null = loggedUser
         ? match.bets.find((bet) => bet.user.id === loggedUser.id) || null
         : null;
-      let betStatus: TBetStatus = 'neutral';
 
       if (loggedUserBet) {
-        const points = getBetPoints(loggedUserBet, match);
-        betStatus = getBetStatus(points);
+        points = getBetPoints(loggedUserBet, match);
       }
 
       const newDate = new Date(match.timestamp);
@@ -110,25 +119,33 @@ export const Results = () => {
       const homeTeam: ITeamProps = {
         id: match.homeTeam.id,
         align: 'left',
+        bet:
+          loggedUser && match.loggedUserBets
+            ? match.loggedUserBets.goalsHome
+            : null,
         colors: match.homeTeam.colors,
         isEditable: false,
         logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
         matchId: match.id,
         name: match.homeTeam.name,
         nameShort: match.homeTeam.abbreviation,
-        score: match.homeTeam.goals
+        score: matchTimestamp < currentTimestamp ? match.homeTeam.goals : null
       };
 
       const awayTeam: ITeamProps = {
         id: match.awayTeam.id,
         align: 'right',
+        bet:
+          loggedUser && match.loggedUserBets
+            ? match.loggedUserBets.goalsAway
+            : null,
         colors: match.awayTeam.colors,
         isEditable: false,
         logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
         matchId: match.id,
         name: match.awayTeam.name,
         nameShort: match.awayTeam.abbreviation,
-        score: match.awayTeam.goals
+        score: matchTimestamp < currentTimestamp ? match.awayTeam.goals : null
       };
 
       const renderMatchInfo = () => {
@@ -178,6 +195,34 @@ export const Results = () => {
       };
 
       const renderBets = () => {
+        const matchBetsFull: TBet[] = [];
+        const matchBetsHalf: TBet[] = [];
+        const matchBetsMinimun: TBet[] = [];
+        const matchBetsMiss: TBet[] = [];
+
+        match.bets.forEach((bet) => {
+          const points = getBetPoints(bet, match);
+          if (points === BET_VALUES.FULL) {
+            matchBetsFull.push(bet);
+          } else if (points === BET_VALUES.HALF) {
+            matchBetsHalf.push(bet);
+          } else if (points === BET_VALUES.MINIMUN) {
+            matchBetsMinimun.push(bet);
+          } else {
+            matchBetsMiss.push(bet);
+          }
+        });
+
+        matchBetsHalf.sort(
+          (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
+        );
+        matchBetsMinimun.sort(
+          (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
+        );
+        matchBetsMiss.sort(
+          (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
+        );
+
         return (
           <div className={styles.expandableStarted}>
             {!isMobile && (
@@ -189,7 +234,16 @@ export const Results = () => {
             )}
             <div className={styles.expandableStartedBets}>
               {loggedUserBet && renderSingleBet(loggedUserBet, true)}
-              {match.bets.map((bet) => {
+              {matchBetsFull.map((bet) => {
+                return renderSingleBet(bet);
+              })}
+              {matchBetsHalf.map((bet) => {
+                return renderSingleBet(bet);
+              })}
+              {matchBetsMinimun.map((bet) => {
+                return renderSingleBet(bet);
+              })}
+              {matchBetsMiss.map((bet) => {
                 return renderSingleBet(bet);
               })}
             </div>
@@ -200,14 +254,14 @@ export const Results = () => {
       return (
         <span key={match.id}>
           {isDate && (
-            <h2>
+            <p className={styles.date}>
               {WEEKDAY[shownDate.getDay()]}, {shownDate.toLocaleDateString()}
-            </h2>
+            </p>
           )}
           <div className={styles.match}>
             <Match
               isExpandable
-              betStatus={betStatus}
+              betValue={points}
               id={match.id}
               isEditable={false}
               expandableContent={
@@ -232,37 +286,10 @@ export const Results = () => {
     });
   };
 
-  const mockItems = [
-    {
-      id: 0,
-      value: 1,
-      text: 'Rodada 1'
-    },
-    {
-      id: 1,
-      value: 2,
-      text: 'Rodada 2'
-    },
-    {
-      id: 2,
-      value: 3,
-      text: 'Rodada 3'
-    },
-    {
-      id: 3,
-      value: 4,
-      text: '2a Fase'
-    }
-  ];
-
   return (
     <main className={containerClass}>
       <div className={leftSectionClass}>
-        <Selector
-          items={mockItems}
-          selectedItem={selectedRound}
-          onClick={(itemId: number) => setSelectedRound(itemId)}
-        />
+        <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
         {!isLoading && renderMatches()}
         {isLoading && <Loading image={spinner} />}
       </div>

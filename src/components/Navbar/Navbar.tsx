@@ -6,6 +6,7 @@ import {
   Button,
   Navbar as TopNav,
   Sidenav,
+  StatusBadge,
   TNavbarButton
 } from '@omegafox/components';
 import { LoginModal, UserModal } from '../index';
@@ -107,6 +108,7 @@ export const Navbar = () => {
         variant="primary"
         onClick={handleModalOpen}
       >
+        {renderStatusBadge()}&nbsp;
         Entrar
       </Button>
     );
@@ -124,6 +126,7 @@ export const Navbar = () => {
         variant="primary"
         onClick={handleModalOpen}
       >
+        {renderStatusBadge()}&nbsp;
         {loggedUser?.nickname}
       </Button>
     );
@@ -131,6 +134,10 @@ export const Navbar = () => {
 
   const renderIcon = () => {
     return <FontAwesomeIcon className={styles.icon} icon={faBars} />;
+  };
+
+  const renderStatusBadge = () => {
+    return <StatusBadge color={loggedUser ? 'green' : 'grey'} />;
   };
 
   const renderRight = () => {
@@ -158,6 +165,12 @@ export const Navbar = () => {
           navbarRight={[
             {
               id: 0,
+              text: '',
+              url: '',
+              renderingFunction: renderStatusBadge
+            },
+            {
+              id: 1,
               text: '',
               url: '',
               renderingFunction: renderRight

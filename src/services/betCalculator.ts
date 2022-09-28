@@ -1,6 +1,6 @@
-import { BET_VALUES } from 'constants/bets';
 import { TBet } from 'store/bet/types';
 import { TMatch } from 'store/match/types';
+import { BET_VALUES } from '@omegafox/components';
 
 const getBetPoints = (bet: TBet, match: TMatch) => {
   if (
