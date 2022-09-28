@@ -1,7 +1,7 @@
 import React from 'react';
 import { isMobile } from 'react-device-detect';
 
-import { Loading, TeamButton, Tooltip } from '@omegafox/components';
+import { Loading, TeamButton } from '@omegafox/components';
 import { ITeam } from 'store/team/types';
 import spinner from 'img/spinner.png';
 
@@ -31,16 +31,14 @@ export const ExtrasTeams = ({
         options.map((team) => {
           return (
             <div className={teamClass} key={team.id}>
-              <Tooltip position="bottom" text={team.name}>
-                <TeamButton
-                  colors={team.colors}
-                  isSelected={team.id === selectedTeam?.id}
-                  logo={`https://assets.omegafox.me/img/countries_crests/${team.abbreviationEn.toLowerCase()}.png`}
-                  name={team.name}
-                  nameShort={team.abbreviation}
-                  onClick={() => onClick(team)}
-                />
-              </Tooltip>
+              <TeamButton
+                colors={team.colors}
+                isSelected={team.id === selectedTeam?.id}
+                logo={`https://assets.omegafox.me/img/countries_crests/${team.abbreviationEn.toLowerCase()}.png`}
+                name={team.name}
+                nameShort={team.abbreviation}
+                onClick={() => onClick(team)}
+              />
             </div>
           );
         })}

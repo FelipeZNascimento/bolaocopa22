@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 
 // Components
-import { Card, Loading, TeamButton } from '@omegafox/components';
+import {
+  Card,
+  Loading,
+  TeamButton,
+  TitleContainer
+} from '@omegafox/components';
 import { QueryHandler } from 'services/queryHandler';
 import { ExtrasTeams } from './ExtrasTeams';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -212,77 +217,86 @@ export const Extras = () => {
 
   return (
     <main className={styles.container}>
-      <div className={styles.topSection}>
-        <p className={styles.title}>
-          Escolha um campeão, os melhores ataque e defesa (considerando apenas a
-          primeira fase) e um artilheiro.
+      {!loggedUser && (
+        <p className={styles.titleContainer}>
+          <TitleContainer text="Você precisa estar logado para ter acesso a essa seção." />
         </p>
+      )}
+      {loggedUser && (
+        <>
+          <div className={styles.topSection}>
+            <p className={styles.title}>
+              Escolha um campeão, os melhores ataque e defesa (considerando
+              apenas a primeira fase) e um artilheiro.
+            </p>
 
-        <div className={styles.cardsContainer}>
-          {extrasInfo.map((item) => {
-            return (
-              <div className={styles.card} key={item.id}>
-                <Card
-                  isSelected={selectedExtra === item.id}
-                  title={item.title}
-                  subtitle={item.subtitle}
-                  onClick={() => setSelectedExtra(item.id)}
-                  renderingStatusFunction={() => renderStatus(item.id)}
+            <div className={styles.cardsContainer}>
+              {extrasInfo.map((item) => {
+                return (
+                  <div className={styles.card} key={item.id}>
+                    <Card
+                      isSelected={selectedExtra === item.id}
+                      title={item.title}
+                      subtitle={item.subtitle}
+                      onClick={() => setSelectedExtra(item.id)}
+                      renderingStatusFunction={() => renderStatus(item.id)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className={styles.teamsContainer}>
+            {selectedExtra !== null && teamsLoading && (
+              <Loading image={spinner} />
+            )}
+            {teams && selectedExtra === 0 && (
+              <>
+                <p className={styles.titleContainer}>
+                  <TitleContainer text="Campeão" />
+                </p>
+                <ExtrasTeams
+                  options={teams}
+                  isLoading={teamsLoading}
+                  selectedTeam={extraBets.champion}
+                  onClick={handleTeamClick}
                 />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <div className={styles.teamsContainer}>
-        {selectedExtra !== null && teamsLoading && <Loading image={spinner} />}
-        {teams && selectedExtra === 0 && (
-          <>
-            <p className={styles.titleContainer}>
-              <span className={styles.title}>Campeão</span>
-            </p>
-            <ExtrasTeams
-              options={teams}
-              isLoading={teamsLoading}
-              selectedTeam={extraBets.champion}
-              onClick={handleTeamClick}
-            />
-          </>
-        )}
-        {teams && selectedExtra === 1 && (
-          <>
-            <p className={styles.titleContainer}>
-              <span className={styles.title}>Melhor Ataque</span>
-            </p>
-            <ExtrasTeams
-              options={teams}
-              isLoading={teamsLoading}
-              selectedTeam={extraBets.offense}
-              onClick={handleTeamClick}
-            />
-          </>
-        )}
-        {teams && selectedExtra === 2 && (
-          <>
-            <p className={styles.titleContainer}>
-              <span className={styles.title}>Melhor Defesa</span>
-            </p>
-            <ExtrasTeams
-              options={teams}
-              isLoading={teamsLoading}
-              selectedTeam={extraBets.defense}
-              onClick={handleTeamClick}
-            />
-          </>
-        )}
-        {teams && selectedExtra === 3 && (
-          <>
-            <p className={styles.titleContainer}>
-              <span className={styles.title}>Artilheiro</span>
-            </p>
-          </>
-        )}
-      </div>
+              </>
+            )}
+            {teams && selectedExtra === 1 && (
+              <>
+                <p className={styles.titleContainer}>
+                  <TitleContainer text="Melhor ataque" />
+                </p>
+                <ExtrasTeams
+                  options={teams}
+                  isLoading={teamsLoading}
+                  selectedTeam={extraBets.offense}
+                  onClick={handleTeamClick}
+                />
+              </>
+            )}
+            {teams && selectedExtra === 2 && (
+              <>
+                <p className={styles.titleContainer}>
+                  <TitleContainer text="Melhor defesa" />
+                </p>
+                <ExtrasTeams
+                  options={teams}
+                  isLoading={teamsLoading}
+                  selectedTeam={extraBets.defense}
+                  onClick={handleTeamClick}
+                />
+              </>
+            )}
+            {teams && selectedExtra === 3 && (
+              <p className={styles.titleContainer}>
+                <TitleContainer text="Artilheiro" />
+              </p>
+            )}
+          </div>
+        </>
+      )}
     </main>
   );
 };
