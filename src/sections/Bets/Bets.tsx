@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 
-import { Loading } from '@omegafox/components';
-import { MatchForBets } from 'components';
+import { Loading, TitleContainer } from '@omegafox/components';
+import { MatchForBets, Selector } from 'components';
 import { IBetObject } from 'components/MatchForBets/types';
 import { Ranking } from 'sections/index';
 
@@ -27,6 +27,7 @@ import { cloneDeep } from 'lodash';
 import { QueryHandler } from 'services/queryHandler';
 
 export const Bets = () => {
+  const [selectedRound, setSelectedRound] = useState(1);
   const dispatch = useDispatch();
   const [listAllMatchesTrigger, listAllMatchesResult] =
     useOnListAllMatchesWithUserBetsMutation();
@@ -111,7 +112,11 @@ export const Bets = () => {
     let isDate: boolean;
 
     return matches.map((match) => {
-      if (match.awayTeam.id === 0 || match.homeTeam.id === 0) {
+      if (
+        match.awayTeam.id === 0 ||
+        match.homeTeam.id === 0 ||
+        match.round !== selectedRound
+      ) {
         return null;
       }
 
@@ -139,8 +144,14 @@ export const Bets = () => {
 
   return (
     <main className={containerClass}>
-      {isLoading && <Loading image={spinner} />}
-      {!isLoading && <div className={leftSectionClass}>{renderMatches()}</div>}
+      <div className={leftSectionClass}>
+        <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
+        {!loggedUser && (
+          <TitleContainer text="Você precisa estar logado para ter acesso a essa seção." />
+        )}
+        {!isLoading && loggedUser && renderMatches()}
+        {isLoading && <Loading image={spinner} />}
+      </div>
       {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>
   );

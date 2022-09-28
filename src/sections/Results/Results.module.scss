@@ -127,3 +127,10 @@
     font-weight: bold;
   }
 }
+
+.date {
+  @include marged(all, none);
+  @include padded(vertical, m);
+  @include aligned(center);
+  @include font-colored($color-grey5);
+}
