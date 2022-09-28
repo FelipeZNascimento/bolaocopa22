@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import {
   Loading,
   Ranking as Rank,
+  StatusBadge,
+  Tooltip,
   TRankingColumn,
   TRankingRow
 } from '@omegafox/components';
@@ -28,20 +30,51 @@ export const Ranking = ({
     if (!isLoading && data && data.isSuccess) {
       const rankingResult = data.result;
       const rankingRows = rankingResult.users.map((user) => {
+        const positionClass = classNames({
+          [styles.yellow]: user.position === 1,
+          [styles.greyThree]: user.position === 2,
+          [styles.orange]: user.position === 3
+        });
+
+        const renderStatusBadge = () => {
+          const currentTimestamp = parseInt(
+            (new Date().getTime() / 1000).toFixed(0)
+          );
+
+          const isOnline = user.lastTimestamp + 5 * 60 > currentTimestamp;
+
+          return <StatusBadge color={isOnline ? 'green' : 'grey'} />;
+        };
+
         return [
-          { id: 0, renderingFunction: () => <div>01.</div> },
+          {
+            id: 0,
+            renderingFunction: () => (
+              <div className={positionClass}>{user.position}.</div>
+            )
+          },
           {
             id: 1,
-            renderingFunction: () => <div>{user.nickname}</div>
+            renderingFunction: () => (
+              <div className={styles.nickname}>
+                &nbsp;{renderStatusBadge()}&nbsp;{user.nickname}
+              </div>
+            )
           },
           { id: 2, renderingFunction: () => <div>{user.points}</div> },
           {
             id: 3,
             renderingFunction: () => (
-              <div>
-                <span className={styles.green}>{user.full}</span> |{' '}
-                <span className={styles.blue}>{user.half}</span> |{' '}
-                <span className={styles.lightBlue}>{user.minimun}</span>
+              <div className={styles.pointsDetails}>
+                <Tooltip text="Acerto completo">
+                  <span className={styles.green}>{user.full}</span>
+                </Tooltip>
+                <Tooltip text="Acerto parcial">
+                  <span className={styles.blue}>{user.half}</span>
+                </Tooltip>
+                <Tooltip text="Acerto mínimo">
+                  <span className={styles.lightBlue}>{user.minimun}</span>
+                </Tooltip>
               </div>
             )
           }

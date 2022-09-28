@@ -20,9 +20,11 @@
   }
 }
 
-.rankingContainer {
-  flex: 1;
-  max-width: 1024px;
+.ranking {
+  &Container {
+    flex: 1;
+    max-width: 1024px;
+  }
 }
 
 .rightSection {
@@ -39,19 +41,50 @@
   max-height: 85vh;
 }
 
+.pointsDetails {
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  display: flex;
+
+  span {
+    @include padded(horizontal, s);
+  }
+}
+
+.nickname {
+  align-items: center;
+  display: flex;
+}
+
 .green {
   @include font-colored($color-mint);
   font-weight: bold;
 }
+
 .blue {
   @include font-colored($color-qatar-blue);
   font-weight: bold;
 }
+
 .lightBlue {
   @include font-colored($color-qatar-lightblue);
   font-weight: bold;
 }
+
 .red {
   @include font-colored($color-qatar-red);
+  font-weight: bold;
+}
+.yellow {
+  @include font-colored($color-qatar-yellow);
+  font-weight: bold;
+}
+.greyThree {
+  @include font-colored($color-grey3);
+  font-weight: bold;
+}
+.orange {
+  @include font-colored($color-orange);
   font-weight: bold;
 }

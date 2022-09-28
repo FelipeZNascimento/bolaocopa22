@@ -96,7 +96,9 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
 
   useEffect(() => {
     if (registerResult.isSuccess && !registerResult.isLoading) {
-      dispatch(userLoggedIn(registerResult.data));
+      const queryData: TQuery = registerResult.data;
+
+      dispatch(userLoggedIn(queryData.result.loggedUser));
       handleClose();
     }
   }, [registerResult]);
