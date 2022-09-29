@@ -38,7 +38,7 @@ jobs:
       # - name: 🧪 Test
       #   run: CI='' npm run test:ci
 
-      - name: 🔨 Build Static Storybook
+      - name: 🔨 Build
         run: CI='' npm run build
 
       - name: 📂 Sync files to server folder

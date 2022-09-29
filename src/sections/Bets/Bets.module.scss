@@ -18,6 +18,12 @@
   }
 }
 
+.titleContainer {
+  @include aligned(center);
+  @include padded(horizontal, s);
+  width: 100%;
+}
+
 .leftSection {
   display: flex;
   flex: 2;
