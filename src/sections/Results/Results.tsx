@@ -42,9 +42,10 @@ export const BET_VALUES: TBET_VALUES = {
 
 export const Results = () => {
   const [selectedRound, setSelectedRound] = useState(1);
+  const [needsToUpdateMatches, setNeedsToUpdateMatches] = useState(false);
   const dispatch = useDispatch();
 
-  const { data, error, isLoading, isUninitialized } = useOnListAllMatchesQuery(
+  const { data, error, isLoading, isFetching } = useOnListAllMatchesQuery(
     null,
     {
       pollingInterval: 10000
@@ -57,7 +58,14 @@ export const Results = () => {
   }, 1000); // 60 * 1000 milsec
 
   useEffect(() => {
-    if (!isLoading && !error && data && !isUninitialized) {
+    if (isFetching) {
+      setNeedsToUpdateMatches(true);
+    }
+  }, [isFetching]);
+
+  useEffect(() => {
+    if (!isLoading && !error && data && needsToUpdateMatches) {
+      setNeedsToUpdateMatches(false);
       const result = QueryHandler(data);
       dispatch(matchesSet(result));
     }
@@ -150,7 +158,7 @@ export const Results = () => {
 
       const renderMatchInfo = () => {
         return (
-          <div className={styles.expandableNotStarted}>
+          <div key={match.id} className={styles.expandableNotStarted}>
             <div className={styles.expandableNotStartedContent}>
               <img
                 src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
@@ -261,6 +269,7 @@ export const Results = () => {
           <div className={styles.match}>
             <Match
               isExpandable
+              key={match.id}
               betValue={points}
               id={match.id}
               isEditable={false}
