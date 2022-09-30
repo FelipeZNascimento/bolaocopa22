@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { isMobile } from 'react-device-detect';
 
 import {
   Match as MatchOmegafox,
@@ -97,8 +98,7 @@ export const MatchForBets = ({
     isEditable: true,
     logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
     matchId: match.id,
-    name: match.homeTeam.name,
-    nameShort: match.homeTeam.abbreviation,
+    name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
     score: match.homeTeam.goals
   };
 
@@ -110,8 +110,7 @@ export const MatchForBets = ({
     isEditable: true,
     logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
     matchId: match.id,
-    name: match.awayTeam.name,
-    nameShort: match.awayTeam.abbreviation,
+    name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
     score: match.awayTeam.goals
   };
 
@@ -128,6 +127,7 @@ export const MatchForBets = ({
           id={match.id}
           isEditable={isEditable}
           isError={isError}
+          isHideClock={isMobile}
           isLoading={isLoading}
           clock={{ time: 0, status: match.status }}
           timestamp={parseInt(

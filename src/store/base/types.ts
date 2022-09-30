@@ -14,6 +14,7 @@ interface IResult {
   loggedUser: TUser[];
   loggedUserExtraBets: TExtraBet[];
   matches: TMatch[];
+  seasonStart: number;
   teams: ITeam[];
   round: number;
   users: TUserRanking[];

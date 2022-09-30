@@ -47,8 +47,7 @@ export const ExtrasTeams = ({
                 colors={team.colors}
                 isSelected={team.id === selectedTeam?.id}
                 logo={`https://assets.omegafox.me/img/countries_crests/${team.abbreviationEn.toLowerCase()}.png`}
-                name={team.name}
-                nameShort={team.abbreviation}
+                name={isMobile ? team.abbreviation : team.name}
                 onClick={() => onClick(team)}
               />
             </div>

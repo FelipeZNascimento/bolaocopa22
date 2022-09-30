@@ -3,7 +3,8 @@ import { TInitialState, TMatch } from 'store/match/types';
 
 const initialState: TInitialState = {
   matches: null,
-  matchesLoading: false
+  matchesLoading: false,
+  seasonStart: null
 };
 
 export const matchSlice = createSlice({
@@ -25,6 +26,9 @@ export const matchSlice = createSlice({
             return { ...match, loggedUserBets: null };
           })
         : null;
+    },
+    seasonStartSet: (state, action) => {
+      state.seasonStart = action.payload;
     }
   }
 });
@@ -33,6 +37,7 @@ export const {
   matchesLoading,
   matchesSet,
   matchesUpdated,
-  matchesUserLoggedOut
+  matchesUserLoggedOut,
+  seasonStartSet
 } = matchSlice.actions;
 export default matchSlice.reducer;
