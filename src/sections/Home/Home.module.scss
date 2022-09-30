@@ -1,18 +1,60 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
 .app {
   text-align: center;
-}
-
-.header {
-  background-color: #8f8c8a;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  min-height: calc(100vh - 64px);
 }
 
-.link {
-  color: #61dafb;
+.topSection {
+  @include padded(vertical, l4);
+
+  flex: 1;
+  flex-direction: column;
+
+  img {
+    max-height: 300px;
+  }
+
+  h1, h2 {
+    @include font-colored($color-grey5);
+  }
+}
+
+.bottomSection {
+  @include flex-aligned(center, flex-start);
+  @include padded(all, s);
+  @include bg-rgba-colored($color-grey1, 0.5);
+
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  border-top: 2px solid $color-grey3;
+  flex: 0;
+  width: 100%;
+
+  p {
+    @include padded(all, none);
+    @include marged(all, none);
+  }
+
+  .match {
+    @include padded(vertical, s3);
+
+    margin: auto;
+    max-width: 380px;
+  }
+}
+
+.column {
+  flex: 1;
+
+  // &:nth-child(even) {
+  //   @include padded(horizontal, l4);
+  // }
 }
