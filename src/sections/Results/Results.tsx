@@ -43,6 +43,8 @@ export const BET_VALUES: TBET_VALUES = {
 export const Results = () => {
   const [selectedRound, setSelectedRound] = useState(1);
   const [needsToUpdateMatches, setNeedsToUpdateMatches] = useState(false);
+  const [currentTimestamp, setCurrentTimestamp] = useState(0);
+
   const dispatch = useDispatch();
 
   const { data, error, isLoading, isFetching } = useOnListAllMatchesQuery(
@@ -52,10 +54,15 @@ export const Results = () => {
     }
   );
 
-  let currentTimestamp = new Date().getTime() / 1000;
-  setInterval(function () {
-    currentTimestamp = new Date().getTime() / 1000;
-  }, 1000); // 60 * 1000 milsec
+  useEffect(() => {
+    const interval = setInterval(function () {
+      const timestamp = parseInt((new Date().getTime() / 1000).toFixed(0));
+
+      setCurrentTimestamp(timestamp);
+    }, 1000); // 60 * 1000 milsec
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (isFetching) {
@@ -135,8 +142,7 @@ export const Results = () => {
         isEditable: false,
         logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
         matchId: match.id,
-        name: match.homeTeam.name,
-        nameShort: match.homeTeam.abbreviation,
+        name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
         score: matchTimestamp < currentTimestamp ? match.homeTeam.goals : null
       };
 
@@ -151,8 +157,7 @@ export const Results = () => {
         isEditable: false,
         logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
         matchId: match.id,
-        name: match.awayTeam.name,
-        nameShort: match.awayTeam.abbreviation,
+        name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
         score: matchTimestamp < currentTimestamp ? match.awayTeam.goals : null
       };
 
@@ -273,6 +278,7 @@ export const Results = () => {
               betValue={points}
               id={match.id}
               isEditable={false}
+              isHideClock={isMobile}
               expandableContent={
                 matchTimestamp > currentTimestamp ? renderMatchInfo : renderBets
               }

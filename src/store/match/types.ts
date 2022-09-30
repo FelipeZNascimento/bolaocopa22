@@ -4,6 +4,7 @@ import { TBet } from 'store/bet/types';
 export type TInitialState = {
   matches: null | TMatch[];
   matchesLoading: boolean;
+  seasonStart: null | number;
 };
 
 interface IStadium {

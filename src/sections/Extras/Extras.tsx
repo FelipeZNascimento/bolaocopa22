@@ -209,7 +209,6 @@ export const Extras = () => {
             colors={player.details.colors}
             logo={`https://assets.omegafox.me/img/countries_crests/${player.details.nameShort.toLowerCase()}.png`}
             name={player.name}
-            nameShort={player.name}
           />
         </div>
       );
@@ -230,7 +229,6 @@ export const Extras = () => {
             colors={team.colors}
             logo={`https://assets.omegafox.me/img/countries_crests/${team.abbreviationEn.toLowerCase()}.png`}
             name={team.abbreviation}
-            nameShort={team.abbreviation}
           />
         </div>
       );

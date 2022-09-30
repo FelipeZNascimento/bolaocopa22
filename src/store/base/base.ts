@@ -29,4 +29,8 @@ export const baseApi = createApi({
   })
 });
 
-export const { useGetConfigQuery, useUpdateConfigMutation, useGetRankingQuery } = baseApi;
+export const {
+  useGetConfigQuery,
+  useUpdateConfigMutation,
+  useGetRankingQuery
+} = baseApi;
