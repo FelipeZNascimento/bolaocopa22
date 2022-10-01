@@ -7,7 +7,6 @@ export type TCountdownObject = {
 
 export const returnCountdownObject = (futureDate: number, baseDate: number) => {
   const distance = futureDate - baseDate;
-  console.log(distance);
 
   return <TCountdownObject>{
     days: Math.floor(distance / (60 * 60 * 24)),

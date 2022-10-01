@@ -31,7 +31,9 @@ import { returnCountdownObject, TCountdownObject } from 'services/countdown';
 
 export const Home = () => {
   const [needsToUpdateMatches, setNeedsToUpdateMatches] = useState(false);
-  const [currentTimestamp, setCurrentTimestamp] = useState(0);
+  const [currentTimestamp, setCurrentTimestamp] = useState(
+    parseInt((new Date().getTime() / 1000).toFixed(0))
+  );
   const [countdownObject, setCountdownObject] =
     useState<TCountdownObject | null>(null);
   const dispatch = useDispatch();
