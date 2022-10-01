@@ -4,16 +4,16 @@ import { cloneDeep } from 'lodash';
 
 // Components
 import {
-  Autocomplete,
   Card,
   Loading,
   TeamButton,
   TitleContainer,
   TDropdownItem
 } from '@omegafox/components';
+import { ExtrasClosed } from './ExtrasClosed';
 
 import { QueryHandler } from 'services/queryHandler';
-import { ExtrasTeams } from './ExtrasTeams';
+import { ExtrasOpen } from './ExtrasOpen';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -28,19 +28,16 @@ import { extraBetsLoading, extraBetsSet } from 'store/bet/reducer';
 // Types
 import { ITeam } from 'store/team/types';
 import { TUser } from 'store/user/types';
+import { TExtraBets } from './types';
+import { TExtraBet } from 'store/bet/types';
+
+// Constants
+import { EXTRA_TYPES } from 'constants/extraTypes';
+import { dropdownList } from 'constants/mocks';
 
 // Styles
 import styles from './Extras.module.scss';
 import spinner from 'img/spinner.png';
-import { TExtraBet } from 'store/bet/types';
-import { dropdownList } from 'constants/mocks';
-
-enum EXTRA_TYPES {
-  CHAMPION,
-  OFFENSE,
-  DEFENSE,
-  STRIKER
-}
 
 const extrasInfo = [
   { id: EXTRA_TYPES.CHAMPION, title: 'Campeão', status: null },
@@ -59,12 +56,6 @@ const extrasInfo = [
   }
 ];
 
-type TExtraBets = {
-  champion: ITeam | null;
-  offense: ITeam | null;
-  defense: ITeam | null;
-  striker: TDropdownItem | null;
-};
 const emptyExtraBets: TExtraBets = {
   champion: null,
   offense: null,
@@ -75,10 +66,13 @@ const emptyExtraBets: TExtraBets = {
 export const Extras = () => {
   const [selectedExtra, setSelectedExtra] = useState<number | null>(null);
   const [updateExtraTrigger, updateExtraResult] = updateExtraBetMutation();
+  const [hasSeasonStarted, setHasSeasonStarted] = useState<boolean | null>(
+    null
+  );
 
-  const [extraBets, setExtraBets] = useState(emptyExtraBets);
-  const { data, error, isLoading, isUninitialized } = listAllBetsQuery();
-  const dispatch = useDispatch();
+  const seasonStart = useSelector(
+    (state: RootState) => state.match.seasonStart
+  ) as unknown as number;
 
   const teams = useSelector(
     (state: RootState) => state.team.teams
@@ -92,13 +86,33 @@ export const Extras = () => {
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
 
-  // const allExtraBets = useSelector(
-  //   (state: RootState) => state.bet.extraBets
-  // ) as unknown as TExtraBet[];
-
   const loggedUserExtraBets = useSelector(
     (state: RootState) => state.bet.loggedUserExtraBets
   ) as unknown as TExtraBet[];
+
+  let intervalId: NodeJS.Timer;
+  useEffect(() => {
+    if (!seasonStart) {
+      return;
+    }
+
+    intervalId = setInterval(function () {
+      const timestamp = parseInt((new Date().getTime() / 1000).toFixed(0));
+      setHasSeasonStarted(timestamp > seasonStart);
+    }, 1000); // 60 * 1000 milsec
+
+    return () => clearInterval(intervalId);
+  }, [seasonStart]);
+
+  useEffect(() => {
+    if (hasSeasonStarted) {
+      clearInterval(intervalId);
+    }
+  }, [hasSeasonStarted]);
+
+  const [extraBets, setExtraBets] = useState(emptyExtraBets);
+  const { data, error, isLoading, isUninitialized } = listAllBetsQuery();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(extraBetsLoading(isLoading));
@@ -117,9 +131,7 @@ export const Extras = () => {
       setExtraBets(emptyExtraBets);
     } else if (loggedUserExtraBets.length > 0) {
       loggedUserExtraBets.forEach((bet) => {
-        if (bet.idExtraType === 0) {
-          updatedExtraBets.champion = bet.team;
-        } else if (bet.idExtraType === EXTRA_TYPES.CHAMPION) {
+        if (bet.idExtraType === EXTRA_TYPES.CHAMPION) {
           updatedExtraBets.champion = bet.team;
         } else if (bet.idExtraType === EXTRA_TYPES.OFFENSE) {
           updatedExtraBets.offense = bet.team;
@@ -133,7 +145,7 @@ export const Extras = () => {
     }
   }, [loggedUserExtraBets]);
 
-  const onStrikerSelect = (player: TDropdownItem) => {
+  const handleStrikerSelect = (player: TDropdownItem) => {
     const updatedExtraBets = { ...extraBets, striker: player };
     updateExtraTrigger({
       betId: null,
@@ -236,30 +248,45 @@ export const Extras = () => {
   };
 
   const renderStatus = (extraType: number) => {
-    if (!isUninitialized && isLoading) {
+    if ((!isUninitialized && isLoading) || hasSeasonStarted === null) {
       return renderLoading();
     }
 
-    switch (extraType) {
-      case EXTRA_TYPES.CHAMPION:
-        return renderTeam(extraBets.champion);
-      case EXTRA_TYPES.OFFENSE:
-        return renderTeam(extraBets.offense);
-      case EXTRA_TYPES.DEFENSE:
-        return renderTeam(extraBets.defense);
-      case EXTRA_TYPES.STRIKER:
-        return renderPlayer(extraBets.striker);
-      default:
-        return null;
+    if (hasSeasonStarted) {
+      switch (extraType) {
+        case EXTRA_TYPES.CHAMPION:
+          return renderTeam(null);
+        case EXTRA_TYPES.OFFENSE:
+          return renderTeam(null);
+        case EXTRA_TYPES.DEFENSE:
+          return renderTeam(null);
+        case EXTRA_TYPES.STRIKER:
+          return renderPlayer(null);
+        default:
+          return null;
+      }
+    } else {
+      switch (extraType) {
+        case EXTRA_TYPES.CHAMPION:
+          return renderTeam(extraBets.champion);
+        case EXTRA_TYPES.OFFENSE:
+          return renderTeam(extraBets.offense);
+        case EXTRA_TYPES.DEFENSE:
+          return renderTeam(extraBets.defense);
+        case EXTRA_TYPES.STRIKER:
+          return renderPlayer(extraBets.striker);
+        default:
+          return null;
+      }
     }
   };
 
   return (
     <main className={styles.container}>
       {!loggedUser && (
-        <p className={styles.titleContainer}>
+        <div className={styles.titleContainer}>
           <TitleContainer text="Você precisa estar logado para ter acesso a essa seção." />
-        </p>
+        </div>
       )}
       {loggedUser && (
         <>
@@ -282,61 +309,20 @@ export const Extras = () => {
             </div>
           </div>
           <div className={styles.teamsContainer}>
-            {selectedExtra !== null && teamsLoading && (
-              <Loading image={spinner} />
+            {!hasSeasonStarted && (
+              <ExtrasOpen
+                champion={extraBets.champion}
+                defense={extraBets.defense}
+                dropdownList={dropdownList}
+                offense={extraBets.offense}
+                selectedExtra={selectedExtra}
+                teamsLoading={teamsLoading}
+                teams={teams}
+                onStrikerSelect={handleStrikerSelect}
+                onTeamClick={handleTeamClick}
+              />
             )}
-            {teams && selectedExtra === 0 && (
-              <>
-                <p className={styles.titleContainer}>
-                  <TitleContainer text="Campeão" />
-                </p>
-                <ExtrasTeams
-                  options={teams}
-                  isLoading={teamsLoading}
-                  selectedTeam={extraBets.champion}
-                  onClick={handleTeamClick}
-                />
-              </>
-            )}
-            {teams && selectedExtra === 1 && (
-              <>
-                <p className={styles.titleContainer}>
-                  <TitleContainer text="Melhor Ataque" />
-                </p>
-                <ExtrasTeams
-                  options={teams}
-                  isLoading={teamsLoading}
-                  selectedTeam={extraBets.offense}
-                  onClick={handleTeamClick}
-                />
-              </>
-            )}
-            {teams && selectedExtra === 2 && (
-              <>
-                <p className={styles.titleContainer}>
-                  <TitleContainer text="Melhor Defesa" />
-                </p>
-                <ExtrasTeams
-                  options={teams}
-                  isLoading={teamsLoading}
-                  selectedTeam={extraBets.defense}
-                  onClick={handleTeamClick}
-                />
-              </>
-            )}
-            {teams && selectedExtra === 3 && (
-              <>
-                <p className={styles.titleContainer}>
-                  <TitleContainer text="Artilheiro" />
-                </p>
-                <div>
-                  <Autocomplete
-                    dropdownList={dropdownList}
-                    onSelect={onStrikerSelect}
-                  />
-                </div>
-              </>
-            )}
+            {hasSeasonStarted && <ExtrasClosed selectedExtra={selectedExtra} />}
           </div>
         </>
       )}

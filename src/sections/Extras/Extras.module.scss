@@ -62,7 +62,8 @@
 }
 
 .teamsContainer {
-  @include flex-aligned(center, center);
+  @include flex-aligned(center, flex-start);
+  @include padded(vertical, l);
 
   flex-direction: row;
   flex-wrap: wrap;
@@ -81,6 +82,34 @@
 
 .titleContainer {
   @include aligned(center);
-  @include padded(horizontal, s);
+  @include padded(all, s);
   width: 100%;
+}
+
+.teamWithExtras {
+  @include marged(all, s2);
+
+  width: 210px;
+
+  &Mobile {
+    width: 160px;
+  }
+
+  .betsContainer {
+    @include marged(horizontal, s3);
+    @include padded(all, s);
+
+    @include bg-rgba-colored($color-grey3, 0.5);
+
+    border-radius: 16px;
+    border-top-left-radius: 0;
+
+    p {
+      @include marged(all, none);
+    }
+
+    .loggedUserBet {
+      font-weight: bold;
+    }
+  }
 }
