@@ -20,7 +20,7 @@
 
 .titleContainer {
   @include aligned(center);
-  @include padded(horizontal, s);
+  @include padded(all, s);
   width: 100%;
 }
 

@@ -115,7 +115,7 @@ export const Ranking = ({
     columns.push({
       id: 3,
       align: 'right',
-      flex: 1,
+      flex: 2,
       renderingFunction: () => <div>&nbsp;</div>
     });
   }

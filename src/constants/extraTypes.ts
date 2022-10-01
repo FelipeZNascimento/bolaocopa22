@@ -1,0 +1,6 @@
+export enum EXTRA_TYPES {
+  CHAMPION,
+  OFFENSE,
+  DEFENSE,
+  STRIKER
+}

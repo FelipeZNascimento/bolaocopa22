@@ -147,9 +147,9 @@ export const Bets = () => {
       <div className={leftSectionClass}>
         <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
         {!loggedUser && (
-          <p className={styles.titleContainer}>
+          <div className={styles.titleContainer}>
             <TitleContainer text="Você precisa estar logado para ter acesso a essa seção." />
-          </p>
+          </div>
         )}
         {!isLoading && loggedUser && renderMatches()}
         {isLoading && <Loading image={spinner} />}
