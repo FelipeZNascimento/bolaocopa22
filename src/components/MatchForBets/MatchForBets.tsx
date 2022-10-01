@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Match as MatchOmegafox,
@@ -12,12 +13,18 @@ import { IBetObject } from './types';
 // Store
 import { RootState } from 'store';
 import { useOnUpdateBetMutation } from 'store/bet/actions';
+
+// Types
 import { TMatch } from 'store/match/types';
 import { TUser } from 'store/user/types';
 
+// Styles and images
 import styles from './MatchForBets.module.scss';
 import { WEEKDAY } from 'constants/weekdays';
+
+// Constants and services
 import { getBetPoints } from 'services/betCalculator';
+import ROUTES from 'constants/routes';
 
 interface IMatchForBets {
   isEditable?: boolean;
@@ -37,6 +44,7 @@ export const MatchForBets = ({
   const [updateBetTrigger, updateBetResult] = useOnUpdateBetMutation();
 
   const { isLoading } = updateBetResult;
+  const navigate = useNavigate();
 
   const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
@@ -90,6 +98,10 @@ export const MatchForBets = ({
     onChange(betObject);
   };
 
+  const handleTeamClick = (teamId: number) => {
+    navigate({ pathname: `${ROUTES.TEAMS.url}/${teamId}` });
+  };
+
   const homeTeam: ITeamProps = {
     id: match.homeTeam.id,
     align: 'left',
@@ -135,6 +147,7 @@ export const MatchForBets = ({
           )}
           teams={[homeTeam, awayTeam]}
           onChange={handleScoreChange}
+          onTeamClick={handleTeamClick}
         />
       </div>
     </>

@@ -36,10 +36,10 @@ export const ROUTES = {
     text: 'Regras',
     url: '/regras'
   },
-  BLOG: {
+  TEAMS: {
     id: 7,
-    text: 'Blog',
-    url: '/blog'
+    text: 'Seleções',
+    url: '/selecoes'
   }
 };
 

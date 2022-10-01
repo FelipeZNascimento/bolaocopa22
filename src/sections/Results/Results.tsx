@@ -47,12 +47,10 @@ export const Results = () => {
 
   const dispatch = useDispatch();
 
-  const { data, error, isLoading, isFetching } = useOnListAllMatchesQuery(
-    null,
-    {
+  const { data, isLoading, isFetching, error } =
+    useOnListAllMatchesQuery(null, {
       pollingInterval: 10000
-    }
-  );
+    });
 
   useEffect(() => {
     const interval = setInterval(function () {
