@@ -5,6 +5,7 @@ import { Toast } from '@omegafox/components';
 
 import { RootState } from 'store';
 import { clearError } from 'store/error/reducer';
+import { TError } from 'store/base/types';
 
 export const ErrorToast = () => {
   const dispatch = useDispatch();
@@ -13,13 +14,9 @@ export const ErrorToast = () => {
     (state: RootState) => state.error.isError
   ) as unknown as boolean;
 
-  const status = useSelector(
-    (state: RootState) => state.error.status
-  ) as unknown as boolean;
-
-  const text = useSelector(
-    (state: RootState) => state.error.text
-  ) as unknown as string;
+  const errors: TError[] = useSelector(
+    (state: RootState) => state.error.errors
+  ) as unknown as TError[];
 
   if (!isError) {
     return null;
@@ -29,7 +26,14 @@ export const ErrorToast = () => {
     dispatch(clearError());
   };
 
-  return (
-    <Toast text={`${text} (${status})`} variant="error" onClose={onClose} />
-  );
+  const showError = errors.find((error) => error.showToast);
+  if (showError) {
+    <Toast
+      text={`${showError.message} (${showError.code})`}
+      variant="error"
+      onClose={onClose}
+    />;
+  }
+
+  return null;
 };

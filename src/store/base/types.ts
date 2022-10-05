@@ -6,6 +6,7 @@ import { ITeam } from 'store/team/types';
 export type TError = {
   code: string;
   message: string;
+  showToast: boolean;
 };
 
 interface IResult {

@@ -100,6 +100,11 @@ const emptyForm: TModalTextField[] = [
   }
 ];
 
+type TToastMessage = {
+  text: string;
+  isError: boolean;
+};
+
 export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   const [logoutTrigger, logoutResult] = useOnLogoutMutation();
   const [updateInfoTrigger, updateInfoResult] = useOnUpdateInfoMutation();
@@ -108,28 +113,49 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   const [form, setForm] = useState<TModalTextField[]>(cloneDeep(emptyForm));
   const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const [isError, setIsError] = useState<TError[]>([]);
+  const [toastMessage, setToastMessage] = useState<TToastMessage | null>(null);
 
   const loggedUser: TUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
 
+  const errors: TError[] = useSelector(
+    (state: RootState) => state.error.errors
+  ) as unknown as TError[];
+
   const isLoading = updateInfoResult.isLoading || updatePassResult.isLoading;
-  const isSuccess =
-    (!updateInfoResult.isUninitialized &&
-      !updateInfoResult.isLoading &&
-      updateInfoResult.isSuccess) ||
-    (!updatePassResult.isUninitialized &&
-      !updatePassResult.isLoading &&
-      updatePassResult.isSuccess);
+  const isSuccess = updateInfoResult.isSuccess;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (loggedUser) {
+    if (updatePassResult.isSuccess) {
+      setToastMessage({ text: 'Operação feita com sucesso', isError: false });
+    } else if (updatePassResult.isError) {
+      setToastMessage({ text: 'Erro na operação', isError: true });
+    }
+  }, [updatePassResult.isSuccess, updatePassResult.isError]);
+
+  useEffect(() => {
+    if (updateInfoResult.isSuccess && updateInfoResult.data) {
+      const queryData: TQuery = updateInfoResult.data;
+      dispatch(userLoggedIn(queryData.result.loggedUser));
+      setToastMessage({ text: 'Operação feita com sucesso', isError: false });
+    } else if (updateInfoResult.isError && errors.length > 0) {
+      let message = '';
+      errors.forEach(
+        (error) => (message += `${error.message} (${error.code}) `)
+      );
+
+      setToastMessage({ text: message, isError: true });
+    }
+  }, [updateInfoResult.isSuccess, updateInfoResult.isError]);
+
+  useEffect(() => {
+    if (loggedUser && isOpen) {
       fillFormWithUserDetails();
     }
-  }, [loggedUser]);
+  }, [loggedUser, isOpen]);
 
   useEffect(() => {
     if (logoutResult.isSuccess && !logoutResult.isLoading) {
@@ -141,32 +167,10 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
         dispatch(extraBetsUserLoggedOut());
         handleClose();
       } else {
-        setIsError(queryData.result.errors);
+        setToastMessage({ text: 'Erro na operação', isError: true });
       }
     }
-  }, [logoutResult]);
-
-  useEffect(() => {
-    if (updateInfoResult.isSuccess && !updateInfoResult.isLoading) {
-      const queryData: TQuery = updateInfoResult.data;
-
-      if (queryData.isSuccess) {
-        dispatch(userLoggedIn(queryData.result.loggedUser));
-      } else {
-        setIsError(queryData.result.errors);
-      }
-    }
-  }, [updateInfoResult]);
-
-  useEffect(() => {
-    if (updatePassResult.isSuccess && !updatePassResult.isLoading) {
-      const queryData: TQuery = updatePassResult.data;
-
-      if (!queryData.isSuccess) {
-        setIsError(queryData.result.errors);
-      }
-    }
-  }, [updatePassResult]);
+  }, [logoutResult.isSuccess, logoutResult.isLoading]);
 
   const fillFormWithUserDetails = () => {
     setForm(
@@ -217,7 +221,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsError([]);
+    setToastMessage(null);
     setIsDisabled(false);
 
     const formKey = e.target.name;
@@ -240,6 +244,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
     setIsDisabled(true);
     setIsChangePassword(false);
     setForm(cloneDeep(emptyForm));
+    setToastMessage(null);
 
     onClose();
   };
@@ -251,7 +256,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   const handleConfirm = () => {
     const isFormDisabled = !isFormValid();
     setIsDisabled(isFormDisabled);
-    setIsError([]);
+    setToastMessage(null);
 
     if (isFormDisabled || !loggedUser) {
       return;
@@ -271,6 +276,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
       const nickname = form.find((item) => item.key === 'nickname');
 
       updateInfoTrigger({
+        skipToast: true,
         id: loggedUser.id,
         name: name?.value || '',
         nickname: nickname?.value || ''
@@ -282,7 +288,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
     const renderPasswordInputs = !isChangePassword;
     setIsChangePassword(renderPasswordInputs);
     setIsDisabled(true);
-    setIsError([]);
+    setToastMessage(null);
     if (renderPasswordInputs) {
       fillFormWithUserDetails();
     }
@@ -306,8 +312,8 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   };
 
   const messageClass = classNames(styles.message, {
-    [styles.messageError]: isError.length > 0,
-    [styles.messageSuccess]: isSuccess && isError.length === 0
+    [styles.messageError]: toastMessage?.isError,
+    [styles.messageSuccess]: !toastMessage?.isError
   });
 
   return (
@@ -340,25 +346,9 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
               />
             );
           })}
-        <p className={messageClass}>
-          {isError.length > 0 && isError[0].message}&nbsp;
-          {isSuccess && isError.length === 0 && 'Operação feita com sucesso'}
-        </p>
-        <div className={styles.buttonContainer}>
-          <Button
-            icon={
-              <FontAwesomeIcon
-                icon={isChangePassword ? faUser : faKey}
-                size="lg"
-              />
-            }
-            isShadowed={false}
-            variant="primary"
-            onClick={handleChangeInputs}
-          >
-            {isChangePassword ? 'Alterar dados' : 'Alterar senha'}
-          </Button>
-        </div>
+        {toastMessage !== null && (
+          <p className={messageClass}>{toastMessage.text}</p>
+        )}
         <div className={styles.buttonContainer}>
           <Button
             icon={<FontAwesomeIcon icon={faCancel} size="lg" />}
@@ -377,6 +367,21 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
             onClick={handleConfirm}
           >
             Salvar
+          </Button>
+        </div>
+        <div className={styles.buttonContainer}>
+          <Button
+            icon={
+              <FontAwesomeIcon
+                icon={isChangePassword ? faUser : faKey}
+                size="lg"
+              />
+            }
+            isShadowed={false}
+            variant="primary"
+            onClick={handleChangeInputs}
+          >
+            {isChangePassword ? 'Alterar dados' : 'Alterar senha'}
           </Button>
         </div>
         &nbsp;
