@@ -15,7 +15,7 @@ export const rtkQueryErrorLogger: Middleware =
           setError({
             message: action.payload.data.result.errors[0].message,
             code: action.payload.data.result.errors[0].code,
-            showToast: !action.meta.arg.originalArgs.skipToast
+            showToast: action.meta.arg.originalArgs.skipToast ? false : true
           })
         );
 

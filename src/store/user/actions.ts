@@ -12,7 +12,10 @@ import { TQuery } from 'store/base/types';
 
 const extendedApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    onLogin: builder.mutation<TQuery, { email: string; password: string }>({
+    onLogin: builder.mutation<
+      TQuery,
+      { email: string; password: string; skipToast: boolean }
+    >({
       query: (arg) => {
         const { email, password } = arg;
         return {
@@ -28,7 +31,7 @@ const extendedApi = baseApi.injectEndpoints({
     }),
     onRegister: builder.mutation<
       TQuery,
-      { email: string; password: string; nickname: string }
+      { email: string; password: string; nickname: string; skipToast: boolean }
     >({
       query: (arg) => {
         const { email, password, nickname } = arg;

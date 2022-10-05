@@ -28,11 +28,13 @@ export const ErrorToast = () => {
 
   const showError = errors.find((error) => error.showToast);
   if (showError) {
-    <Toast
-      text={`${showError.message} (${showError.code})`}
-      variant="error"
-      onClose={onClose}
-    />;
+    return (
+      <Toast
+        text={`${showError.message} (${showError.code})`}
+        variant="error"
+        onClose={onClose}
+      />
+    );
   }
 
   return null;

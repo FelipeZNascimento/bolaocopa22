@@ -124,7 +124,6 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   ) as unknown as TError[];
 
   const isLoading = updateInfoResult.isLoading || updatePassResult.isLoading;
-  const isSuccess = updateInfoResult.isSuccess;
 
   const dispatch = useDispatch();
 
@@ -169,6 +168,8 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
       } else {
         setToastMessage({ text: 'Erro na operação', isError: true });
       }
+    } else if (logoutResult.isError) {
+      setToastMessage({ text: 'Erro na operação', isError: true });
     }
   }, [logoutResult.isSuccess, logoutResult.isLoading]);
 
