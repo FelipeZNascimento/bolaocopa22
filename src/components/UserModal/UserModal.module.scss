@@ -34,9 +34,13 @@
 }
 
 .message {
+  @include bg-rgba-colored($color-grey2, 0.5);
   @include aligned(center);
   @include font-sized(m);
   @include marged(top, zero);
+  @include padded(vertical, s);
+
+  border-radius: 16px;
 
   &Error {
     @include font-colored($color-qatar-red);

@@ -13,8 +13,9 @@ export const rtkQueryErrorLogger: Middleware =
       if (action.payload.data) {
         api.dispatch(
           setError({
-            text: action.payload.data.result.errors[0].message,
-            status: action.payload.data.result.errors[0].code
+            message: action.payload.data.result.errors[0].message,
+            code: action.payload.data.result.errors[0].code,
+            showToast: !action.meta.arg.originalArgs.skipToast
           })
         );
 
@@ -24,8 +25,8 @@ export const rtkQueryErrorLogger: Middleware =
       } else {
         api.dispatch(
           setError({
-            text: 'Erro inesperado. Reinicie a página.',
-            status: action.payload.error
+            message: 'Erro inesperado. Reinicie a página.',
+            code: action.payload.error
           })
         );
 

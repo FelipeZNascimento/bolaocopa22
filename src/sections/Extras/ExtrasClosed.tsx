@@ -1,7 +1,7 @@
 import React from 'react';
 import { isMobile } from 'react-device-detect';
 import { useSelector } from 'react-redux';
-import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 
 // Components
 import { TeamButton } from '@omegafox/components';
@@ -16,12 +16,15 @@ import { IExtrasClosed } from './types';
 
 // Constants
 import { EXTRA_TYPES } from 'constants/extraTypes';
+import ROUTES from 'constants/routes';
 
 // Styles
+import classNames from 'classnames';
 import styles from './Extras.module.scss';
 import { TUser } from 'store/user/types';
 
 export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
+  const navigate = useNavigate();
   const allExtraBets = useSelector(
     (state: RootState) => state.bet.extraBets
   ) as unknown as TExtraBet[];
@@ -29,6 +32,10 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
   const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
+
+  const teams = useSelector(
+    (state: RootState) => state.team.teams
+  ) as unknown as ITeam[];
 
   const allChampions = allExtraBets
     .filter((extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION)
@@ -58,6 +65,12 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
     [styles.teamWithExtrasMobile]: isMobile
   });
 
+  const handleTeamClick = (team: ITeam | null) => {
+    if (team !== null && teams && teams.find((item) => item.id === team.id)) {
+      navigate({ pathname: `${ROUTES.TEAMS.url}/${team.id}` });
+    }
+  };
+
   const renderTeam = (extraBet: TExtraBet, users: TUser[]) => {
     if (extraBet.team === null) {
       return;
@@ -68,9 +81,9 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
 
     return (
       <div className={teamClass} key={extraBet.team.id}>
-        <div>
+        <div onClick={() => handleTeamClick(extraBet.team)}>
           <TeamButton
-            isHoverable={false}
+            isHoverable
             isSelected={hasLoggedUserBet}
             colors={extraBet.team.colors}
             logo={`https://assets.omegafox.me/img/countries_crests/${extraBet.team.abbreviationEn.toLowerCase()}.png`}

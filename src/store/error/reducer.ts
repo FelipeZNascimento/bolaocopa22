@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { TError } from 'store/base/types';
 
 const initialState = {
   isError: false,
-  status: null,
-  text: ''
+  errors: [] as TError[]
 };
 
 export const errorSlice = createSlice({
@@ -12,13 +12,15 @@ export const errorSlice = createSlice({
   reducers: {
     setError: (state, action) => {
       state.isError = true;
-      state.status = action.payload.status;
-      state.text = action.payload.text;
+      state.errors.push({
+        code: action.payload.code,
+        message: action.payload.message,
+        showToast: action.payload.showToast
+      });
     },
     clearError: (state) => {
       state.isError = false;
-      state.status = null;
-      state.text = '';
+      state.errors = [];
     }
   }
 });

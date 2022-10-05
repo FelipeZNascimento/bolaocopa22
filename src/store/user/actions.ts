@@ -57,7 +57,7 @@ const extendedApi = baseApi.injectEndpoints({
     }),
     onUpdateInfo: builder.mutation<
       TQuery,
-      { id: number; name: string; nickname: string }
+      { id: number; name: string; nickname: string; skipToast: boolean }
     >({
       query: (arg) => {
         const { id, name, nickname } = arg;
