@@ -20,7 +20,7 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 // Store
 import { RootState } from 'store';
 import {
-  useOnListAllExtrasQuery as listAllBetsQuery,
+  useOnListAllExtrasMutation as listAllBetsMutation,
   useOnUpdateExtraBetMutation as updateExtraBetMutation
 } from 'store/bet/actions';
 import { extraBetsLoading, extraBetsSet } from 'store/bet/reducer';
@@ -64,11 +64,17 @@ const emptyExtraBets: TExtraBets = {
 };
 
 export const Extras = () => {
+  //useStates
   const [selectedExtra, setSelectedExtra] = useState<number | null>(null);
-  const [updateExtraTrigger, updateExtraResult] = updateExtraBetMutation();
   const [hasSeasonStarted, setHasSeasonStarted] = useState<boolean | null>(
     null
   );
+  const [extraBets, setExtraBets] = useState(emptyExtraBets);
+
+  // Queries and Mutations
+  const [updateExtraTrigger, updateExtraResult] = updateExtraBetMutation();
+  const [listAllBetsTrigger, listAllBetsResult] = listAllBetsMutation();
+  const dispatch = useDispatch();
 
   const seasonStart = useSelector(
     (state: RootState) => state.match.seasonStart
@@ -110,20 +116,30 @@ export const Extras = () => {
     }
   }, [hasSeasonStarted]);
 
-  const [extraBets, setExtraBets] = useState(emptyExtraBets);
-  const { data, error, isLoading, isUninitialized } = listAllBetsQuery();
-  const dispatch = useDispatch();
+  useEffect(() => {
+    listAllBetsTrigger();
+  }, []);
 
   useEffect(() => {
-    dispatch(extraBetsLoading(isLoading));
+    if (loggedUser) {
+      listAllBetsTrigger();
+    }
+  }, [loggedUser]);
 
-    if (!error && !isLoading && data) {
-      const result = QueryHandler(data);
+  useEffect(() => {
+    dispatch(extraBetsLoading(listAllBetsResult.isLoading));
+
+    if (
+      !listAllBetsResult.error &&
+      !listAllBetsResult.isLoading &&
+      listAllBetsResult.data
+    ) {
+      const result = QueryHandler(listAllBetsResult.data);
       if (result) {
         dispatch(extraBetsSet(result));
       }
     }
-  }, [data, isLoading]);
+  }, [listAllBetsResult.data, listAllBetsResult.isLoading]);
 
   useEffect(() => {
     const updatedExtraBets = cloneDeep(extraBets);
@@ -248,18 +264,33 @@ export const Extras = () => {
   };
 
   const renderStatus = (extraType: number) => {
-    if ((!isUninitialized && isLoading) || hasSeasonStarted === null) {
+    if (
+      (!listAllBetsResult.isUninitialized && listAllBetsResult.isLoading) ||
+      hasSeasonStarted === null
+    ) {
       return renderLoading();
     }
 
     if (hasSeasonStarted) {
       switch (extraType) {
         case EXTRA_TYPES.CHAMPION:
-          return renderTeam(null);
+          return renderTeam(
+            loggedUserExtraBets.find(
+              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION
+            )?.team || null
+          );
         case EXTRA_TYPES.OFFENSE:
-          return renderTeam(null);
+          return renderTeam(
+            loggedUserExtraBets.find(
+              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.OFFENSE
+            )?.team || null
+          );
         case EXTRA_TYPES.DEFENSE:
-          return renderTeam(null);
+          return renderTeam(
+            loggedUserExtraBets.find(
+              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.DEFENSE
+            )?.team || null
+          );
         case EXTRA_TYPES.STRIKER:
           return renderPlayer(null);
         default:

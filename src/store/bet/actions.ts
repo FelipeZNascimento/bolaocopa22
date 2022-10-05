@@ -67,7 +67,7 @@ const extendedApi = baseApi.injectEndpoints({
         };
       }
     }),
-    onListAllExtras: builder.query<TQuery, void>({
+    onListAllExtras: builder.mutation<TQuery, void>({
       query: () => {
         return {
           url: listAllExtraBetsEndpoint(),
@@ -85,5 +85,5 @@ const extendedApi = baseApi.injectEndpoints({
 export const {
   useOnUpdateBetMutation,
   useOnUpdateExtraBetMutation,
-  useOnListAllExtrasQuery
+  useOnListAllExtrasMutation
 } = extendedApi;
