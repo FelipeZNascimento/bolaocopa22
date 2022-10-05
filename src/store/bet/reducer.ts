@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  extraBets: null,
-  loggedUserExtraBets: null,
+  extraBets: [],
+  loggedUserExtraBets: [],
   betsLoading: false
 };
 
@@ -22,7 +22,7 @@ export const betSlice = createSlice({
       state.loggedUserExtraBets = action.payload.loggedUserExtraBets;
     },
     extraBetsUserLoggedOut: (state) => {
-      state.loggedUserExtraBets = null;
+      state.loggedUserExtraBets = [];
     }
   }
 });

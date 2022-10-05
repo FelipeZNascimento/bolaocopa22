@@ -28,27 +28,37 @@ interface ISingleTeam {
 }
 
 export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
-  const [frameIds, setFrameIds] = useState<string[]>([]);
+  const [frameId, setFrameId] = useState<string>('');
   const navigate = useNavigate();
+
+  (function (el) {
+    window.addEventListener('message', (event) => {
+      if (event.origin.startsWith('https://www.sofascore')) {
+        if (el && el.id === event.data.id) {
+          el.style.height = event.data.height + 'px';
+        }
+      }
+    });
+  })(document.getElementById('sofa-standings-embed-3954-41087'));
 
   useEffect(() => {
     if (singleTeam) {
       if (singleTeam.group === 'A') {
-        setFrameIds(['3954', '41087']);
+        setFrameId('3954');
       } else if (singleTeam.group === 'B') {
-        setFrameIds(['3955', '41087']);
+        setFrameId('3955');
       } else if (singleTeam.group === 'C') {
-        setFrameIds(['3956', '41087']);
+        setFrameId('3956');
       } else if (singleTeam.group === 'D') {
-        setFrameIds(['3957', '41087']);
+        setFrameId('3957');
       } else if (singleTeam.group === 'E') {
-        setFrameIds(['3958', '41087']);
+        setFrameId('3958');
       } else if (singleTeam.group === 'F') {
-        setFrameIds(['3959', '41087']);
+        setFrameId('3959');
       } else if (singleTeam.group === 'G') {
-        setFrameIds(['3960', '41087']);
+        setFrameId('3960');
       } else if (singleTeam.group === 'H') {
-        setFrameIds(['3961', '41087']);
+        setFrameId('3961');
       }
     }
   }, [singleTeam]);
@@ -160,17 +170,27 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
           />
         </div>
       </div>
-      {frameIds.length === 2 && (
+      {frameId && (
         <div className={contentContainerClass}>
           <div className={contentClass}>
             <iframe
-              id={`sofa-standings-embed-${frameIds[0]}-${frameIds[1]}`}
+              id={`sofa-standings-embed-${frameId}-41087`}
               width="100%"
-              height="269"
-              src={`https://www.sofascore.com/tournament/${frameIds[0]}/${frameIds[1]}/standings/tables/embed`}
+              height="330"
+              src={`https://www.sofascore.com/tournament/${frameId}/41087/standings/tables/embed`}
               frameBorder="0"
               scrolling="no"
             ></iframe>
+            <div>
+              Standings provided by{' '}
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href="https://www.sofascore.com/"
+              >
+                Sofascore
+              </a>
+            </div>
           </div>
         </div>
       )}

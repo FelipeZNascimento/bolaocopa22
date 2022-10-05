@@ -34,14 +34,20 @@
 
 .message {
   @include aligned(center);
+  @include bg-rgba-colored($color-grey2, 0.5);
   @include font-sized(m);
   @include marged(top, zero);
+  @include padded(vertical, s);
+
+  border-radius: 16px;
 
   &Error {
+    @extend .message;
     @include font-colored($color-qatar-red);
   }
 
   &Success {
+    @extend .message;
     @include font-colored($color-qatar-blue);
   }
 }

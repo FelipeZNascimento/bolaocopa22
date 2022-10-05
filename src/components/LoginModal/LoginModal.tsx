@@ -61,38 +61,78 @@ const emptyForm: TModalTextField[] = [
   }
 ];
 
+type TToastMessage = {
+  text: string;
+  isError: boolean;
+};
+
 export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
   // Mutation Triggers
   const [loginTrigger, loginResult] = useOnLoginMutation();
   const [registerTrigger, registerResult] = useOnRegisterMutation();
 
   // UseState
+  const [toastMessage, setToastMessage] = useState<TToastMessage | null>(null);
   const [form, setForm] = useState<TModalTextField[]>(cloneDeep(emptyForm));
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const [isError, setIsError] = useState<TError[]>([]);
   const [status, setStatus] = useState<'login' | 'register' | 'forgotPassword'>(
     'login'
   );
+  const [hasSeasonStarted, setHasSeasonStarted] = useState<boolean | null>(
+    null
+  );
 
   const dispatch = useDispatch();
+
+  const seasonStart = useSelector(
+    (state: RootState) => state.match.seasonStart
+  ) as unknown as number;
+
   const loginLoading = useSelector(
     (state: RootState) => state.user.loginLoading
   ) as boolean;
 
+  const errors: TError[] = useSelector(
+    (state: RootState) => state.error.errors
+  ) as unknown as TError[];
+
+  let intervalId: NodeJS.Timer;
+  useEffect(() => {
+    if (!seasonStart) {
+      return;
+    }
+
+    intervalId = setInterval(function () {
+      const timestamp = parseInt((new Date().getTime() / 1000).toFixed(0));
+      setHasSeasonStarted(timestamp > seasonStart);
+    }, 1000); // 60 * 1000 milsec
+
+    return () => clearInterval(intervalId);
+  }, [seasonStart]);
+
+  useEffect(() => {
+    if (hasSeasonStarted) {
+      clearInterval(intervalId);
+    }
+  }, [hasSeasonStarted]);
+
   useEffect(() => {
     dispatch(userLoginLoading(loginResult.isLoading));
 
-    if (loginResult.isSuccess && !loginResult.isLoading) {
+    if (loginResult.isSuccess && loginResult.data) {
       const queryData: TQuery = loginResult.data;
 
-      if (queryData.isSuccess) {
-        dispatch(userLoggedIn(queryData.result.loggedUser));
-        handleClose();
-      } else {
-        setIsError(queryData.result.errors);
-      }
+      dispatch(userLoggedIn(queryData.result.loggedUser));
+      handleClose();
+    } else if (loginResult.isError && errors.length > 0) {
+      let message = '';
+      errors.forEach(
+        (error) => (message += `${error.message} (${error.code}) `)
+      );
+
+      setToastMessage({ text: message, isError: true });
     }
-  }, [loginResult]);
+  }, [loginResult.isSuccess, loginResult.isError]);
 
   useEffect(() => {
     if (registerResult.isSuccess && !registerResult.isLoading) {
@@ -138,7 +178,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsError([]);
+    setToastMessage(null);
 
     const formKey = e.target.name;
     const formValue = e.target.value;
@@ -160,7 +200,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
     setForm(cloneDeep(emptyForm));
     setStatus('login');
     setIsDisabled(true);
-    setIsError([]);
+    setToastMessage(null);
     onClose();
   };
 
@@ -174,7 +214,8 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
 
     loginTrigger({
       email: email as string,
-      password: password as string
+      password: password as string,
+      skipToast: true
     });
   };
 
@@ -191,14 +232,15 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
     registerTrigger({
       email: email,
       password: password,
-      nickname: nickname
+      nickname: nickname,
+      skipToast: true
     });
   };
 
   const handleConfirm = () => {
     const isFormDisabled = !isFormValid();
     setIsDisabled(isFormDisabled);
-    setIsError([]);
+    setToastMessage(null);
 
     if (isFormDisabled) {
       return;
@@ -307,9 +349,9 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
               />
             );
           })}
-        <p className={styles.messageError}>
-          {isError.length > 0 && isError[0].message}&nbsp;
-        </p>
+        {toastMessage !== null && (
+          <p className={styles.messageError}>{toastMessage.text}</p>
+        )}
         <div className={styles.buttonContainer}>
           <Button isShadowed={false} variant="neutral" onClick={handleClose}>
             Cancelar
@@ -325,8 +367,10 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
           </Button>
         </div>
         <div className={styles.extraOptions}>
-          <a onClick={handleForgotPassword}>Esqueci a senha</a>
-          {status !== 'register' && (
+          {status !== 'forgotPassword' && (
+            <a onClick={handleForgotPassword}>Esqueci a senha</a>
+          )}
+          {!hasSeasonStarted && status !== 'register' && (
             <a onClick={() => handleRegister()}>Registre-se</a>
           )}
           {status !== 'login' && (

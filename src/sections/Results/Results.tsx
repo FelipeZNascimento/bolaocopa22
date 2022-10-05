@@ -47,10 +47,12 @@ export const Results = () => {
 
   const dispatch = useDispatch();
 
-  const { data, isLoading, isFetching, error } =
-    useOnListAllMatchesQuery(null, {
+  const { data, isLoading, isFetching, error } = useOnListAllMatchesQuery(
+    null,
+    {
       pollingInterval: 10000
-    });
+    }
+  );
 
   useEffect(() => {
     const interval = setInterval(function () {
@@ -103,7 +105,6 @@ export const Results = () => {
     let isDate: boolean;
 
     return matches.map((match) => {
-      let points: TBetValues | null = null;
       if (
         match.awayTeam.id === 0 ||
         match.homeTeam.id === 0 ||
@@ -111,12 +112,10 @@ export const Results = () => {
       ) {
         return null;
       }
-      const loggedUserBet: TBet | null = loggedUser
-        ? match.bets.find((bet) => bet.user.id === loggedUser.id) || null
-        : null;
 
-      if (loggedUserBet) {
-        points = getBetPoints(loggedUserBet, match);
+      let points: TBetValues | null = null;
+      if (match.loggedUserBets) {
+        points = getBetPoints(match.loggedUserBets, match);
       }
 
       const newDate = new Date(match.timestamp);
@@ -178,16 +177,16 @@ export const Results = () => {
       };
 
       const renderSingleBet = (bet: TBet, userBet = false) => {
-        const points = getBetPoints(bet, match);
+        const singleBetPoints = getBetPoints(bet, match);
         const betContainerClass = classNames(styles.singleBetContainer, {
           [styles.singleBetContainerUser]: userBet
         });
 
         const betClass = classNames({
-          [styles.singleBetGreen]: points === BET_VALUES.FULL,
-          [styles.singleBetBlue]: points === BET_VALUES.HALF,
-          [styles.singleBetLightBlue]: points === BET_VALUES.MINIMUN,
-          [styles.singleBetRed]: points === BET_VALUES.MISS
+          [styles.singleBetGreen]: singleBetPoints === BET_VALUES.FULL,
+          [styles.singleBetBlue]: singleBetPoints === BET_VALUES.HALF,
+          [styles.singleBetLightBlue]: singleBetPoints === BET_VALUES.MINIMUN,
+          [styles.singleBetRed]: singleBetPoints === BET_VALUES.MISS
         });
 
         return (
@@ -199,7 +198,7 @@ export const Results = () => {
               className={`${betClass} ${styles.singleBetScore}`}
             >{`${bet.goalsHome} x ${bet.goalsAway}`}</div>
             <div className={`${betClass} ${styles.singleBetPoints}`}>
-              {points} Pts.
+              {singleBetPoints} Pts.
             </div>
           </div>
         );
@@ -212,12 +211,12 @@ export const Results = () => {
         const matchBetsMiss: TBet[] = [];
 
         match.bets.forEach((bet) => {
-          const points = getBetPoints(bet, match);
-          if (points === BET_VALUES.FULL) {
+          const singleBetPoints = getBetPoints(bet, match);
+          if (singleBetPoints === BET_VALUES.FULL) {
             matchBetsFull.push(bet);
-          } else if (points === BET_VALUES.HALF) {
+          } else if (singleBetPoints === BET_VALUES.HALF) {
             matchBetsHalf.push(bet);
-          } else if (points === BET_VALUES.MINIMUN) {
+          } else if (singleBetPoints === BET_VALUES.MINIMUN) {
             matchBetsMinimun.push(bet);
           } else {
             matchBetsMiss.push(bet);
@@ -244,7 +243,8 @@ export const Results = () => {
               </div>
             )}
             <div className={styles.expandableStartedBets}>
-              {loggedUserBet && renderSingleBet(loggedUserBet, true)}
+              {match.loggedUserBets &&
+                renderSingleBet(match.loggedUserBets, true)}
               {matchBetsFull.map((bet) => {
                 return renderSingleBet(bet);
               })}
@@ -273,7 +273,7 @@ export const Results = () => {
             <Match
               isExpandable
               key={match.id}
-              betValue={points}
+              betValue={matchTimestamp < currentTimestamp ? points : null}
               id={match.id}
               isEditable={false}
               isHideClock={isMobile}
