@@ -1,7 +1,8 @@
 import { TMatch } from 'store/match/types';
-import { TUser, TUserRanking } from 'store/user/types';
+import { TUser } from 'store/user/types';
 import { TExtraBet } from 'store/bet/types';
 import { ITeam } from 'store/team/types';
+import { TUserRanking } from 'store/ranking/types';
 
 export type TError = {
   code: string;

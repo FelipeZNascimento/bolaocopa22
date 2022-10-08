@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
@@ -11,26 +11,18 @@ import { Ranking } from 'sections/index';
 // Store
 import { RootState } from 'store';
 import { TMatch } from 'store/match/types';
-import {
-  matchesLoading,
-  matchesSet,
-  matchesUpdated
-} from 'store/match/reducer';
+import { matchesUpdated } from 'store/match/reducer';
 import { TUser } from 'store/user/types';
-import { useOnListAllMatchesWithUserBetsMutation } from 'store/match/actions';
 
 // Styles and images
 import styles from './Bets.module.scss';
 import logo from 'img/logo_translucid10.png';
 import spinner from 'img/spinner.png';
 import { cloneDeep } from 'lodash';
-import { QueryHandler } from 'services/queryHandler';
 
 export const Bets = () => {
   const [selectedRound, setSelectedRound] = useState(1);
   const dispatch = useDispatch();
-  const [listAllMatchesTrigger, listAllMatchesResult] =
-    useOnListAllMatchesWithUserBetsMutation();
 
   const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
@@ -43,37 +35,6 @@ export const Bets = () => {
   const matches = useSelector(
     (state: RootState) => state.match.matches
   ) as unknown as TMatch[];
-
-  const isThereUserBets =
-    matches && matches.some((match) => match.loggedUserBets !== null);
-
-  const isLoading =
-    isMatchesLoading ||
-    listAllMatchesResult.isLoading ||
-    (loggedUser && listAllMatchesResult.isUninitialized && !isThereUserBets);
-
-  useEffect(() => {
-    if (
-      !isMatchesLoading &&
-      loggedUser &&
-      !isThereUserBets &&
-      listAllMatchesResult.isUninitialized
-    ) {
-      listAllMatchesTrigger();
-    }
-  }, [isMatchesLoading, matches, loggedUser]);
-
-  useEffect(() => {
-    dispatch(matchesLoading(listAllMatchesResult.isLoading));
-
-    if (listAllMatchesResult.isSuccess && !listAllMatchesResult.isLoading) {
-      const result = QueryHandler(listAllMatchesResult.data);
-
-      if (result) {
-        dispatch(matchesSet(result));
-      }
-    }
-  }, [listAllMatchesResult]);
 
   const containerClass = classNames(styles.container, {
     [styles.containerBrowser]: !isMobile,
@@ -132,7 +93,11 @@ export const Bets = () => {
       const matchTimestamp = Math.floor(newDate.getTime() / 1000);
       return (
         <MatchForBets
-          isEditable={loggedUser !== null && currentTimestamp < matchTimestamp}
+          isEditable={
+            loggedUser !== null &&
+            loggedUser.isActive &&
+            currentTimestamp < matchTimestamp
+          }
           key={match.id}
           match={match}
           shownDate={isDate ? shownDate : null}
@@ -151,8 +116,13 @@ export const Bets = () => {
             <TitleContainer text="Você precisa estar logado para ter acesso a essa seção." />
           </div>
         )}
-        {!isLoading && loggedUser && renderMatches()}
-        {isLoading && <Loading image={spinner} />}
+        {loggedUser && !loggedUser.isActive && (
+          <div className={styles.titleContainer}>
+            <TitleContainer text="As apostas serão liberadas após confirmação de pagamento." />
+          </div>
+        )}
+        {!isMatchesLoading && loggedUser && renderMatches()}
+        {isMatchesLoading && <Loading image={spinner} />}
       </div>
       {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>

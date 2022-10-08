@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ErrorToast, Navbar, Startup } from 'components/index';
+import { DataController, ErrorToast, Navbar, Startup } from 'components/index';
 import {
   Bets,
   Extras,
@@ -31,6 +31,7 @@ root.render(
     <Provider store={store}>
       <Router>
         <Startup>
+          <DataController />
           <Navbar />
           <Routes>
             <Route path={`${ROUTES.HOME.url}/*`} element={<Home />} />

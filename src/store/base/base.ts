@@ -1,11 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { TQuery } from './types';
-import {
-  apiBaseUrl,
-  config as configEndpoint,
-  listRanking as listRankingEndpoint
-} from 'services/endpoints';
+import { apiBaseUrl, config as configEndpoint } from 'services/endpoints';
 
 export const baseApi = createApi({
   reducerPath: 'bolaoApi',
@@ -20,17 +16,8 @@ export const baseApi = createApi({
       query: () => {
         return { url: configEndpoint(), credentials: 'include' };
       }
-    }),
-    getRanking: builder.query<TQuery, null>({
-      query: () => {
-        return { url: listRankingEndpoint(), credentials: 'include' };
-      }
     })
   })
 });
 
-export const {
-  useGetConfigQuery,
-  useUpdateConfigMutation,
-  useGetRankingQuery
-} = baseApi;
+export const { useGetConfigQuery, useUpdateConfigMutation } = baseApi;

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
+import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 
+// Components
 import {
   Loading,
   Ranking as Rank,
@@ -10,11 +12,18 @@ import {
   TRankingColumn,
   TRankingRow
 } from '@omegafox/components';
+
+// Store
+import { RootState } from 'store';
+
+// Types
+import { TRankingProps } from './types';
+import { TRankingResult } from 'store/ranking/types';
+
+// Style and images
 import styles from './Ranking.module.scss';
 import spinner from 'img/spinner.png';
 import logo from 'img/logo_translucid10.png';
-import { useGetRankingQuery } from 'store/base/base';
-import { TRankingProps } from './types';
 
 export const Ranking = ({
   backgroundImage = logo,
@@ -22,13 +31,17 @@ export const Ranking = ({
   isMinified = false
 }: TRankingProps) => {
   const [rows, setRows] = useState<TRankingRow[]>([]);
-  const { data, error, isLoading } = useGetRankingQuery(null, {
-    pollingInterval: 10000
-  });
+
+  const rankingResult = useSelector(
+    (state: RootState) => state.ranking.rankingResult
+  ) as unknown as TRankingResult;
+
+  const rankingLoading = useSelector(
+    (state: RootState) => state.ranking.rankingLoading
+  ) as unknown as boolean;
 
   useEffect(() => {
-    if (!isLoading && data && data.isSuccess) {
-      const rankingResult = data.result;
+    if (!rankingLoading && rankingResult) {
       const rankingRows = rankingResult.users.map((user) => {
         const positionClass = classNames({
           [styles.yellow]: user.position === 1,
@@ -83,7 +96,7 @@ export const Ranking = ({
 
       setRows(rankingRows);
     }
-  }, [data, isLoading, error]);
+  }, [rankingLoading, rankingResult]);
 
   const containerClass = classNames(styles.container, {
     [styles.containerBrowser]: !isMobile,
@@ -121,7 +134,7 @@ export const Ranking = ({
   }
 
   const renderRanking = () => {
-    if (isLoading) {
+    if (rankingLoading) {
       return <Loading image={spinner} />;
     }
 

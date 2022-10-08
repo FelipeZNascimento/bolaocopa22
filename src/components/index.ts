@@ -1,3 +1,4 @@
+export { DataController } from 'components/DataController/DataController';
 export { LoginModal } from 'components/LoginModal/LoginModal';
 export { UserModal } from 'components/UserModal/UserModal';
 export { MatchForBets } from 'components/MatchForBets/MatchForBets';

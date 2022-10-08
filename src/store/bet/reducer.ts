@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   extraBets: [],
   loggedUserExtraBets: [],
-  betsLoading: false
+  extraBetsLoading: false
 };
 
 export const betSlice = createSlice({
@@ -11,7 +11,7 @@ export const betSlice = createSlice({
   initialState: initialState,
   reducers: {
     extraBetsLoading: (state, action) => {
-      state.betsLoading = action.payload;
+      state.extraBetsLoading = action.payload;
     },
     extraBetsSet: (state, action) => {
       state.extraBets = action.payload.extraBets;
