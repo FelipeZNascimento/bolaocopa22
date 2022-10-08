@@ -1,7 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ErrorToast, Navbar, Startup } from 'components/index';
-import { Bets, Extras, Home, Ranking, Results, Teams } from 'sections/index';
+import {
+  Bets,
+  Extras,
+  ForgotPassword,
+  Home,
+  Ranking,
+  Results,
+  Teams
+} from 'sections/index';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -32,6 +40,10 @@ root.render(
             <Route path={`${ROUTES.EXTRAS.url}/*`} element={<Extras />} />
             <Route path={`${ROUTES.TEAMS.url}/`} element={<Teams />} />
             <Route path={`${ROUTES.TEAMS.url}/:teamId`} element={<Teams />} />
+            <Route
+              path={`${ROUTES.FORGOT_PASSWORD.url}/:token/:email`}
+              element={<ForgotPassword />}
+            />
             <Route path={'/'} element={<Home />} />
             <Route path={'*'} element={<Home />} />
             {/* '*' path goes for 404 errors on the page */}

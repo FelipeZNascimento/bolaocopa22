@@ -3,7 +3,7 @@ import { Button, Loading, Modal, TextField } from '@omegafox/components';
 import { cloneDeep } from 'lodash';
 
 import { validateEmail } from 'services/helpers';
-import { TModalTextField, IModalProps } from 'components/types';
+import { TTextField, IModalProps, TToastMessage } from 'components/types';
 import styles from './LoginModal.module.scss';
 import logo from 'img/spinner.png';
 
@@ -11,12 +11,17 @@ import logo from 'img/spinner.png';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Store
-import { useOnLoginMutation, useOnRegisterMutation } from 'store/user/actions';
+import {
+  useOnForgotPasswordMutation,
+  useOnLoginMutation,
+  useOnRegisterMutation
+} from 'store/user/actions';
 import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
 import { TError, TQuery } from 'store/base/types';
 import type { RootState } from 'store/index';
+import classNames from 'classnames';
 
-const emptyForm: TModalTextField[] = [
+const emptyForm: TTextField[] = [
   {
     isValid: true,
     isVisible: true,
@@ -61,19 +66,15 @@ const emptyForm: TModalTextField[] = [
   }
 ];
 
-type TToastMessage = {
-  text: string;
-  isError: boolean;
-};
-
 export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
   // Mutation Triggers
   const [loginTrigger, loginResult] = useOnLoginMutation();
   const [registerTrigger, registerResult] = useOnRegisterMutation();
+  const [forgotPassTrigger, forgotPassResult] = useOnForgotPasswordMutation();
 
   // UseState
   const [toastMessage, setToastMessage] = useState<TToastMessage | null>(null);
-  const [form, setForm] = useState<TModalTextField[]>(cloneDeep(emptyForm));
+  const [form, setForm] = useState<TTextField[]>(cloneDeep(emptyForm));
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [status, setStatus] = useState<'login' | 'register' | 'forgotPassword'>(
     'login'
@@ -205,11 +206,9 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
   };
 
   const onLogin = () => {
-    const email = form.find(
-      (item: TModalTextField) => item.key === 'email'
-    )?.value;
+    const email = form.find((item: TTextField) => item.key === 'email')?.value;
     const password = form.find(
-      (item: TModalTextField) => item.key === 'password'
+      (item: TTextField) => item.key === 'password'
     )?.value;
 
     loginTrigger({
@@ -220,20 +219,29 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
   };
 
   const onRegister = () => {
-    const email = form.find((item: TModalTextField) => item.key === 'email')
+    const email = form.find((item: TTextField) => item.key === 'email')
       ?.value as string;
-    const password = form.find(
-      (item: TModalTextField) => item.key === 'password'
-    )?.value as string;
-    const nickname = form.find(
-      (item: TModalTextField) => item.key === 'nickname'
-    )?.value as string;
+    const password = form.find((item: TTextField) => item.key === 'password')
+      ?.value as string;
+    const nickname = form.find((item: TTextField) => item.key === 'nickname')
+      ?.value as string;
 
     registerTrigger({
       email: email,
       password: password,
       nickname: nickname,
       skipToast: true
+    });
+  };
+
+  const onForgotPassword = () => {
+    const email = form.find((item: TTextField) => item.key === 'email')
+      ?.value as string;
+
+    forgotPassTrigger({ email: email, skipToast: true });
+    setToastMessage({
+      text: 'Enviamos um e-mail com instruções para configurar sua nova senha.',
+      isError: false
     });
   };
 
@@ -251,7 +259,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
     } else if (status === 'register') {
       onRegister();
     } else if (status === 'forgotPassword') {
-      console.log('forgotPassword');
+      onForgotPassword();
     }
   };
 
@@ -320,6 +328,11 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
     }
   };
 
+  const messageClass = classNames(styles.message, {
+    [styles.messageError]: toastMessage?.isError,
+    [styles.messageSuccess]: !toastMessage?.isError
+  });
+
   return (
     <>
       <Modal
@@ -350,7 +363,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
             );
           })}
         {toastMessage !== null && (
-          <p className={styles.messageError}>{toastMessage.text}</p>
+          <p className={messageClass}>{toastMessage.text}</p>
         )}
         <div className={styles.buttonContainer}>
           <Button isShadowed={false} variant="neutral" onClick={handleClose}>

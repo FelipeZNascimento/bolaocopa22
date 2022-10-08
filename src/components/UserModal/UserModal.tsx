@@ -13,7 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { Button, Loading, Modal, TextField } from '@omegafox/components';
-import { TModalTextField, IModalProps } from 'components/types';
+import { TTextField, IModalProps } from 'components/types';
 
 // Redux
 import type { RootState } from 'store/index';
@@ -34,7 +34,7 @@ import styles from './UserModal.module.scss';
 import logo from 'img/spinner.png';
 import classNames from 'classnames';
 
-const emptyForm: TModalTextField[] = [
+const emptyForm: TTextField[] = [
   {
     isDisabled: true,
     isValid: true,
@@ -110,7 +110,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
   const [updateInfoTrigger, updateInfoResult] = useOnUpdateInfoMutation();
   const [updatePassTrigger, updatePassResult] = useOnUpdatePassMutation();
 
-  const [form, setForm] = useState<TModalTextField[]>(cloneDeep(emptyForm));
+  const [form, setForm] = useState<TTextField[]>(cloneDeep(emptyForm));
   const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [toastMessage, setToastMessage] = useState<TToastMessage | null>(null);

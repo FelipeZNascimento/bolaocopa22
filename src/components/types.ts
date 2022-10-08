@@ -1,4 +1,4 @@
-export type TModalTextField = {
+export type TTextField = {
   description?: string;
   isDisabled?: boolean;
   isValid: boolean;
@@ -14,3 +14,8 @@ export interface IModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+export type TToastMessage = {
+  text: string;
+  isError: boolean;
+};
