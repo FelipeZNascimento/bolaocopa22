@@ -8,11 +8,3 @@ export type TUser = {
   isActive: boolean;
   lastTimestamp: number;
 };
-
-export type TUserRanking = TUser & {
-  position: number;
-  points: number;
-  full: number;
-  half: number;
-  minimun: number;
-};

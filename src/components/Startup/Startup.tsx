@@ -4,27 +4,35 @@ import { useDispatch } from 'react-redux';
 // Store
 import { useGetConfigQuery } from 'store/base/base';
 import { userLoggedIn, userLoginLoading } from 'store/user/reducer';
-import { IStartup } from './types';
 import { QueryHandler } from 'services/queryHandler';
-import { teamsSet } from 'store/team/reducer';
+import { teamsLoading, teamsSet } from 'store/team/reducer';
 import { seasonStartSet } from 'store/match/reducer';
 
+// Types
+import { IStartup } from './types';
+
 export const Startup = ({ children }: IStartup) => {
-  const { data, error, isLoading } = useGetConfigQuery();
+  const useGetConfigResult = useGetConfigQuery();
   const dispatch = useDispatch();
 
+  // Default config
   useEffect(() => {
-    dispatch(userLoginLoading(isLoading));
+    dispatch(userLoginLoading(useGetConfigResult.isLoading));
+    dispatch(teamsLoading(useGetConfigResult.isLoading));
 
-    if (!error && !isLoading && data) {
-      const result = QueryHandler(data);
+    if (
+      !useGetConfigResult.error &&
+      !useGetConfigResult.isLoading &&
+      useGetConfigResult.data
+    ) {
+      const result = QueryHandler(useGetConfigResult.data);
       if (result) {
         dispatch(userLoggedIn(result.loggedUser));
         dispatch(teamsSet(result.teams));
         dispatch(seasonStartSet(result.seasonStart));
       }
     }
-  }, [data, isLoading]);
+  }, [useGetConfigResult.data, useGetConfigResult.isLoading]);
 
   return <>{children}</>;
 };

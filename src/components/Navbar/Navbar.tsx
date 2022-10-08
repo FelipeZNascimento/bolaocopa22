@@ -55,9 +55,11 @@ export const Navbar = () => {
       }
 
       if (hash.includes('#entrar')) {
-        setIsLoginModalOpen(true);
-      } else {
-        setIsLoginModalOpen(false);
+        if (loggedUser) {
+          setIsUserModalOpen(true);
+        } else {
+          setIsLoginModalOpen(true);
+        }
       }
     }
   }, [hash, pathname]);

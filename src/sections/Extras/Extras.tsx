@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 
 // Components
@@ -12,7 +12,6 @@ import {
 } from '@omegafox/components';
 import { ExtrasClosed } from './ExtrasClosed';
 
-import { QueryHandler } from 'services/queryHandler';
 import { ExtrasOpen } from './ExtrasOpen';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
@@ -20,10 +19,8 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 // Store
 import { RootState } from 'store';
 import {
-  useOnListAllExtrasMutation as listAllBetsMutation,
   useOnUpdateExtraBetMutation as updateExtraBetMutation
 } from 'store/bet/actions';
-import { extraBetsLoading, extraBetsSet } from 'store/bet/reducer';
 
 // Types
 import { ITeam } from 'store/team/types';
@@ -73,8 +70,6 @@ export const Extras = () => {
 
   // Queries and Mutations
   const [updateExtraTrigger, updateExtraResult] = updateExtraBetMutation();
-  const [listAllBetsTrigger, listAllBetsResult] = listAllBetsMutation();
-  const dispatch = useDispatch();
 
   const seasonStart = useSelector(
     (state: RootState) => state.match.seasonStart
@@ -96,6 +91,10 @@ export const Extras = () => {
     (state: RootState) => state.bet.loggedUserExtraBets
   ) as unknown as TExtraBet[];
 
+  const extraBetsLoading = useSelector(
+    (state: RootState) => state.bet.extraBetsLoading
+  ) as unknown as TExtraBet[];
+
   let intervalId: NodeJS.Timer;
   useEffect(() => {
     if (!seasonStart) {
@@ -115,31 +114,6 @@ export const Extras = () => {
       clearInterval(intervalId);
     }
   }, [hasSeasonStarted]);
-
-  useEffect(() => {
-    listAllBetsTrigger();
-  }, []);
-
-  useEffect(() => {
-    if (loggedUser) {
-      listAllBetsTrigger();
-    }
-  }, [loggedUser]);
-
-  useEffect(() => {
-    dispatch(extraBetsLoading(listAllBetsResult.isLoading));
-
-    if (
-      !listAllBetsResult.error &&
-      !listAllBetsResult.isLoading &&
-      listAllBetsResult.data
-    ) {
-      const result = QueryHandler(listAllBetsResult.data);
-      if (result) {
-        dispatch(extraBetsSet(result));
-      }
-    }
-  }, [listAllBetsResult.data, listAllBetsResult.isLoading]);
 
   useEffect(() => {
     const updatedExtraBets = cloneDeep(extraBets);
@@ -264,10 +238,7 @@ export const Extras = () => {
   };
 
   const renderStatus = (extraType: number) => {
-    if (
-      (!listAllBetsResult.isUninitialized && listAllBetsResult.isLoading) ||
-      hasSeasonStarted === null
-    ) {
+    if (extraBetsLoading || hasSeasonStarted === null) {
       return renderLoading();
     }
 
@@ -340,7 +311,13 @@ export const Extras = () => {
             </div>
           </div>
           <div className={styles.teamsContainer}>
-            {!hasSeasonStarted && (
+            {!hasSeasonStarted && !loggedUser.isActive && (
+              <div className={styles.titleContainer}>
+                <TitleContainer text="As apostas serão liberadas após confirmação de pagamento." />
+              </div>
+            )}
+
+            {!hasSeasonStarted && loggedUser.isActive && (
               <ExtrasOpen
                 champion={extraBets.champion}
                 defense={extraBets.defense}

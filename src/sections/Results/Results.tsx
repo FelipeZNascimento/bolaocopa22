@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
-import { QueryHandler } from 'services/queryHandler';
 import { getBetPoints } from 'services/betCalculator';
 
 // Components
@@ -19,8 +18,6 @@ import { Ranking } from 'sections/index';
 
 // Store
 import { RootState } from 'store';
-import { useOnListAllMatchesQuery } from 'store/match/actions';
-import { matchesSet } from 'store/match/reducer';
 import { TMatch } from 'store/match/types';
 import { TBet } from 'store/bet/types';
 import { TUser } from 'store/user/types';
@@ -42,16 +39,8 @@ export const BET_VALUES: TBET_VALUES = {
 
 export const Results = () => {
   const [selectedRound, setSelectedRound] = useState(1);
-  const [needsToUpdateMatches, setNeedsToUpdateMatches] = useState(false);
-  const [currentTimestamp, setCurrentTimestamp] = useState(0);
-
-  const dispatch = useDispatch();
-
-  const { data, isLoading, isFetching, error } = useOnListAllMatchesQuery(
-    null,
-    {
-      pollingInterval: 10000
-    }
+  const [currentTimestamp, setCurrentTimestamp] = useState(
+    parseInt((new Date().getTime() / 1000).toFixed(0))
   );
 
   useEffect(() => {
@@ -64,22 +53,12 @@ export const Results = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (isFetching) {
-      setNeedsToUpdateMatches(true);
-    }
-  }, [isFetching]);
-
-  useEffect(() => {
-    if (!isLoading && !error && data && needsToUpdateMatches) {
-      setNeedsToUpdateMatches(false);
-      const result = QueryHandler(data);
-      dispatch(matchesSet(result));
-    }
-  }, [data, isLoading]);
-
   const matches = useSelector(
     (state: RootState) => state.match.matches
+  ) as unknown as TMatch[];
+
+  const isMatchesLoading = useSelector(
+    (state: RootState) => state.match.matchesLoading
   ) as unknown as TMatch[];
 
   const loggedUser = useSelector(
@@ -196,7 +175,7 @@ export const Results = () => {
             </div>
             <div
               className={`${betClass} ${styles.singleBetScore}`}
-            >{`${bet.goalsHome} x ${bet.goalsAway}`}</div>
+            >{`${bet.goalsHome || 'x'} - ${bet.goalsAway || 'x'}`}</div>
             <div className={`${betClass} ${styles.singleBetPoints}`}>
               {singleBetPoints} Pts.
             </div>
@@ -303,8 +282,8 @@ export const Results = () => {
     <main className={containerClass}>
       <div className={leftSectionClass}>
         <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
-        {!isLoading && renderMatches()}
-        {isLoading && <Loading image={spinner} />}
+        {!isMatchesLoading && renderMatches()}
+        {isMatchesLoading && <Loading image={spinner} />}
       </div>
       {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>
