@@ -1,4 +1,4 @@
-name: 🔨 Build & 🧪 Test
+name: 🔨 Build & 🧪 Test (PROD)
 on:
   push:
     branches: [master]
