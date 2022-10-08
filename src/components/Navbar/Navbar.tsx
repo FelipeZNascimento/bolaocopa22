@@ -53,6 +53,12 @@ export const Navbar = () => {
       if (currentPath) {
         setSelectedNavId(currentPath.id);
       }
+
+      if (hash.includes('#entrar')) {
+        setIsLoginModalOpen(true);
+      } else {
+        setIsLoginModalOpen(false);
+      }
     }
   }, [hash, pathname]);
 
@@ -108,8 +114,7 @@ export const Navbar = () => {
         variant="primary"
         onClick={handleModalOpen}
       >
-        {renderStatusBadge()}&nbsp;
-        Entrar
+        {renderStatusBadge()}&nbsp; Entrar
       </Button>
     );
   };

@@ -6,7 +6,9 @@ import {
   logout as logoutEndpoint,
   register as registerEndpoint,
   updateInfo as updateInfoEndpoint,
-  updatePass as updatePassEndpoint
+  updatePass as updatePassEndpoint,
+  forgotPassword as forgotPasswordEndpoint,
+  recoverPassword as recoverPasswordEndpoint
 } from 'services/endpoints';
 import { TQuery } from 'store/base/types';
 
@@ -99,14 +101,53 @@ const extendedApi = baseApi.injectEndpoints({
           credentials: 'include'
         };
       }
+    }),
+    onForgotPassword: builder.mutation<
+      TQuery,
+      { email: string; skipToast: boolean }
+    >({
+      query: (arg) => {
+        const { email } = arg;
+        return {
+          url: forgotPasswordEndpoint(email),
+          method: 'get',
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          credentials: 'include'
+        };
+      }
+    }),
+    onUpdatePassToken: builder.mutation<
+      TQuery,
+      { email: string; token: string; newPassword: string, skipToast: boolean }
+    >({
+      query: (arg) => {
+        const { email, token, newPassword } = arg;
+        return {
+          url: recoverPasswordEndpoint(),
+          method: 'post',
+          body: {
+            email,
+            token,
+            newPassword: sha256(newPassword).toString()
+          },
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          credentials: 'include'
+        };
+      }
     })
   })
 });
 
 export const {
+  useOnForgotPasswordMutation,
   useOnLoginMutation,
   useOnLogoutMutation,
   useOnRegisterMutation,
   useOnUpdateInfoMutation,
-  useOnUpdatePassMutation
+  useOnUpdatePassMutation,
+  useOnUpdatePassTokenMutation
 } = extendedApi;

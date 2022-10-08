@@ -9,6 +9,9 @@ export const login = () => '/user/login';
 export const logout = () => '/user/logout';
 export const updateInfo = () => '/user/updateInfo';
 export const updatePass = () => '/user/updatePassword';
+export const forgotPassword = (email: string) =>
+  `/user/forgotPassword?email=${email}`;
+export const recoverPassword = () => '/user/recoverPassword';
 
 // Match
 export const listAllMatches = () => '/match';

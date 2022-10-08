@@ -2,44 +2,58 @@ export const ROUTES = {
   HOME: {
     id: 0,
     text: 'Início',
-    url: '/inicio'
+    url: '/inicio',
+    isHidden: false
   },
   RESULTS: {
     id: 1,
     text: 'Resultados',
-    url: '/resultados'
+    url: '/resultados',
+    isHidden: false
   },
   BETS: {
     id: 2,
     text: 'Apostar',
     url: '/apostar',
-    withCredentials: true
+    withCredentials: true,
+    isHidden: false
   },
   EXTRAS: {
     id: 3,
     text: 'Extras',
     url: '/extras',
-    withCredentials: true
+    withCredentials: true,
+    isHidden: false
   },
   RANKING: {
     id: 4,
     text: 'Ranking',
-    url: '/ranking'
+    url: '/ranking',
+    isHidden: false
   },
   PRIZES: {
     id: 5,
     text: 'Prêmios',
-    url: '/premios'
+    url: '/premios',
+    isHidden: false
   },
   RULES: {
     id: 6,
     text: 'Regras',
-    url: '/regras'
+    url: '/regras',
+    isHidden: false
   },
   TEAMS: {
     id: 7,
     text: 'Seleções',
-    url: '/selecoes'
+    url: '/selecoes',
+    isHidden: false
+  },
+  FORGOT_PASSWORD: {
+    id: 8,
+    text: 'Senha',
+    url: '/forgotPassword',
+    isHidden: true
   }
 };
 
