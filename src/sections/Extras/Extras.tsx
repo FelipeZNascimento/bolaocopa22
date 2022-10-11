@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
+import { isMobile } from 'react-device-detect';
+import classNames from 'classnames';
 
 // Components
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import {
   Card,
   Loading,
@@ -11,16 +15,12 @@ import {
   TDropdownItem
 } from '@omegafox/components';
 import { ExtrasClosed } from './ExtrasClosed';
-
 import { ExtrasOpen } from './ExtrasOpen';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 // Store
 import { RootState } from 'store';
-import {
-  useOnUpdateExtraBetMutation as updateExtraBetMutation
-} from 'store/bet/actions';
+import { useOnUpdateExtraBetMutation as updateExtraBetMutation } from 'store/bet/actions';
+import { extraBetsUpdated } from 'store/bet/reducer';
 
 // Types
 import { ITeam } from 'store/team/types';
@@ -70,6 +70,8 @@ export const Extras = () => {
 
   // Queries and Mutations
   const [updateExtraTrigger, updateExtraResult] = updateExtraBetMutation();
+
+  const dispatch = useDispatch();
 
   const seasonStart = useSelector(
     (state: RootState) => state.match.seasonStart
@@ -135,6 +137,31 @@ export const Extras = () => {
     }
   }, [loggedUserExtraBets]);
 
+  const updateStoreWithNewBets = (idExtraType: number, id: number) => {
+    const updatedExtraBets = cloneDeep(loggedUserExtraBets).map((item) => {
+      if (item.idExtraType === idExtraType) {
+        if (idExtraType === EXTRA_TYPES.STRIKER) {
+          return {
+            ...item,
+            idPlayer: id
+          };
+        }
+
+        const updatedTeam = teams.find((team) => team.id === id);
+
+        return {
+          ...item,
+          idTeam: id,
+          team: updatedTeam
+        };
+      }
+
+      return item;
+    });
+
+    dispatch(extraBetsUpdated(updatedExtraBets));
+  };
+
   const handleStrikerSelect = (player: TDropdownItem) => {
     const updatedExtraBets = { ...extraBets, striker: player };
     updateExtraTrigger({
@@ -146,6 +173,7 @@ export const Extras = () => {
     });
 
     setExtraBets(updatedExtraBets);
+    updateStoreWithNewBets(EXTRA_TYPES.CHAMPION, player.id);
   };
 
   const handleTeamClick = (team: ITeam) => {
@@ -161,6 +189,7 @@ export const Extras = () => {
         });
 
         setExtraBets(updatedExtraBets);
+        updateStoreWithNewBets(EXTRA_TYPES.CHAMPION, team.id);
         break;
       }
       case EXTRA_TYPES.OFFENSE: {
@@ -174,6 +203,7 @@ export const Extras = () => {
         });
 
         setExtraBets(updatedExtraBets);
+        updateStoreWithNewBets(EXTRA_TYPES.OFFENSE, team.id);
         break;
       }
       case EXTRA_TYPES.DEFENSE: {
@@ -187,6 +217,7 @@ export const Extras = () => {
         });
 
         setExtraBets(updatedExtraBets);
+        updateStoreWithNewBets(EXTRA_TYPES.DEFENSE, team.id);
         break;
       }
     }
@@ -283,6 +314,11 @@ export const Extras = () => {
     }
   };
 
+  const teamClass = classNames(styles.teamsContainer, {
+    [styles.teamsContainerMobile]: isMobile,
+    [styles.teamsContainerDesktop]: !isMobile,
+  });
+
   return (
     <main className={styles.container}>
       {!loggedUser && (
@@ -310,7 +346,7 @@ export const Extras = () => {
               })}
             </div>
           </div>
-          <div className={styles.teamsContainer}>
+          <div className={teamClass}>
             {!hasSeasonStarted && !loggedUser.isActive && (
               <div className={styles.titleContainer}>
                 <TitleContainer text="As apostas serão liberadas após confirmação de pagamento." />

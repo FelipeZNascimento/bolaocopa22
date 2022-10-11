@@ -3,6 +3,7 @@ import { baseApi } from 'store/base/base';
 import { betSlice } from './bet/reducer';
 import { errorSlice } from './error/reducer';
 import { matchSlice } from './match/reducer';
+import { newsSlice } from './news/reducer';
 import { rankingSlice } from './ranking/reducer';
 import { teamSlice } from './team/reducer';
 import { userSlice } from 'store/user/reducer';
@@ -14,6 +15,7 @@ const store = configureStore({
     bet: betSlice.reducer,
     error: errorSlice.reducer,
     match: matchSlice.reducer,
+    news: newsSlice.reducer,
     ranking: rankingSlice.reducer,
     team: teamSlice.reducer,
     user: userSlice.reducer

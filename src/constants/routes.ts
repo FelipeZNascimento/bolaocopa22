@@ -37,11 +37,11 @@ export const ROUTES = {
     url: '/premios',
     isHidden: false
   },
-  RULES: {
+  GROUPS: {
     id: 6,
-    text: 'Regras',
-    url: '/regras',
-    isHidden: false
+    text: 'Grupos',
+    url: '/grupos',
+    isHidden: true
   },
   TEAMS: {
     id: 7,

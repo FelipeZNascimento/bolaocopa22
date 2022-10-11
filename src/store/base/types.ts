@@ -3,6 +3,7 @@ import { TUser } from 'store/user/types';
 import { TExtraBet } from 'store/bet/types';
 import { ITeam } from 'store/team/types';
 import { TUserRanking } from 'store/ranking/types';
+import { TNews } from 'store/news/types';
 
 export type TError = {
   code: string;
@@ -20,6 +21,7 @@ interface IResult {
   teams: ITeam[];
   round: number;
   users: TUserRanking[];
+  news: TNews[];
 }
 
 export type TQuery = {

@@ -18,8 +18,7 @@ export const betSlice = createSlice({
       state.loggedUserExtraBets = action.payload.loggedUserExtraBets;
     },
     extraBetsUpdated: (state, action) => {
-      state.extraBets = action.payload.extraBets;
-      state.loggedUserExtraBets = action.payload.loggedUserExtraBets;
+      state.loggedUserExtraBets = action.payload;
     },
     extraBetsUserLoggedOut: (state) => {
       state.loggedUserExtraBets = [];

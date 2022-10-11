@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faChevronRight,
-  faClose
+  faClose,
+  faTableList
 } from '@fortawesome/free-solid-svg-icons';
 
 // Store
@@ -39,7 +40,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
         }
       }
     });
-  })(document.getElementById('sofa-standings-embed-3954-41087'));
+  })(document.getElementById(`sofa-standings-embed-${frameId}-41087`));
 
   useEffect(() => {
     if (singleTeam) {
@@ -72,8 +73,14 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
   };
 
   const handleTeamClick = (teamId: number) => {
-    if (teams.find((team) => team.id === teamId)) {
-      navigate({ pathname: `${ROUTES.TEAMS.url}/${teamId}` });
+    const selectedTeam = teams.find((team) => team.id === teamId);
+    if (selectedTeam) {
+      navigate({
+        pathname: `${ROUTES.TEAMS.url}/${selectedTeam.name
+          .replace(/\s+/g, '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')}`
+      });
     }
   };
 
@@ -99,7 +106,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
       <div className={singleTeamHeaderClass}>
         <div className={styles.button}>
           <Button
-            icon={<FontAwesomeIcon icon={faClose} size="lg" />}
+            icon={<FontAwesomeIcon icon={faTableList} size="lg" />}
             isShadowed={false}
             size="small"
             variant="neutral"
@@ -131,10 +138,23 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
             onClick={() => handleTeamClick(singleTeam.id + 1)}
           />
         </div>
+        <div className={styles.button}>
+          <Button
+            icon={<FontAwesomeIcon icon={faClose} size="lg" />}
+            isShadowed={false}
+            size="small"
+            variant="neutral"
+            onClick={() => navigate(-1)}
+          />
+        </div>
       </div>
       <div className={contentContainerClass}>
         <div className={contentClass}>
           <p>{singleTeam.name}</p>
+          <img
+            src={`https://flagcdn.com/h40/${singleTeam.isoCode.toLowerCase()}.png`}
+          />
+          <br />
           <img
             src={`https://assets.omegafox.me/img/countries_crests/${singleTeam.abbreviationEn.toLowerCase()}.png`}
           />
@@ -150,6 +170,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
               >
                 <TeamButton
                   isHoverable
+                  key={team.id}
                   borderPosition="bottomRight"
                   isBig={false}
                   colors={team.colors}

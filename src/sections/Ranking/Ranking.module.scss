@@ -20,11 +20,9 @@
   }
 }
 
-.ranking {
-  &Container {
-    flex: 1;
-    max-width: 1024px;
-  }
+.rankingContainer {
+  flex: 1;
+  max-width: 1200px;
 }
 
 .rightSection {

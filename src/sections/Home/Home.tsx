@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
-
+import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBetPoints } from 'services/betCalculator';
 
 // Components
 import {
+  Button,
   FINISHED_GAME,
   FOOTBALL_MATCH_STATUS,
   Loading,
-  Match
+  Match,
+  NewsCard,
+  TitleContainer
 } from '@omegafox/components';
 
 // Types
@@ -17,37 +20,41 @@ import { TMatch } from 'store/match/types';
 import { TUser } from 'store/user/types';
 import { TBet } from 'store/bet/types';
 import { ITeamProps, TBetValues } from '@omegafox/components';
+import { TNews } from 'store/news/types';
 
 // Store
 import { RootState } from 'store';
-import { useOnListAllMatchesQuery } from 'store/match/actions';
-import { matchesSet } from 'store/match/reducer';
 import { QueryHandler } from 'services/queryHandler';
+import { useGetNewsQuery } from 'store/news/actions';
+import { newsLoading, setNews } from 'store/news/reducer';
 
 // Styles and images
 import styles from './Home.module.scss';
 import spinner from 'img/spinner.png';
+
+// Services and Constants
+import { getBetPoints } from 'services/betCalculator';
 import { returnCountdownObject, TCountdownObject } from 'services/countdown';
+import ROUTES from 'constants/routes';
 
 export const Home = () => {
-  const [needsToUpdateMatches, setNeedsToUpdateMatches] = useState(false);
   const [currentTimestamp, setCurrentTimestamp] = useState(
     parseInt((new Date().getTime() / 1000).toFixed(0))
   );
   const [countdownObject, setCountdownObject] =
     useState<TCountdownObject | null>(null);
-  const dispatch = useDispatch();
 
-  const { data, error, isLoading, isFetching } = useOnListAllMatchesQuery(
-    null,
-    {
-      pollingInterval: 10000,
-      skip: isMobile
-    }
-  );
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const useGetNewsResult = useGetNewsQuery();
 
   const matches = useSelector(
     (state: RootState) => state.match.matches
+  ) as unknown as TMatch[];
+
+  const isMatchesLoading = useSelector(
+    (state: RootState) => state.match.matchesLoading
   ) as unknown as TMatch[];
 
   const seasonStart = useSelector(
@@ -58,19 +65,21 @@ export const Home = () => {
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
 
-  useEffect(() => {
-    if (isFetching) {
-      setNeedsToUpdateMatches(true);
-    }
-  }, [isFetching]);
+  const isNewsLoading = useSelector(
+    (state: RootState) => state.news.isNewsLoading
+  ) as unknown as boolean;
+
+  const news = useSelector(
+    (state: RootState) => state.news.news
+  ) as unknown as TNews[];
 
   useEffect(() => {
-    if (!isLoading && !error && data && needsToUpdateMatches) {
-      setNeedsToUpdateMatches(false);
-      const result = QueryHandler(data);
-      dispatch(matchesSet(result));
+    dispatch(newsLoading(useGetNewsResult.isLoading));
+    if (!useGetNewsResult.isLoading && useGetNewsResult.data) {
+      const result = QueryHandler(useGetNewsResult.data);
+      dispatch(setNews(result));
     }
-  }, [data, isLoading]);
+  }, [useGetNewsResult.isLoading, useGetNewsResult.data]);
 
   useEffect(() => {
     if (!seasonStart) {
@@ -148,6 +157,7 @@ export const Home = () => {
     }
     const homeTeam: ITeamProps = {
       id: match.homeTeam.id,
+      abbreviationEn: match.homeTeam.abbreviationEn,
       align: 'left',
       bet:
         loggedUser && match.loggedUserBets
@@ -164,6 +174,7 @@ export const Home = () => {
     const awayTeam: ITeamProps = {
       id: match.awayTeam.id,
       align: 'right',
+      abbreviationEn: match.awayTeam.abbreviationEn,
       bet:
         loggedUser && match.loggedUserBets
           ? match.loggedUserBets.goalsAway
@@ -177,10 +188,10 @@ export const Home = () => {
     };
 
     return (
-      <div className={styles.match}>
+      <div className={styles.match} key={match.id}>
         <Match
-          key={match.id}
           betValue={points}
+          key={match.id}
           id={match.id}
           isEditable={false}
           isExpandable={false}
@@ -205,22 +216,63 @@ export const Home = () => {
     );
   };
 
+  const newsContainerClass = classNames(styles.newsContainer, {
+    [styles.newsContainerMobile]: isMobile,
+    [styles.newsContainerDesktop]: !isMobile
+  });
+
   return (
     <main className={styles.app}>
       <div className={styles.topSection}>
-        <h1>Bem-vindos ao Bolão da Copa do Mundo 2022</h1>
+        <p className={styles.countdown}>
+          {countdownObject && (
+            <>
+              A Copa começa em {countdownObject.days} dias,{' '}
+              {countdownObject.hours} horas, {countdownObject.minutes} minutos e{' '}
+              {countdownObject.seconds} segundos
+            </>
+          )}
+          {!countdownObject && <>Bem-vindo ao Bolão da Copa do Mundo</>}
+        </p>
+        <p className={styles.title}>Bolão da Copa do Mundo 2022</p>
         <img src={spinner} />
-        {countdownObject && (
-          <h2>
-            Faltam {countdownObject.days} dias, {countdownObject.hours} horas,{' '}
-            {countdownObject.minutes} minutos e {countdownObject.seconds}{' '}
-            segundos para o início da Copa
-          </h2>
-        )}
+        <div>
+          {loggedUser && (
+            <Button isShadowed onClick={() => navigate(ROUTES.BETS.url)}>
+              Apostar
+            </Button>
+          )}
+          {!loggedUser && (
+            <Button
+              isShadowed
+              onClick={() => navigate(`${ROUTES.HOME.url}#entrar`)}
+            >
+              Entrar
+            </Button>
+          )}
+        </div>
+      </div>
+      <div className={styles.newsSection}>
+        <TitleContainer text="Últimas Notícias" />
+        <div className={newsContainerClass}>
+          {isNewsLoading && <Loading image={spinner} />}
+          {!isNewsLoading &&
+            news &&
+            news.map((item) => (
+              <NewsCard
+                key={item.link}
+                date={item.date}
+                image={item.image}
+                link={item.link}
+                resume={item.resume}
+                title={item.title}
+              />
+            ))}
+        </div>
       </div>
       {!isMobile && (
-        <div className={styles.bottomSection}>
-          {isLoading && <Loading image={spinner} text="" />}
+        <div className={styles.footer}>
+          {isMatchesLoading && <Loading image={spinner} text="" />}
 
           {previousMatches && previousMatches.length > 0 && (
             <div className={styles.column}>

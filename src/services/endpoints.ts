@@ -1,7 +1,9 @@
 // export const apiBaseUrl = 'https://localhost:63768/copa2022';
 export const apiBaseUrl = 'https://api.omegafox.me/copa2022';
 
+// General
 export const config = () => '/general/config';
+export const news = () => '/general/news';
 
 // User
 export const register = () => '/user/register';

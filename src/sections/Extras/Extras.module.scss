@@ -8,19 +8,6 @@
   @include flex-aligned(flex-start, center);
   flex-direction: column;
   min-height: calc(100vh - 64px);
-
-  &Browser {
-    @include padded(horizontal, l);
-  }
-
-  &Mobile {
-    @include padded(horizontal, none);
-  }
-}
-
-.rankingContainer {
-  flex: 1;
-  max-width: 1024px;
 }
 
 .topSection {
@@ -67,7 +54,14 @@
 
   flex-direction: row;
   flex-wrap: wrap;
-  width: 100%;
+
+  &Mobile {
+    width: 100%;
+  }
+
+  &Desktop {
+    width: 1200px;
+  }
 }
 
 .team {
