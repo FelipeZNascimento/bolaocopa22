@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
+import classNames from 'classnames';
 
+// Components
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
   Navbar as TopNav,
@@ -10,14 +14,6 @@ import {
   TNavbarButton
 } from '@omegafox/components';
 import { LoginModal, UserModal } from '../index';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
-
-import logo from 'img/spinner.png';
-import ROUTES from 'constants/routes';
-import { navbarButtons, loginButton } from 'constants/navbarButtons';
-import styles from './Navbar.module.scss';
-import classNames from 'classnames';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -25,6 +21,14 @@ import { useSelector } from 'react-redux';
 // Store
 import type { RootState } from 'store/index';
 import { TUser } from 'store/user/types';
+
+// Styles and images
+import logo from 'img/spinner.png';
+import styles from './Navbar.module.scss';
+
+// Constants
+import ROUTES from 'constants/routes';
+import { navbarButtons, loginButton } from 'constants/navbarButtons';
 
 export const Navbar = () => {
   const [isSidenavOpen, setIsSidenavOpen] = useState<boolean>(false);
