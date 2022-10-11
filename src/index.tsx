@@ -5,6 +5,7 @@ import {
   Bets,
   Extras,
   ForgotPassword,
+  Groups,
   Home,
   Ranking,
   Results,
@@ -40,7 +41,8 @@ root.render(
             <Route path={`${ROUTES.RANKING.url}/*`} element={<Ranking />} />
             <Route path={`${ROUTES.EXTRAS.url}/*`} element={<Extras />} />
             <Route path={`${ROUTES.TEAMS.url}/`} element={<Teams />} />
-            <Route path={`${ROUTES.TEAMS.url}/:teamId`} element={<Teams />} />
+            <Route path={`${ROUTES.TEAMS.url}/:teamName`} element={<Teams />} />
+            <Route path={`${ROUTES.GROUPS.url}/*`} element={<Groups />} />
             <Route
               path={`${ROUTES.FORGOT_PASSWORD.url}/:token/:email`}
               element={<ForgotPassword />}
