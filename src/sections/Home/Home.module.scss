@@ -12,28 +12,74 @@
 }
 
 .topSection {
-  @include padded(vertical, l4);
+  @include flex-aligned(center, center);
+  @include bg-rgba-colored($color-qatar-red, 0.9);
+  @include padded(top, l4);
+  @include padded(bottom, l);
 
   flex: 1;
   flex-direction: column;
+  position: relative;
 
   img {
     max-height: 300px;
   }
 
-  h1, h2 {
-    @include font-colored($color-grey5);
+  .title {
+    @include font-sized(l3);
+    @include font-colored($color-grey1);
+    @include marged(all, none);
   }
 }
 
-.bottomSection {
+.countdown {
+  @include bg-rgba-colored($color-grey5, 0.5);
+  @include font-colored($color-grey1);
+  @include font-sized(l);
+  @include marged(all, none);
+  @include padded(top, s3);
+
+  position: absolute;
+  top: 0;
+  min-height: 24px;
+  width: 100%;
+}
+
+.column {
+  flex: 1;
+}
+
+.newsSection {
+  @include flex-aligned(center, center);
+  @include padded(top, m);
+
+  flex-direction: column;
+  width: 100%;
+}
+
+.newsContainer {
+  @include flex-aligned(center, center);
+
+  flex-wrap: wrap;
+  z-index: 0;
+
+  &Desktop {
+    max-width: 1200px;
+  }
+
+  &Mobile {
+    width: 100%;
+  }
+}
+
+.footer {
   @include flex-aligned(center, flex-start);
   @include padded(all, s);
-  @include bg-rgba-colored($color-grey1, 0.5);
+  @include bg-rgba-colored($color-grey1, 0.9);
 
   bottom: 0;
   left: 0;
-  position: absolute;
+  position: sticky;
   border-top: 2px solid $color-grey3;
   flex: 0;
   width: 100%;
@@ -49,12 +95,4 @@
     margin: auto;
     max-width: 380px;
   }
-}
-
-.column {
-  flex: 1;
-
-  // &:nth-child(even) {
-  //   @include padded(horizontal, l4);
-  // }
 }
