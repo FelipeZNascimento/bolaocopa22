@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 // Store
 import { RootState } from 'store';
@@ -19,8 +20,12 @@ import { QueryHandler } from 'services/queryHandler';
 
 // Types
 import { TUser } from 'store/user/types';
+import ROUTES from 'constants/routes';
 
 export const MatchController = () => {
+  const { pathname } = useLocation();
+  const skipAllMatchesQuery = pathname.includes(ROUTES.BETS.url);
+
   const [listAllMatchesTrigger, listAllMatchesResult] =
     useOnListAllMatchesWithUserBetsMutation();
   const dispatch = useDispatch();
@@ -31,7 +36,8 @@ export const MatchController = () => {
   const prevLoggedUser = usePrevious(loggedUser);
 
   const allMatchesQueryResult = useOnListAllMatchesQuery(null, {
-    pollingInterval: 10000
+    pollingInterval: 10000,
+    skip: skipAllMatchesQuery
   });
 
   // Trigger matches mutation if user just logged in
