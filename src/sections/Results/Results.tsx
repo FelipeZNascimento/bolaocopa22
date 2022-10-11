@@ -110,13 +110,14 @@ export const Results = () => {
       const homeTeam: ITeamProps = {
         id: match.homeTeam.id,
         align: 'left',
+        abbreviationEn: match.homeTeam.abbreviationEn,
         bet:
           loggedUser && match.loggedUserBets
             ? match.loggedUserBets.goalsHome
             : null,
         colors: match.homeTeam.colors,
         isEditable: false,
-        logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
+        logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}_small.png`,
         matchId: match.id,
         name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
         score: matchTimestamp < currentTimestamp ? match.homeTeam.goals : null
@@ -125,13 +126,14 @@ export const Results = () => {
       const awayTeam: ITeamProps = {
         id: match.awayTeam.id,
         align: 'right',
+        abbreviationEn: match.awayTeam.abbreviationEn,
         bet:
           loggedUser && match.loggedUserBets
             ? match.loggedUserBets.goalsAway
             : null,
         colors: match.awayTeam.colors,
         isEditable: false,
-        logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
+        logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}_small.png`,
         matchId: match.id,
         name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
         score: matchTimestamp < currentTimestamp ? match.awayTeam.goals : null
@@ -173,9 +175,9 @@ export const Results = () => {
             <div className={styles.singleBetOwner}>
               {userBet ? '>' : ''} {bet.user.nickname}
             </div>
-            <div
-              className={`${betClass} ${styles.singleBetScore}`}
-            >{`${bet.goalsHome || 'x'} - ${bet.goalsAway || 'x'}`}</div>
+            <div className={`${betClass} ${styles.singleBetScore}`}>{`${
+              bet.goalsHome || 'x'
+            } - ${bet.goalsAway || 'x'}`}</div>
             <div className={`${betClass} ${styles.singleBetPoints}`}>
               {singleBetPoints} Pts.
             </div>

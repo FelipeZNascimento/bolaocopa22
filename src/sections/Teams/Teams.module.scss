@@ -4,14 +4,19 @@
 @import "styles/margins.scss";
 @import "styles/paddings.scss";
 
+.container {
+  @include flex-aligned(center, center);
+
+  flex: 1;
+}
+
 .teamsContainer {
   @include flex-aligned(center, center);
   @include padded(vertical, l);
 
   flex-direction: row;
   flex-wrap: wrap;
-  min-height: calc(100vh - 64px);
-  width: 100%;
+  width: 1200px;
 }
 
 .team {
@@ -53,7 +58,6 @@
   width: 800px;
 
   &Mobile {
-    flex-direction: column;
     max-width: 100%;
   }
 }
@@ -70,8 +74,8 @@
   min-height: 300px;
 
   img {
-    max-height: 180px;
-    max-width: 180px;
+    max-height: 100px;
+    max-width: 100px;
   }
 
   p {
@@ -92,5 +96,5 @@
 }
 
 .button {
-  @include padded(horizontal, s2);
+  @include padded(horizontal, s3);
 }

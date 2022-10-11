@@ -17,6 +17,7 @@ import { useOnUpdateBetMutation } from 'store/bet/actions';
 // Types
 import { TMatch } from 'store/match/types';
 import { TUser } from 'store/user/types';
+import { ITeam } from 'store/team/types';
 
 // Styles and images
 import styles from './MatchForBets.module.scss';
@@ -50,8 +51,12 @@ export const MatchForBets = ({
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
 
+  const teams = useSelector(
+    (state: RootState) => state.team.teams
+  ) as unknown as ITeam[];
+
   let points = null;
-  if (loggedUser && match.loggedUserBets) {
+  if (loggedUser && loggedUser.isActive && match.loggedUserBets) {
     points = getBetPoints(match.loggedUserBets, match);
   }
 
@@ -99,16 +104,25 @@ export const MatchForBets = ({
   };
 
   const handleTeamClick = (teamId: number) => {
-    navigate({ pathname: `${ROUTES.TEAMS.url}/${teamId}` });
+    const selectedTeam = teams.find((team) => team.id === teamId);
+    if (selectedTeam) {
+      navigate({
+        pathname: `${ROUTES.TEAMS.url}/${selectedTeam.name
+          .replace(/\s+/g, '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')}`
+      });
+    }
   };
 
   const homeTeam: ITeamProps = {
     id: match.homeTeam.id,
+    abbreviationEn: match.homeTeam.abbreviationEn,
     align: 'left',
     bet: match.loggedUserBets ? match.loggedUserBets.goalsHome : null,
     colors: match.homeTeam.colors,
     isEditable: true,
-    logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}.png`,
+    logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}_small.png`,
     matchId: match.id,
     name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
     score: match.homeTeam.goals
@@ -116,11 +130,12 @@ export const MatchForBets = ({
 
   const awayTeam: ITeamProps = {
     id: match.awayTeam.id,
+    abbreviationEn: match.awayTeam.abbreviationEn,
     align: 'right',
     bet: match.loggedUserBets ? match.loggedUserBets.goalsAway : null,
     colors: match.awayTeam.colors,
     isEditable: true,
-    logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}.png`,
+    logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}_small.png`,
     matchId: match.id,
     name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
     score: match.awayTeam.goals

@@ -34,9 +34,15 @@ export const Teams = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (teams && params.teamId) {
-      const teamId = parseInt(params.teamId);
-      const team = teams.find((item) => item.id === teamId);
+    if (teams && params.teamName) {
+      const teamName = params.teamName;
+      const team = teams.find(
+        (item) =>
+          item.name
+            .replace(/\s+/g, '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') === teamName
+      );
 
       if (team) {
         setSelectedTeam(team);
@@ -47,7 +53,12 @@ export const Teams = () => {
   }, [params, teams]);
 
   const handleTeamClick = (team: ITeam) => {
-    navigate({ pathname: `${ROUTES.TEAMS.url}/${team.id}` });
+    navigate({
+      pathname: `${ROUTES.TEAMS.url}/${team.name
+        .replace(/\s+/g, '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')}`
+    });
   };
 
   const renderAllTeams = () => {
@@ -91,12 +102,12 @@ export const Teams = () => {
   };
 
   return (
-    <>
+    <div className={styles.container}>
       {(isLoading || !teams) && <Loading image={spinner} />}
       {selectedTeam === null && (
         <div className={styles.teamsContainer}>{renderAllTeams()}</div>
       )}
       {selectedTeam && <SingleTeam singleTeam={selectedTeam} />}
-    </>
+    </div>
   );
 };
