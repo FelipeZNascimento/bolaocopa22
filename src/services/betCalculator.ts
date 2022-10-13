@@ -3,31 +3,37 @@ import { TMatch } from 'store/match/types';
 import { BET_VALUES } from '@omegafox/components';
 
 const getBetPoints = (bet: TBet, match: TMatch) => {
+  return getBetPointsByScore(
+    match.homeTeam.goals,
+    match.awayTeam.goals,
+    bet.goalsHome,
+    bet.goalsAway
+  );
+};
+
+const getBetPointsByScore = (
+  scoreHome: number,
+  scoreAway: number,
+  betHome: number,
+  betAway: number
+) => {
   if (
-    match.awayTeam.goals !== null &&
-    match.homeTeam.goals !== null &&
-    bet.goalsAway !== null &&
-    bet.goalsHome !== null
+    scoreHome !== null &&
+    scoreAway !== null &&
+    betHome !== null &&
+    betAway !== null
   ) {
     // valid goals
     if (
-      (bet.goalsAway > bet.goalsHome &&
-        match.awayTeam.goals > match.homeTeam.goals) ||
-      (bet.goalsAway < bet.goalsHome &&
-        match.awayTeam.goals < match.homeTeam.goals)
+      (betAway > betHome && scoreAway > scoreHome) ||
+      (betAway < betHome && scoreAway < scoreHome)
     ) {
       // Acertou o vencedor
-      if (
-        bet.goalsAway === match.awayTeam.goals &&
-        bet.goalsHome === match.homeTeam.goals
-      ) {
+      if (betAway === scoreAway && betHome === scoreHome) {
         // na mosca
         return BET_VALUES.FULL;
       } else {
-        if (
-          bet.goalsAway === match.awayTeam.goals ||
-          bet.goalsHome === match.homeTeam.goals
-        ) {
+        if (betAway === scoreAway || betHome === scoreHome) {
           // acertou 1 placar
           return BET_VALUES.HALF;
         } else {
@@ -35,12 +41,9 @@ const getBetPoints = (bet: TBet, match: TMatch) => {
           return BET_VALUES.MINIMUN;
         }
       }
-    } else if (
-      bet.goalsAway === bet.goalsHome &&
-      match.awayTeam.goals === match.homeTeam.goals
-    ) {
+    } else if (betAway === betHome && scoreAway === scoreHome) {
       // Acertou empate
-      if (bet.goalsAway === match.awayTeam.goals) {
+      if (betAway === scoreAway) {
         // na mosca
         return BET_VALUES.FULL;
       } else {
@@ -65,4 +68,4 @@ const getBetStatus = (points: number) => {
   }
 };
 
-export { getBetPoints, getBetStatus };
+export { getBetPoints, getBetPointsByScore, getBetStatus };

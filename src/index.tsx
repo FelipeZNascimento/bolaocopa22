@@ -9,6 +9,7 @@ import {
   Home,
   Ranking,
   Results,
+  Rules,
   Teams
 } from 'sections/index';
 import reportWebVitals from './reportWebVitals';
@@ -43,6 +44,7 @@ root.render(
             <Route path={`${ROUTES.TEAMS.url}/`} element={<Teams />} />
             <Route path={`${ROUTES.TEAMS.url}/:teamName`} element={<Teams />} />
             <Route path={`${ROUTES.GROUPS.url}/*`} element={<Groups />} />
+            <Route path={`${ROUTES.RULES.url}/*`} element={<Rules />} />
             <Route
               path={`${ROUTES.FORGOT_PASSWORD.url}/:token/:email`}
               element={<ForgotPassword />}

@@ -24,8 +24,9 @@ import styles from './MatchForBets.module.scss';
 import { WEEKDAY } from 'constants/weekdays';
 
 // Constants and services
-import { getBetPoints } from 'services/betCalculator';
 import ROUTES from 'constants/routes';
+import { getBetPoints } from 'services/betCalculator';
+import { stringNormalizer } from 'services/helpers';
 
 interface IMatchForBets {
   isEditable?: boolean;
@@ -107,10 +108,7 @@ export const MatchForBets = ({
     const selectedTeam = teams.find((team) => team.id === teamId);
     if (selectedTeam) {
       navigate({
-        pathname: `${ROUTES.TEAMS.url}/${selectedTeam.name
-          .replace(/\s+/g, '')
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')}`
+        pathname: `${ROUTES.TEAMS.url}/${stringNormalizer(selectedTeam.name)}`
       });
     }
   };

@@ -37,4 +37,17 @@ const randomHexColorGenerator = () => {
   return color;
 };
 
-export { randomHexColorGenerator, guidGenerator, validateEmail };
+const stringNormalizer = (string: string) => {
+  return string
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+};
+
+export {
+  guidGenerator,
+  randomHexColorGenerator,
+  stringNormalizer,
+  validateEmail
+};

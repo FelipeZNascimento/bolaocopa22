@@ -5,4 +5,5 @@ export { Groups } from 'sections/Groups/Groups';
 export { Home } from 'sections/Home/Home';
 export { Ranking } from 'sections/Ranking/Ranking';
 export { Results } from 'sections/Results/Results';
+export { Rules } from 'sections/Rules/Rules';
 export { Teams } from 'sections/Teams/Teams';

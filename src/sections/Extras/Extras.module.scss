@@ -26,6 +26,10 @@
     @include font-sized(l2);
     @include marged(all, none);
   }
+
+  &Desktop {
+    @include padded(all, l);
+  }
 }
 
 .cardsContainer {
@@ -33,6 +37,7 @@
 
   flex-wrap: wrap;
   flex: 0;
+  width: 100%;
 
   h1,
   h2 {
@@ -41,11 +46,25 @@
 }
 
 .card {
-  @include padded(all, s);
+  @include padded(horizontal, l2);
+
+  flex: 1;
+  min-width: 180px;
+
+  &Mobile {
+    @include padded(all, s);
+    width: 180px;
+  }
 }
 
 .status {
-  width: 140px;
+  &Desktop {
+    width: 100%;
+  }
+
+  &Mobile {
+    width: 140px;
+  }
 }
 
 .teamsContainer {
