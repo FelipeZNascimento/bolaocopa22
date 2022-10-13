@@ -8,6 +8,7 @@ import {
   Loading,
   Ranking as Rank,
   StatusBadge,
+  TextContainer,
   Tooltip,
   TRankingColumn,
   TRankingRow
@@ -139,12 +140,9 @@ export const Ranking = ({
     }
 
     return (
-      <Rank
-        isHeader={isHeader}
-        backgroundImage={backgroundImage}
-        columns={columns}
-        rows={rows}
-      />
+      <TextContainer backgroundImage={backgroundImage}>
+        <Rank isHeader={isHeader} columns={columns} rows={rows} />
+      </TextContainer>
     );
   };
 

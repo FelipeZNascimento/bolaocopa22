@@ -24,7 +24,6 @@
   img {
     max-height: 300px;
   }
-
   .title {
     @include font-sized(l3);
     @include font-colored($color-grey1);
@@ -47,6 +46,22 @@
 
 .column {
   flex: 1;
+}
+
+.groupsSection {
+  @include flex-aligned(center, center);
+  @include padded(top, m);
+
+  flex-direction: column;
+  width: 100%;
+
+  .iconsContainer {
+    @include flex-aligned(center, center);
+
+    a {
+      @include padded(horizontal, m);
+    }
+  }
 }
 
 .newsSection {

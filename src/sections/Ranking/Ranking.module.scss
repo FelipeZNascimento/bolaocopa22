@@ -16,6 +16,7 @@
   }
 
   &Mobile {
+    @include marged(horizontal, s);
     @include padded(horizontal, none);
   }
 }

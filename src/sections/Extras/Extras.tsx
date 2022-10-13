@@ -233,10 +233,15 @@ export const Extras = () => {
     } else if (player && updateExtraResult.isLoading) {
       return renderLoading();
     } else {
+      const statusClass = classNames({
+        [styles.statusMobile]: isMobile,
+        [styles.statusDesktop]: !isMobile
+      });
+
       return (
-        <div className={styles.status}>
+        <div className={statusClass}>
           <TeamButton
-            fontSize={'small'}
+            fontSize={isMobile ? 'small' : 'big'}
             isHoverable={false}
             isBig={false}
             colors={player.details.colors}
@@ -254,14 +259,19 @@ export const Extras = () => {
     } else if (team && updateExtraResult.isLoading) {
       return renderLoading();
     } else {
+      const statusClass = classNames({
+        [styles.statusMobile]: isMobile,
+        [styles.statusDesktop]: !isMobile
+      });
+
       return (
-        <div className={styles.status}>
+        <div className={statusClass}>
           <TeamButton
             isHoverable={false}
             isBig={false}
             colors={team.colors}
             logo={`https://assets.omegafox.me/img/countries_crests/${team.abbreviationEn.toLowerCase()}.png`}
-            name={team.abbreviation}
+            name={isMobile ? team.abbreviation : team.name}
           />
         </div>
       );
@@ -316,7 +326,15 @@ export const Extras = () => {
 
   const teamClass = classNames(styles.teamsContainer, {
     [styles.teamsContainerMobile]: isMobile,
-    [styles.teamsContainerDesktop]: !isMobile,
+    [styles.teamsContainerDesktop]: !isMobile
+  });
+
+  const topSectionClass = classNames(styles.topSection, {
+    [styles.topSectionDesktop]: !isMobile
+  });
+
+  const cardClass = classNames(styles.card, {
+    [styles.cardMobile]: isMobile
   });
 
   return (
@@ -328,11 +346,11 @@ export const Extras = () => {
       )}
       {loggedUser && (
         <>
-          <div className={styles.topSection}>
+          <div className={topSectionClass}>
             <div className={styles.cardsContainer}>
               {extrasInfo.map((item) => {
                 return (
-                  <div className={styles.card} key={item.id}>
+                  <div className={cardClass} key={item.id}>
                     <Card
                       isForceMobile
                       isSelected={selectedExtra === item.id}

@@ -37,6 +37,10 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
     (state: RootState) => state.team.teams
   ) as unknown as ITeam[];
 
+  if (!allExtraBets) {
+    return null;
+  }
+
   const allChampions = allExtraBets
     .filter((extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION)
     .sort((a, b) =>
