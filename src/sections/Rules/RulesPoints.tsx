@@ -17,9 +17,9 @@ import {
   FOOTBALL_MATCH_STATUS,
   ITeamProps,
   Match,
-  Ranking,
-  TRankingColumn,
-  TRankingRow
+  Table,
+  TTableColumn,
+  TTableRow
 } from '@omegafox/components';
 import match_explained from 'img/match_explained.png';
 
@@ -28,7 +28,7 @@ export const RulesPoints = () => {
     (state: RootState) => state.team.teams
   ) as unknown as ITeam[];
 
-  const columns: TRankingColumn[] = [
+  const columns: TTableColumn[] = [
     {
       id: 0,
       align: 'center',
@@ -51,7 +51,7 @@ export const RulesPoints = () => {
     }
   ];
 
-  const rows: TRankingRow[] = [
+  const rows: TTableRow[] = [
     [
       {
         id: 0,
@@ -98,7 +98,7 @@ export const RulesPoints = () => {
     ]
   ];
 
-  const multiplierColumns: TRankingColumn[] = [
+  const multiplierColumns: TTableColumn[] = [
     {
       id: 0,
       align: 'left',
@@ -121,7 +121,7 @@ export const RulesPoints = () => {
     }
   ];
 
-  const multiplierRows: TRankingRow[] = [
+  const multiplierRows: TTableRow[] = [
     [
       {
         id: 0,
@@ -253,7 +253,7 @@ export const RulesPoints = () => {
             isSelected
             renderingStatusFunction={() => (
               <div className={styles.column}>
-                <Ranking isHeader columns={columns} rows={rows} />
+                <Table isHeader columns={columns} rows={rows} />
               </div>
             )}
           />
@@ -264,7 +264,7 @@ export const RulesPoints = () => {
             isSelected
             renderingStatusFunction={() => (
               <div className={styles.column}>
-                <Ranking
+                <Table
                   isHeader={false}
                   columns={multiplierColumns}
                   rows={multiplierRows}

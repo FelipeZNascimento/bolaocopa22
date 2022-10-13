@@ -5,17 +5,17 @@ import classNames from 'classnames';
 // Components
 import {
   Card,
-  Ranking,
+  Table,
   TitleContainer,
-  TRankingColumn,
-  TRankingRow
+  TTableColumn,
+  TTableRow
 } from '@omegafox/components';
 
 // Styles and images
 import styles from './Rules.module.scss';
 
 export const RulesPrizes = () => {
-  const columns: TRankingColumn[] = [
+  const columns: TTableColumn[] = [
     {
       id: 0,
       align: 'center',
@@ -38,7 +38,7 @@ export const RulesPrizes = () => {
     }
   ];
 
-  const firstCase: TRankingRow[] = [
+  const firstCase: TTableRow[] = [
     [
       {
         id: 0,
@@ -91,7 +91,7 @@ export const RulesPrizes = () => {
     ]
   ];
 
-  const secondCase: TRankingRow[] = [
+  const secondCase: TTableRow[] = [
     [
       {
         id: 0,
@@ -229,7 +229,7 @@ export const RulesPrizes = () => {
             isSelected
             renderingStatusFunction={() => (
               <div className={styles.column}>
-                <Ranking isHeader columns={columns} rows={firstCase} />
+                <Table isHeader columns={columns} rows={firstCase} />
               </div>
             )}
           />
@@ -240,7 +240,7 @@ export const RulesPrizes = () => {
             isSelected
             renderingStatusFunction={() => (
               <div className={styles.column}>
-                <Ranking isHeader columns={columns} rows={secondCase} />
+                <Table isHeader columns={columns} rows={secondCase} />
               </div>
             )}
           />

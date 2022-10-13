@@ -6,12 +6,12 @@ import classNames from 'classnames';
 // Components
 import {
   Loading,
-  Ranking as Rank,
+  Table,
   StatusBadge,
   TextContainer,
   Tooltip,
-  TRankingColumn,
-  TRankingRow
+  TTableColumn,
+  TTableRow
 } from '@omegafox/components';
 
 // Store
@@ -31,7 +31,7 @@ export const Ranking = ({
   isHeader = true,
   isMinified = false
 }: TRankingProps) => {
-  const [rows, setRows] = useState<TRankingRow[]>([]);
+  const [rows, setRows] = useState<TTableRow[]>([]);
 
   const rankingResult = useSelector(
     (state: RootState) => state.ranking.rankingResult
@@ -104,7 +104,7 @@ export const Ranking = ({
     [styles.containerMobile]: isMobile
   });
 
-  const columns: TRankingColumn[] = [
+  const columns: TTableColumn[] = [
     {
       id: 0,
       align: 'left',
@@ -141,7 +141,7 @@ export const Ranking = ({
 
     return (
       <TextContainer backgroundImage={backgroundImage}>
-        <Rank isHeader={isHeader} columns={columns} rows={rows} />
+        <Table isHeader={isHeader} columns={columns} rows={rows} />
       </TextContainer>
     );
   };

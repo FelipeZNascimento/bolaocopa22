@@ -3,17 +3,17 @@ import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 import {
   Card,
-  Ranking,
+  Table,
   TitleContainer,
-  TRankingColumn,
-  TRankingRow
+  TTableColumn,
+  TTableRow
 } from '@omegafox/components';
 
 // Styles and images
 import styles from './Rules.module.scss';
 
 export const RulesExtras = () => {
-  const columns: TRankingColumn[] = [
+  const columns: TTableColumn[] = [
     {
       id: 0,
       align: 'center',
@@ -36,7 +36,7 @@ export const RulesExtras = () => {
     }
   ];
 
-  const rows: TRankingRow[] = [
+  const rows: TTableRow[] = [
     [
       {
         id: 0,
@@ -125,7 +125,7 @@ export const RulesExtras = () => {
             isSelected
             renderingStatusFunction={() => (
               <div className={styles.column}>
-                <Ranking isHeader columns={columns} rows={rows} />
+                <Table isHeader columns={columns} rows={rows} />
               </div>
             )}
           />
