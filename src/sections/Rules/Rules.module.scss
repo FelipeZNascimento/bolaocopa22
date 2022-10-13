@@ -1,0 +1,111 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
+.mainContainer {
+  @include flex-aligned(center, center);
+  width: 100%;
+
+  img {
+    vertical-align: middle;
+  }
+}
+
+.container {
+  @include padded(top, m);
+
+  &Desktop {
+    width: 1024px;
+  }
+
+  &Mobile {
+    @include marged(horizontal, s);
+    width: 100%;
+  }
+}
+
+.internalContainer {
+  width: 100%;
+
+  &Desktop {
+    @include padded(horizontal, l4);
+  }
+}
+
+.titlesContainer {
+  @include flex-aligned(space-evenly, center);
+  flex-wrap: wrap;
+
+  & > div {
+    @include marged(all, s2);
+  }
+}
+
+.subTitle {
+  @include aligned(center);
+  @include font-sized(l2);
+  @include marged(bottom, none);
+
+  font-weight: bold;
+  width: 100%;
+}
+
+.columnsContainer {
+  @include flex-aligned(space-evenly, flex-start);
+
+  &Mobile {
+    @include flex-aligned(space-evenly, center);
+    flex-direction: column;
+  }
+
+  .column {
+    @include marged(all, s);
+    @include flex-aligned(center, flex-start);
+
+    flex-direction: column;
+    width: 100%;
+
+    .fullWidth {
+      @include aligned(center);
+      width: 100%;
+
+      a {
+        transition: filter 0.2s ease-in-out;
+      }
+
+      a:hover {
+        filter: brightness(110%);
+      }
+    }
+  }
+}
+
+.matchContainer {
+  width: 100%;
+}
+
+.faqItem {
+  @include padded(vertical, m);
+}
+
+.mint {
+  @include font-colored($color-mint);
+  font-weight: bold;
+}
+
+.blue {
+  @include font-colored($color-qatar-blue);
+  font-weight: bold;
+}
+
+.lightBlue {
+  @include font-colored($color-qatar-lightblue);
+  font-weight: bold;
+}
+
+.red {
+  @include font-colored($color-qatar-red);
+  font-weight: bold;
+}

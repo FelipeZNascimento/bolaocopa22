@@ -31,10 +31,10 @@ export const ROUTES = {
     url: '/ranking',
     isHidden: false
   },
-  PRIZES: {
+  RULES: {
     id: 5,
-    text: 'Prêmios',
-    url: '/premios',
+    text: 'Regras',
+    url: '/regras',
     isHidden: false
   },
   GROUPS: {

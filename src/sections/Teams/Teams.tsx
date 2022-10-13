@@ -10,6 +10,9 @@ import { SingleTeam } from './SingleTeam';
 // Store
 import { RootState } from 'store';
 
+// Services
+import { stringNormalizer } from 'services/helpers';
+
 // Types
 import { ITeam } from 'store/team/types';
 
@@ -37,11 +40,7 @@ export const Teams = () => {
     if (teams && params.teamName) {
       const teamName = params.teamName;
       const team = teams.find(
-        (item) =>
-          item.name
-            .replace(/\s+/g, '')
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '') === teamName
+        (item) => stringNormalizer(item.name) === teamName
       );
 
       if (team) {
@@ -54,10 +53,7 @@ export const Teams = () => {
 
   const handleTeamClick = (team: ITeam) => {
     navigate({
-      pathname: `${ROUTES.TEAMS.url}/${team.name
-        .replace(/\s+/g, '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')}`
+      pathname: `${ROUTES.TEAMS.url}/${stringNormalizer(team.name)}`
     });
   };
 

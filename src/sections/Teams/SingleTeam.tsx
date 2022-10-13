@@ -15,6 +15,9 @@ import {
 // Store
 import { RootState } from 'store';
 
+// Services
+import { stringNormalizer } from 'services/helpers';
+
 // Types and constants
 import { ITeam } from 'store/team/types';
 import ROUTES from 'constants/routes';
@@ -76,10 +79,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
     const selectedTeam = teams.find((team) => team.id === teamId);
     if (selectedTeam) {
       navigate({
-        pathname: `${ROUTES.TEAMS.url}/${selectedTeam.name
-          .replace(/\s+/g, '')
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')}`
+        pathname: `${ROUTES.TEAMS.url}/${stringNormalizer(selectedTeam.name)}`
       });
     }
   };
