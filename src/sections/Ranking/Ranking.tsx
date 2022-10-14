@@ -71,7 +71,8 @@ export const Ranking = ({
             id: 1,
             renderingFunction: () => (
               <div className={styles.nickname}>
-                &nbsp;{renderStatusBadge()}&nbsp;{user.nickname}
+                &nbsp;{renderStatusBadge()}&nbsp;
+                <span className={styles.ellipsis}>{user.nickname}</span>
               </div>
             )
           },
@@ -80,15 +81,31 @@ export const Ranking = ({
             id: 3,
             renderingFunction: () => (
               <div className={styles.pointsDetails}>
-                <Tooltip text="Acerto completo">
-                  <span className={styles.green}>{user.full}</span>
-                </Tooltip>
-                <Tooltip text="Acerto parcial">
-                  <span className={styles.blue}>{user.half}</span>
-                </Tooltip>
-                <Tooltip text="Acerto mínimo">
-                  <span className={styles.lightBlue}>{user.minimun}</span>
-                </Tooltip>
+                <span className={styles.green}>{user.full}</span>
+              </div>
+            )
+          },
+          {
+            id: 4,
+            renderingFunction: () => (
+              <div className={styles.pointsDetails}>
+                <span className={styles.blue}>{user.half}</span>
+              </div>
+            )
+          },
+          {
+            id: 5,
+            renderingFunction: () => (
+              <div className={styles.pointsDetails}>
+                <span className={styles.lightBlue}>{user.minimun}</span>
+              </div>
+            )
+          },
+          {
+            id: 6,
+            renderingFunction: () => (
+              <div className={styles.pointsDetails}>
+                <span className={styles.orange}>{user.extras}</span>
               </div>
             )
           }
@@ -109,29 +126,83 @@ export const Ranking = ({
       id: 0,
       align: 'left',
       flex: 1,
-      renderingFunction: () => <div>Pos</div>
+      renderingFunction: () => (
+        <div>
+          <b>Pos</b>
+        </div>
+      )
     },
     {
       id: 1,
       align: 'left',
       flex: 4,
-      renderingFunction: () => <div>Nome</div>
+      renderingFunction: () => (
+        <div>
+          <b>Nome</b>
+        </div>
+      )
     },
     {
       id: 2,
       align: isMinified ? 'right' : 'center',
       flex: 1,
-      renderingFunction: () => <div>Pts.</div>
+      renderingFunction: () => (
+        <div>
+          <b>Pts.</b>
+        </div>
+      )
     }
   ];
 
   if (!isMinified) {
-    columns.push({
-      id: 3,
-      align: 'right',
-      flex: 2,
-      renderingFunction: () => <div>&nbsp;</div>
-    });
+    columns.push(
+      {
+        id: 3,
+        align: 'center',
+        flex: 1,
+        renderingFunction: () => (
+          <div>
+            <Tooltip text="Acerto Completo">
+              <b>AC</b>
+            </Tooltip>
+          </div>
+        )
+      },
+      {
+        id: 4,
+        align: 'center',
+        flex: 1,
+        renderingFunction: () => (
+          <div>
+            <Tooltip text="Acerto Parcial">
+              <b>AP</b>
+            </Tooltip>
+          </div>
+        )
+      },
+      {
+        id: 5,
+        align: 'center',
+        flex: 1,
+        renderingFunction: () => (
+          <div>
+            <Tooltip text="Acerto Mínimo">
+              <b>AM</b>
+            </Tooltip>
+          </div>
+        )
+      },
+      {
+        id: 6,
+        align: 'center',
+        flex: 1,
+        renderingFunction: () => (
+          <div>
+            <b>{isMobile ? 'Ext.' : 'Extras'}</b>
+          </div>
+        )
+      }
+    );
   }
 
   const renderRanking = () => {
