@@ -6,6 +6,7 @@ export type TUserRanking = TUser & {
   full: number;
   half: number;
   minimun: number;
+  extras: number;
 };
 
 export type TRankingResult = {

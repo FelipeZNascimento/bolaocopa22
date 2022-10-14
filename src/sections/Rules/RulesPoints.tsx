@@ -244,7 +244,7 @@ export const RulesPoints = () => {
   return (
     <div className={internalContainerClass}>
       <p className="align-center">
-        <img src={match_explained} />
+        <img alt='Match with explanation arrows' src={match_explained} />
       </p>
       <div className={columnsContainerClass}>
         <div className={styles.column}>
@@ -381,8 +381,9 @@ export const RulesPoints = () => {
           <p className={styles.subTitle}>Empate</p>
           <p>
             Caso uma partida termine empatada, as únicas pontuações possíveis
-            são: <span className={styles.red}>Erro</span>,{' '}
-            <span className={styles.lightBlue}>Acerto Mínimo</span> ou{' '}
+            são: <span className={styles.red}>Erro</span> (se apostou em um
+            vencedor), <span className={styles.lightBlue}>Acerto Mínimo</span>{' '}
+            (se apostou em empate mas errou o placar) ou{' '}
             <span className={styles.mint}>Acerto Total</span>.
           </p>
         </div>

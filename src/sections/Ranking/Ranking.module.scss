@@ -16,6 +16,7 @@
   }
 
   &Mobile {
+    @include font-sized(s);
     @include marged(horizontal, s);
     @include padded(horizontal, none);
   }
@@ -41,19 +42,18 @@
 }
 
 .pointsDetails {
-  justify-content: flex-end;
-  align-items: center;
+  @include flex-aligned(center, center);
   height: 100%;
-  display: flex;
-
-  span {
-    @include padded(horizontal, s);
-  }
 }
 
 .nickname {
-  align-items: center;
-  display: flex;
+  @include flex-aligned(flex-start, center);
+
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .green {
@@ -85,5 +85,9 @@
 }
 .orange {
   @include font-colored($color-orange);
+  font-weight: bold;
+}
+.purple {
+  @include font-colored($color-purple);
   font-weight: bold;
 }

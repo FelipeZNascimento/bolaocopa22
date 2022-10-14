@@ -5,7 +5,7 @@
 @import "styles/paddings.scss";
 
 .container {
-  @include padded(top, l);
+  @include padded(vertical, l);
   display: flex;
   flex: 1;
 

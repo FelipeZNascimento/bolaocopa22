@@ -144,6 +144,7 @@ export const Results = () => {
           <div key={match.id} className={styles.expandableNotStarted}>
             <div className={styles.expandableNotStartedContent}>
               <img
+                alt="Stadium image"
                 src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
               />
               <p>{match.stadium.name}</p>
@@ -219,6 +220,7 @@ export const Results = () => {
             {!isMobile && (
               <div className={styles.expandableStartedStadium}>
                 <img
+                  alt="Stadium image"
                   src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
                 />
               </div>
