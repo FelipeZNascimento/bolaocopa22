@@ -42,6 +42,7 @@ export const RulesBets = () => {
         <a href="https://wa.me/5511966031088">
           +55 11 96603-1088{' '}
           <img
+            alt="Gmail Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/gmail.png"
           />
@@ -50,6 +51,7 @@ export const RulesBets = () => {
         <a href="mailto:felipe@omegafox.me">
           felipe@omegafox.me{' '}
           <img
+            alt="Gmail Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/gmail.png"
           />

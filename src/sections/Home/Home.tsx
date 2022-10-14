@@ -235,7 +235,7 @@ export const Home = () => {
           {!countdownObject && <>Bem-vindo ao Bolão da Copa do Mundo</>}
         </p>
         <p className={styles.title}>Bolão da Copa do Mundo 2022</p>
-        <img src={spinner} />
+        <img src={spinner} alt="World Cup Logo" />
         <div>
           {loggedUser && (
             <Button isShadowed onClick={() => navigate(ROUTES.BETS.url)}>
@@ -256,12 +256,14 @@ export const Home = () => {
         <div className={styles.iconsContainer}>
           <a href="https://t.me/+rVP220dgf2o0ZDJh">
             <img
+              alt="Telegram Icon"
               height={80}
               src="https://assets.omegafox.me/img/social_icons/telegram.png"
             />
           </a>
           <a href="https://chat.whatsapp.com/7RkUEwV0fcaJT4TNuzklFN">
             <img
+              alt="WhatsApp Icon"
               height={80}
               src="https://assets.omegafox.me/img/social_icons/whatsapp.png"
             />

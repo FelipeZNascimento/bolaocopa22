@@ -152,10 +152,12 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
         <div className={contentClass}>
           <p>{singleTeam.name}</p>
           <img
+            alt="Country flag"
             src={`https://flagcdn.com/h40/${singleTeam.isoCode.toLowerCase()}.png`}
           />
           <br />
           <img
+            alt="National football federation crest"
             src={`https://assets.omegafox.me/img/countries_crests/${singleTeam.abbreviationEn.toLowerCase()}.png`}
           />
         </div>
@@ -187,6 +189,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
             {singleTeam.confederation.abbreviation})
           </p>
           <img
+            alt="Confederation crest"
             src={`https://assets.omegafox.me/img/confederations_logos/${singleTeam.confederation.abbreviation.toLowerCase()}.png`}
           />
         </div>

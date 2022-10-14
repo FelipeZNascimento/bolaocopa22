@@ -52,6 +52,7 @@ export const RulesSubscription = () => {
         <a href="https://wa.me/5511966031088">
           +55 11 96603-1088{' '}
           <img
+            alt="WhatsApp Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/whatsapp.png"
           />
@@ -60,6 +61,7 @@ export const RulesSubscription = () => {
         <a href="https://wa.me/351916166514">
           +351 916 166 514{' '}
           <img
+            alt="WhatsApp Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/whatsapp.png"
           />
@@ -68,6 +70,7 @@ export const RulesSubscription = () => {
         <a href="https://t.me/nelsonmotta">
           @nelsonmotta{' '}
           <img
+            alt="Telegram Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/telegram.png"
           />
@@ -76,6 +79,7 @@ export const RulesSubscription = () => {
         <a href="https://t.me/FelipeZanon">
           @FelipeZanon{' '}
           <img
+            alt="Telegram Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/telegram.png"
           />
@@ -84,6 +88,7 @@ export const RulesSubscription = () => {
         <a href="mailto:ngm.motta@gmail.com">
           ngm.motta@gmail.com{' '}
           <img
+            alt="Gmail Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/gmail.png"
           />
@@ -92,6 +97,7 @@ export const RulesSubscription = () => {
         <a href="mailto:felipe@omegafox.me">
           felipe@omegafox.me{' '}
           <img
+            alt="Gmail Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/gmail.png"
           />
