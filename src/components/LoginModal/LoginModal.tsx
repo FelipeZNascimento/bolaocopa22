@@ -98,6 +98,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
   ) as unknown as TError[];
 
   let intervalId: NodeJS.Timer;
+
   useEffect(() => {
     if (!seasonStart) {
       return;
@@ -141,6 +142,13 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
 
       dispatch(userLoggedIn(queryData.result.loggedUser));
       handleClose();
+    } else if (registerResult.isError && errors.length > 0) {
+      let message = '';
+      errors.forEach(
+        (error) => (message += `${error.message} (${error.code}) `)
+      );
+
+      setToastMessage({ text: message, isError: true });
     }
   }, [registerResult]);
 
@@ -240,7 +248,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
 
     forgotPassTrigger({ email: email, skipToast: true });
     setToastMessage({
-      text: 'Enviamos um e-mail com instruções para configurar sua nova senha.',
+      text: 'Se esse endereço de email estiver cadastrado, você receberá instruções para configurar sua nova senha.',
       isError: false
     });
   };
@@ -282,6 +290,8 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
 
   const handleRegister = () => {
     setStatus('register');
+    setToastMessage(null);
+
     setForm(
       form.map((item) => {
         if (
@@ -304,6 +314,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
 
   const handleForgotPassword = () => {
     setStatus('forgotPassword');
+    setToastMessage(null);
 
     setForm(
       form.map((item) => {
