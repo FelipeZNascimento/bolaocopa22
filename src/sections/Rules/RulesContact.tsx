@@ -1,5 +1,4 @@
 import React from 'react';
-import { TitleContainer } from '@omegafox/components';
 import classNames from 'classnames';
 import { isMobile } from 'react-device-detect';
 
