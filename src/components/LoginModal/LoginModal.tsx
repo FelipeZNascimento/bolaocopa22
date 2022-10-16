@@ -327,6 +327,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
         return item;
       })
     );
+    setIsDisabled(!isFormValid());
   };
 
   const renderTitle = () => {
