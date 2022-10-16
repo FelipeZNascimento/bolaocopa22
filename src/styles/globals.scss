@@ -1,11 +1,11 @@
 html {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 *,
 *:before,
 *:after {
-    box-sizing: inherit;
+  box-sizing: inherit;
 }
 
 h1,
@@ -13,37 +13,37 @@ h2,
 h3,
 h4,
 h5 {
-    font-weight: normal;
-    margin: 0;
-    padding: 0;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
 }
 
 a {
-    color: inherit;
-    cursor: pointer;
+  color: inherit;
+  cursor: pointer;
 }
 
 .align-center {
-    justify-content: center;
-    text-align: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .align-right {
-    justify-content: flex-end;
-    text-align: right;
+  justify-content: flex-end;
+  text-align: right;
 }
 
 .align-left {
-    justify-content: flex-start;
-    text-align: left;
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .bold {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .small-caps {
-    font-variant: small-caps;
+  font-variant: small-caps;
 }
 
 .modal-open {

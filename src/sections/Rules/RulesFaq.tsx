@@ -24,11 +24,11 @@ export const RulesFaq = () => {
     <div className={internalContainerClass}>
       <div className={styles.faqItem}>
         <p className={styles.subTitle}>
-          O Bolão acontecerá apenas durante a fase de grupos ou se estende até à
+          O Bolão acontecerá apenas durante a fase de grupos ou se estende até a
           Final?
         </p>
         <p>
-          Estende-se <b>até à final</b>. As partidas das Oitavas, Quartas, Semis
+          Estende-se <b>até a final</b>. As partidas das Oitavas, Quartas, Semis
           e Final serão adicionadas ao Bolão conforme as seleções forem se
           classificando.
         </p>
@@ -67,9 +67,8 @@ export const RulesFaq = () => {
         </p>
         <p>
           <b>Não</b>. 10% do valor total será direcionado ao pagamento de custos
-          de manutenção (servidor, hospedagem e desenvolvimento) e premiações
-          adicionais. Os 90% restantes serão distribuídos entre os vencedores do
-          Bolão.
+          de manutenção (servidor, hospedagem e desenvolvimento). Os 90%
+          restantes serão distribuídos entre os vencedores do Bolão.
         </p>
         <p>
           Para mais detalhes, acesse{' '}
@@ -179,6 +178,15 @@ export const RulesFaq = () => {
             Apostas Extras
           </a>
           .
+        </p>
+      </div>
+      <div className={styles.faqItem}>
+        <p className={styles.subTitle}>
+          Apostei em somente 1 dos times, minha aposta ainda conta?
+        </p>
+        <p>
+          <b>Não.</b> Para que uma aposta seja considerada válida, ambos os
+          times envolvidos na partida devem receber uma aposta.
         </p>
       </div>
       <div className={styles.faqItem}>

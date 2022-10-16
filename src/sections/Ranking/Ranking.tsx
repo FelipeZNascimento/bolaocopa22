@@ -148,7 +148,9 @@ export const Ranking = ({
       flex: 1,
       renderingFunction: () => (
         <div>
-          <b>Pts.</b>
+          <Tooltip text="Pontos">
+            <b>Pts.</b>
+          </Tooltip>
         </div>
       )
     }
@@ -162,8 +164,8 @@ export const Ranking = ({
         flex: 1,
         renderingFunction: () => (
           <div>
-            <Tooltip text="Acerto Completo">
-              <b>AC</b>
+            <Tooltip text="Acerto Total">
+              <b>AT</b>
             </Tooltip>
           </div>
         )

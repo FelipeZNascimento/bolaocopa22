@@ -25,7 +25,6 @@ export const RulesBets = () => {
           text="Atualizações Diárias"
         />
       </div>
-
       <p className="align-center">
         As apostas poderão ser feitas até o horário de início de cada jogo. No
         momento do apito inicial, a partida será automaticamente bloqueada para
@@ -39,13 +38,13 @@ export const RulesBets = () => {
       <p className="align-center">
         Caso o participante não consiga acessar o site do Bolão por algum motivo
         para realizar suas apostas, serão aceitas apostas enviadas para o e-mail{' '}
-        <a href="https://wa.me/5511966031088">
-          +55 11 96603-1088{' '}
+        <a href="mailto:ngm.motta@gmail.com">
           <img
             alt="Gmail Icon"
             height={20}
             src="https://assets.omegafox.me/img/social_icons/gmail.png"
-          />
+          />{' '}
+          ngm.motta@gmail.com
         </a>{' '}
         ou{' '}
         <a href="mailto:felipe@omegafox.me">

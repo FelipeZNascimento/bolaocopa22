@@ -209,7 +209,7 @@ export const RulesPrizes = () => {
         <TitleContainer
           borderPosition="bottomLeft"
           size="small"
-          text="Até 112 inscritos: Top 5"
+          text="Até 111 inscritos: Top 5"
         />
         <TitleContainer
           borderPosition="bottomRight"

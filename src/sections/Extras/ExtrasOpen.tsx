@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 // Components
-import { Autocomplete, Loading, TitleContainer } from '@omegafox/components';
+import {
+  Autocomplete,
+  Loading,
+  TDropdownItem,
+  TitleContainer
+} from '@omegafox/components';
 import { ExtrasTeams } from './ExtrasTeams';
+
+// Store
+import { useOnListAllPlayersQuery } from 'store/player/actions';
+import { playersLoading, setPlayers } from 'store/player/reducer';
+
+// Services
+import { QueryHandler } from 'services/queryHandler';
 
 // Types
 import { IExtrasOpen } from './types';
@@ -11,9 +24,11 @@ import { IExtrasOpen } from './types';
 import styles from './Extras.module.scss';
 import spinner from 'img/spinner.png';
 
+// Constants
+import { EXTRA_TYPES } from 'constants/extraTypes';
+
 export const ExtrasOpen = ({
   champion,
-  dropdownList,
   defense,
   offense,
   selectedExtra,
@@ -22,10 +37,38 @@ export const ExtrasOpen = ({
   onStrikerSelect,
   onTeamClick
 }: IExtrasOpen) => {
+  const [dropdownList, setDropdownList] = useState<TDropdownItem[]>([]);
+
+  // Queries and Mutations
+  const listAllPlayersResult = useOnListAllPlayersQuery();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(playersLoading(listAllPlayersResult.isLoading));
+    if (!listAllPlayersResult.isLoading && listAllPlayersResult.data) {
+      const result = QueryHandler(listAllPlayersResult.data);
+      if (result && result.players) {
+        dispatch(setPlayers(result.players));
+        setDropdownList(
+          result.players.map((player) => ({
+            id: player.id,
+            name: player.name,
+            details: {
+              nameShort: player.team.abbreviation,
+              colors: player.team.colors,
+              id: player.team.id,
+              name: player.team.name
+            }
+          }))
+        );
+      }
+    }
+  }, [listAllPlayersResult.isLoading, listAllPlayersResult.data]);
+
   return (
     <>
       {selectedExtra !== null && teamsLoading && <Loading image={spinner} />}
-      {teams && selectedExtra === 0 && (
+      {teams && selectedExtra === EXTRA_TYPES.CHAMPION && (
         <>
           <p className={styles.titleContainer}>
             <TitleContainer text="Campeão" />
@@ -38,7 +81,7 @@ export const ExtrasOpen = ({
           />
         </>
       )}
-      {teams && selectedExtra === 1 && (
+      {teams && selectedExtra === EXTRA_TYPES.OFFENSE && (
         <>
           <p className={styles.titleContainer}>
             <TitleContainer text="Melhor Ataque" />
@@ -51,7 +94,7 @@ export const ExtrasOpen = ({
           />
         </>
       )}
-      {teams && selectedExtra === 2 && (
+      {teams && selectedExtra === EXTRA_TYPES.DEFENSE && (
         <>
           <p className={styles.titleContainer}>
             <TitleContainer text="Melhor Defesa" />
@@ -64,17 +107,22 @@ export const ExtrasOpen = ({
           />
         </>
       )}
-      {teams && selectedExtra === 3 && (
+      {teams && selectedExtra === EXTRA_TYPES.STRIKER && (
         <>
-          <p className={styles.titleContainer}>
-            <TitleContainer text="Artilheiro" />
-          </p>
-          <div>
-            <Autocomplete
-              dropdownList={dropdownList}
-              onSelect={onStrikerSelect}
-            />
-          </div>
+          {listAllPlayersResult.isFetching && <Loading image={spinner} />}
+          {!listAllPlayersResult.isFetching && (
+            <>
+              <p className={styles.titleContainer}>
+                <TitleContainer text="Artilheiro" />
+              </p>
+              <div>
+                <Autocomplete
+                  dropdownList={dropdownList}
+                  onSelect={onStrikerSelect}
+                />
+              </div>
+            </>
+          )}
         </>
       )}
     </>

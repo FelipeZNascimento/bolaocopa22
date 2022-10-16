@@ -19,6 +19,10 @@ export const recoverPassword = () => '/user/recoverPassword';
 export const listAllMatches = () => '/match';
 export const listAllMatchesWithUserBets = () => '/match/userBets';
 
+// Match
+export const listAllPlayers = () => '/player';
+// export const listAllMatchesWithUserBets = () => '/match/userBets';
+
 // Bet
 export const updateBet = () => '/bet';
 export const listAllExtraBets = () => '/extraBets';

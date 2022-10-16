@@ -121,7 +121,10 @@ export const Bets = () => {
             <TitleContainer text="As apostas serão liberadas após confirmação de pagamento." />
           </div>
         )}
-        {!isMatchesLoading && loggedUser && renderMatches()}
+        {!isMatchesLoading &&
+          loggedUser &&
+          loggedUser.isActive &&
+          renderMatches()}
         {isMatchesLoading && <Loading image={spinner} />}
       </div>
       {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
