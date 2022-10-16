@@ -244,7 +244,7 @@ export const RulesPoints = () => {
   return (
     <div className={internalContainerClass}>
       <p className="align-center">
-        <img alt='Match with explanation arrows' src={match_explained} />
+        <img alt="Match with explanation arrows" src={match_explained} />
       </p>
       <div className={columnsContainerClass}>
         <div className={styles.column}>
@@ -379,7 +379,7 @@ export const RulesPoints = () => {
       <div className={columnsContainerClass}>
         <div className={styles.column}>
           <p className={styles.subTitle}>Empate</p>
-          <p>
+          <p className={styles.fullWidth}>
             Caso uma partida termine empatada, as únicas pontuações possíveis
             são: <span className={styles.red}>Erro</span> (se apostou em um
             vencedor), <span className={styles.lightBlue}>Acerto Mínimo</span>{' '}
@@ -391,7 +391,7 @@ export const RulesPoints = () => {
       <div className={columnsContainerClass}>
         <div className={styles.column}>
           <p className={styles.subTitle}>Tempo Extra e Prorrogação</p>
-          <p>
+          <p className={styles.fullWidth}>
             Se uma partida for para a prorrogação, será considerado o resultado
             ao fim do Tempo Extra.
             <br />

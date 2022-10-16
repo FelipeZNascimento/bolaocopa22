@@ -68,6 +68,7 @@
     width: 100%;
 
     .fullWidth {
+      @include marged(all, none);
       @include aligned(center);
       width: 100%;
 

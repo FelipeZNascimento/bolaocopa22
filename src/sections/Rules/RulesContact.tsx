@@ -18,6 +18,7 @@ export const RulesContact = () => {
 
   return (
     <div className={internalContainerClass}>
+      <p className={styles.subTitle}>Grupos Oficiais do Bolão</p>
       <div className={columnsContainerClass}>
         <div className={styles.column}>
           <p className={styles.fullWidth}>
