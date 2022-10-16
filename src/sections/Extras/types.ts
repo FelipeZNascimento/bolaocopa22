@@ -1,11 +1,12 @@
 import { TDropdownItem } from '@omegafox/components';
+import { IPlayer } from 'store/player/types';
 import { ITeam } from 'store/team/types';
 
 export type TExtraBets = {
   champion: ITeam | null;
   offense: ITeam | null;
   defense: ITeam | null;
-  striker: TDropdownItem | null;
+  striker: IPlayer | null;
 };
 
 export interface IExtrasClosed {
@@ -15,7 +16,6 @@ export interface IExtrasClosed {
 export interface IExtrasOpen {
   champion: ITeam | null;
   defense: ITeam | null;
-  dropdownList: TDropdownItem[];
   offense: ITeam | null;
   selectedExtra: number | null;
   teamsLoading: boolean;

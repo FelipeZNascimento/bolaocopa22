@@ -1,4 +1,5 @@
 import { EXTRA_TYPES } from 'constants/extraTypes';
+import { IPlayer } from 'store/player/types';
 import { ITeam } from 'store/team/types';
 import { TUser } from 'store/user/types';
 
@@ -18,5 +19,6 @@ export type TExtraBet = {
   idPlayer?: number | null;
   user: TUser;
   team: ITeam | null;
+  player: IPlayer | null;
   timestamp: string;
 };

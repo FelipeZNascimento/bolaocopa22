@@ -30,11 +30,11 @@ import { TExtraBet } from 'store/bet/types';
 
 // Constants
 import { EXTRA_TYPES } from 'constants/extraTypes';
-import { dropdownList } from 'constants/mocks';
 
 // Styles
 import styles from './Extras.module.scss';
 import spinner from 'img/spinner.png';
+import { IPlayer } from 'store/player/types';
 
 const extrasInfo = [
   { id: EXTRA_TYPES.CHAMPION, title: 'Campeão', status: null },
@@ -80,6 +80,10 @@ export const Extras = () => {
   const teams = useSelector(
     (state: RootState) => state.team.teams
   ) as unknown as ITeam[];
+
+  const players = useSelector(
+    (state: RootState) => state.player.players
+  ) as unknown as IPlayer[];
 
   const teamsLoading = useSelector(
     (state: RootState) => state.team.teamsLoading
@@ -141,10 +145,15 @@ export const Extras = () => {
     const updatedExtraBets = cloneDeep(loggedUserExtraBets).map((item) => {
       if (item.idExtraType === idExtraType) {
         if (idExtraType === EXTRA_TYPES.STRIKER) {
-          return {
-            ...item,
-            idPlayer: id
-          };
+          const selectedPlayer = players.find((item) => item.id === id);
+          if (selectedPlayer) {
+            return {
+              ...item,
+              idPlayer: id,
+              player: selectedPlayer,
+              team: teams.find((team) => team.id === selectedPlayer.team.id)
+            };
+          }
         }
 
         const updatedTeam = teams.find((team) => team.id === id);
@@ -163,17 +172,21 @@ export const Extras = () => {
   };
 
   const handleStrikerSelect = (player: TDropdownItem) => {
-    const updatedExtraBets = { ...extraBets, striker: player };
-    updateExtraTrigger({
-      betId: null,
-      extraType: EXTRA_TYPES.CHAMPION,
-      userId: loggedUser.id,
-      teamId: null,
-      playerId: player.id
-    });
+    const selectedPlayer = players.find((item) => item.id === player.id);
 
-    setExtraBets(updatedExtraBets);
-    updateStoreWithNewBets(EXTRA_TYPES.CHAMPION, player.id);
+    if (selectedPlayer) {
+      updateExtraTrigger({
+        betId: null,
+        extraType: EXTRA_TYPES.STRIKER,
+        userId: loggedUser.id,
+        teamId: selectedPlayer.team.id,
+        playerId: selectedPlayer.id
+      });
+      const updatedExtraBets = { ...extraBets, striker: selectedPlayer };
+
+      setExtraBets(updatedExtraBets);
+      updateStoreWithNewBets(EXTRA_TYPES.STRIKER, player.id);
+    }
   };
 
   const handleTeamClick = (team: ITeam) => {
@@ -227,10 +240,10 @@ export const Extras = () => {
     return <Loading image={spinner} size="small" isOverlay />;
   };
 
-  const renderPlayer = (player: TDropdownItem | null) => {
-    if (!player) {
+  const renderPlayer = (team: ITeam | null, playerName: string | null) => {
+    if (!playerName || !team) {
       return <FontAwesomeIcon icon={faQuestionCircle} size="lg" />;
-    } else if (player && updateExtraResult.isLoading) {
+    } else if (updateExtraResult.isLoading) {
       return renderLoading();
     } else {
       const statusClass = classNames({
@@ -244,9 +257,9 @@ export const Extras = () => {
             fontSize={isMobile ? 'small' : 'big'}
             isHoverable={false}
             isBig={false}
-            colors={player.details.colors}
-            logo={`https://assets.omegafox.me/img/countries_crests/${player.details.nameShort.toLowerCase()}.png`}
-            name={player.name}
+            colors={team.colors}
+            logo={`https://assets.omegafox.me/img/countries_crests/${team.abbreviationEn.toLowerCase()}.png`}
+            name={playerName}
           />
         </div>
       );
@@ -283,44 +296,36 @@ export const Extras = () => {
       return renderLoading();
     }
 
-    if (hasSeasonStarted) {
-      switch (extraType) {
-        case EXTRA_TYPES.CHAMPION:
-          return renderTeam(
-            loggedUserExtraBets.find(
-              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION
-            )?.team || null
-          );
-        case EXTRA_TYPES.OFFENSE:
-          return renderTeam(
-            loggedUserExtraBets.find(
-              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.OFFENSE
-            )?.team || null
-          );
-        case EXTRA_TYPES.DEFENSE:
-          return renderTeam(
-            loggedUserExtraBets.find(
-              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.DEFENSE
-            )?.team || null
-          );
-        case EXTRA_TYPES.STRIKER:
-          return renderPlayer(null);
-        default:
-          return null;
-      }
-    } else {
-      switch (extraType) {
-        case EXTRA_TYPES.CHAMPION:
-          return renderTeam(extraBets.champion);
-        case EXTRA_TYPES.OFFENSE:
-          return renderTeam(extraBets.offense);
-        case EXTRA_TYPES.DEFENSE:
-          return renderTeam(extraBets.defense);
-        case EXTRA_TYPES.STRIKER:
-          return renderPlayer(extraBets.striker);
-        default:
-          return null;
-      }
+    const strikerBet = loggedUserExtraBets.find(
+      (extraBet) => extraBet.idExtraType === EXTRA_TYPES.STRIKER
+    );
+
+    switch (extraType) {
+      case EXTRA_TYPES.CHAMPION:
+        return renderTeam(
+          loggedUserExtraBets.find(
+            (extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION
+          )?.team || null
+        );
+      case EXTRA_TYPES.OFFENSE:
+        return renderTeam(
+          loggedUserExtraBets.find(
+            (extraBet) => extraBet.idExtraType === EXTRA_TYPES.OFFENSE
+          )?.team || null
+        );
+      case EXTRA_TYPES.DEFENSE:
+        return renderTeam(
+          loggedUserExtraBets.find(
+            (extraBet) => extraBet.idExtraType === EXTRA_TYPES.DEFENSE
+          )?.team || null
+        );
+      case EXTRA_TYPES.STRIKER:
+        return renderPlayer(
+          strikerBet?.team || null,
+          strikerBet?.player?.name || null
+        );
+      default:
+        return null;
     }
   };
 
@@ -375,7 +380,6 @@ export const Extras = () => {
               <ExtrasOpen
                 champion={extraBets.champion}
                 defense={extraBets.defense}
-                dropdownList={dropdownList}
                 offense={extraBets.offense}
                 selectedExtra={selectedExtra}
                 teamsLoading={teamsLoading}

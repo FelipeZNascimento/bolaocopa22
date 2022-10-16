@@ -4,6 +4,7 @@ import { TExtraBet } from 'store/bet/types';
 import { ITeam } from 'store/team/types';
 import { TUserRanking } from 'store/ranking/types';
 import { TNews } from 'store/news/types';
+import { IPlayer } from 'store/player/types';
 
 export type TError = {
   code: string;
@@ -17,6 +18,7 @@ interface IResult {
   loggedUser: TUser[];
   loggedUserExtraBets: TExtraBet[];
   matches: TMatch[];
+  players: IPlayer[];
   seasonStart: number;
   teams: ITeam[];
   round: number;

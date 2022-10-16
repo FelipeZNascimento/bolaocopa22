@@ -4,6 +4,7 @@ import { betSlice } from './bet/reducer';
 import { errorSlice } from './error/reducer';
 import { matchSlice } from './match/reducer';
 import { newsSlice } from './news/reducer';
+import { playerSlice } from './player/reducer';
 import { rankingSlice } from './ranking/reducer';
 import { teamSlice } from './team/reducer';
 import { userSlice } from 'store/user/reducer';
@@ -16,6 +17,7 @@ const store = configureStore({
     error: errorSlice.reducer,
     match: matchSlice.reducer,
     news: newsSlice.reducer,
+    player: playerSlice.reducer,
     ranking: rankingSlice.reducer,
     team: teamSlice.reducer,
     user: userSlice.reducer
