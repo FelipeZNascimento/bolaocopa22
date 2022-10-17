@@ -99,6 +99,7 @@ export const Results = () => {
 
       const newDate = new Date(match.timestamp);
       const matchTimestamp = newDate.getTime() / 1000;
+      const hasMatchStarted = matchTimestamp < currentTimestamp;
 
       if (!shownDate || newDate.getDate() !== shownDate.getDate()) {
         shownDate = new Date(match.timestamp);
@@ -120,7 +121,7 @@ export const Results = () => {
         logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}_small.png`,
         matchId: match.id,
         name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
-        score: matchTimestamp < currentTimestamp ? match.homeTeam.goals : null
+        score: hasMatchStarted ? match.homeTeam.goals : null
       };
 
       const awayTeam: ITeamProps = {
@@ -136,7 +137,7 @@ export const Results = () => {
         logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}_small.png`,
         matchId: match.id,
         name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
-        score: matchTimestamp < currentTimestamp ? match.awayTeam.goals : null
+        score: hasMatchStarted ? match.awayTeam.goals : null
       };
 
       const renderMatchInfo = () => {
@@ -177,8 +178,8 @@ export const Results = () => {
               {userBet ? '>' : ''} {bet.user.nickname}
             </div>
             <div className={`${betClass} ${styles.singleBetScore}`}>{`${
-              bet.goalsHome || 'x'
-            } - ${bet.goalsAway || 'x'}`}</div>
+              bet.goalsHome !== null ? bet.goalsHome : 'x'
+            } - ${bet.goalsAway !== null ? bet.goalsAway : 'x'}`}</div>
             <div className={`${betClass} ${styles.singleBetPoints}`}>
               {singleBetPoints} Pts.
             </div>
@@ -193,6 +194,9 @@ export const Results = () => {
         const matchBetsMiss: TBet[] = [];
 
         match.bets.forEach((bet) => {
+          if (loggedUser && bet.user.id === loggedUser.id) {
+            return;
+          }
           const singleBetPoints = getBetPoints(bet, match);
           if (singleBetPoints === BET_VALUES.FULL) {
             matchBetsFull.push(bet);
@@ -256,18 +260,18 @@ export const Results = () => {
             <Match
               isExpandable
               key={match.id}
-              betValue={matchTimestamp < currentTimestamp ? points : null}
+              betValue={hasMatchStarted ? points : null}
               id={match.id}
               isEditable={false}
               isHideClock={isMobile}
               expandableContent={
-                matchTimestamp > currentTimestamp ? renderMatchInfo : renderBets
+                !hasMatchStarted ? renderMatchInfo : renderBets
               }
               clock={{
                 time: 0,
                 status:
                   match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED &&
-                  matchTimestamp < currentTimestamp
+                  hasMatchStarted
                     ? FOOTBALL_MATCH_STATUS.FIRST_HALF
                     : match.status
               }}
