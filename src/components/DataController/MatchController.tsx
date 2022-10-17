@@ -24,7 +24,11 @@ import ROUTES from 'constants/routes';
 
 export const MatchController = () => {
   const { pathname } = useLocation();
-  const skipAllMatchesQuery = pathname.includes(ROUTES.BETS.url);
+  const skipAllMatchesQuery =
+    pathname.includes(ROUTES.BETS.url) ||
+    pathname.includes(ROUTES.EXTRAS.url) ||
+    pathname.includes(ROUTES.RULES.url) ||
+    pathname.includes(ROUTES.TEAMS.url);
 
   const [listAllMatchesTrigger, listAllMatchesResult] =
     useOnFetchAllMatchesMutation();
