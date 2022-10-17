@@ -8,7 +8,7 @@ import { RootState } from 'store';
 // Actions
 import {
   useOnListAllMatchesQuery,
-  useOnListAllMatchesWithUserBetsMutation
+  useOnFetchAllMatchesMutation
 } from 'store/match/actions';
 
 // Reducers
@@ -27,7 +27,7 @@ export const MatchController = () => {
   const skipAllMatchesQuery = pathname.includes(ROUTES.BETS.url);
 
   const [listAllMatchesTrigger, listAllMatchesResult] =
-    useOnListAllMatchesWithUserBetsMutation();
+    useOnFetchAllMatchesMutation();
   const dispatch = useDispatch();
 
   const loggedUser = useSelector(

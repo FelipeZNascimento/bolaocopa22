@@ -21,7 +21,6 @@ export const listAllMatchesWithUserBets = () => '/match/userBets';
 
 // Match
 export const listAllPlayers = () => '/player';
-// export const listAllMatchesWithUserBets = () => '/match/userBets';
 
 // Bet
 export const updateBet = () => '/bet';
