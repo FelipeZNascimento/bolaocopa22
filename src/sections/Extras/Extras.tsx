@@ -142,32 +142,31 @@ export const Extras = () => {
   }, [loggedUserExtraBets]);
 
   const updateStoreWithNewBets = (idExtraType: number, id: number) => {
-    const updatedExtraBets = cloneDeep(loggedUserExtraBets).map((item) => {
-      if (item.idExtraType === idExtraType) {
-        if (idExtraType === EXTRA_TYPES.STRIKER) {
-          const selectedPlayer = players.find((item) => item.id === id);
-          if (selectedPlayer) {
-            return {
-              ...item,
-              idPlayer: id,
-              player: selectedPlayer,
-              team: teams.find((team) => team.id === selectedPlayer.team.id)
-            };
-          }
-        }
+    let selectedTeam = null;
+    let selectedPlayer = null;
 
-        const updatedTeam = teams.find((team) => team.id === id);
+    if (idExtraType === EXTRA_TYPES.STRIKER) {
+      selectedPlayer = players.find((item) => item.id === id);
+    } else {
+      selectedTeam = teams.find((team) => team.id === id);
+    }
 
-        return {
-          ...item,
-          idTeam: id,
-          team: updatedTeam
-        };
-      }
+    const newExtraBet: TExtraBet = {
+      id: null,
+      idExtraType: idExtraType,
+      idTeam: selectedTeam?.id || null,
+      idPlayer: selectedPlayer?.id || null,
+      user: loggedUser,
+      team: selectedTeam || null,
+      player: selectedPlayer || null,
+      timestamp: null
+    };
 
-      return item;
-    });
-
+    const updatedExtraBets = loggedUserExtraBets.filter(
+      (item) => item.idExtraType !== idExtraType
+    );
+    updatedExtraBets.push(newExtraBet);
+    console.log(updatedExtraBets);
     dispatch(extraBetsUpdated(updatedExtraBets));
   };
 

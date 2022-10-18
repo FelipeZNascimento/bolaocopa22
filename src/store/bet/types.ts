@@ -13,12 +13,12 @@ export type TBet = {
 };
 
 export type TExtraBet = {
-  id: number;
+  id: number | null;
   idExtraType: EXTRA_TYPES;
   idTeam?: number | null;
   idPlayer?: number | null;
   user: TUser;
   team: ITeam | null;
   player: IPlayer | null;
-  timestamp: string;
+  timestamp: string | null;
 };
