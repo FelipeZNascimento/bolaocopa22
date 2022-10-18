@@ -6,6 +6,7 @@ import {
   Autocomplete,
   Loading,
   TDropdownItem,
+  TextContainer,
   TitleContainer
 } from '@omegafox/components';
 import { ExtrasTeams } from './ExtrasTeams';
@@ -110,7 +111,19 @@ export const ExtrasOpen = ({
       {teams && selectedExtra === EXTRA_TYPES.STRIKER && (
         <>
           {listAllPlayersResult.isFetching && <Loading image={spinner} />}
-          {!listAllPlayersResult.isFetching && (
+          {!listAllPlayersResult.isFetching && dropdownList.length <= 1 && (
+            <TextContainer borderPosition="bottomLeft">
+              <>
+                <p className='align-center'>
+                  A Extra de Artilheiros será liberada assim que <b>todas</b> as
+                  seleções tiverem feito suas convocações finais para a Copa do
+                  Mundo.
+                </p>
+                <p className='align-center'>Espera-se que isso aconteça por volta do dia 07/11.</p>
+              </>
+            </TextContainer>
+          )}
+          {!listAllPlayersResult.isFetching && dropdownList.length > 1 && (
             <>
               <p className={styles.titleContainer}>
                 <TitleContainer text="Artilheiro" />

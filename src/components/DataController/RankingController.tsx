@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 // Actions
 import { useGetRankingQuery } from 'store/ranking/actions';
@@ -10,11 +11,21 @@ import { rankingSet } from 'store/ranking/reducer';
 // Utilities
 import { QueryHandler } from 'services/queryHandler';
 
+// Constants
+import ROUTES from 'constants/routes';
+
 export const RankingController = () => {
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
+
+  const skipRankingQuery =
+    pathname.includes(ROUTES.EXTRAS.url) ||
+    pathname.includes(ROUTES.RULES.url) ||
+    pathname.includes(ROUTES.TEAMS.url);
 
   const { data, error, isLoading } = useGetRankingQuery(null, {
-    pollingInterval: 10000
+    pollingInterval: 10000,
+    skip: skipRankingQuery
   });
 
   useEffect(() => {

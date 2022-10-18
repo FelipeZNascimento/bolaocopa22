@@ -24,10 +24,8 @@ import { TRankingResult } from 'store/ranking/types';
 // Style and images
 import styles from './Ranking.module.scss';
 import spinner from 'img/spinner.png';
-import logo from 'img/logo_translucid10.png';
 
 export const Ranking = ({
-  backgroundImage = logo,
   isHeader = true,
   isMinified = false
 }: TRankingProps) => {
@@ -213,7 +211,7 @@ export const Ranking = ({
     }
 
     return (
-      <TextContainer backgroundImage={backgroundImage}>
+      <TextContainer>
         <Table isHeader={isHeader} columns={columns} rows={rows} />
       </TextContainer>
     );

@@ -2,7 +2,6 @@ import { baseApi } from 'store/base/base';
 // import { TMatch } from './types';
 
 import {
-  listAllMatchesWithUserBets as listAllMatchesWithUserBetsEndpoint,
   listAllMatches as listAllMatchesEndpoint
 } from 'services/endpoints';
 import { TQuery } from 'store/base/types';
@@ -14,11 +13,10 @@ const extendedApi = baseApi.injectEndpoints({
         return { url: listAllMatchesEndpoint(), credentials: 'include' };
       }
     }),
-
-    onListAllMatchesWithUserBets: builder.mutation<TQuery, void>({
+    onFetchAllMatches: builder.mutation<TQuery, void>({
       query: () => {
         return {
-          url: listAllMatchesWithUserBetsEndpoint(),
+          url: listAllMatchesEndpoint(),
           method: 'get',
           headers: {
             'Content-type': 'application/json; charset=UTF-8'
@@ -30,7 +28,5 @@ const extendedApi = baseApi.injectEndpoints({
   })
 });
 
-export const {
-  useOnListAllMatchesWithUserBetsMutation,
-  useOnListAllMatchesQuery
-} = extendedApi;
+export const { useOnFetchAllMatchesMutation, useOnListAllMatchesQuery } =
+  extendedApi;

@@ -22,6 +22,7 @@ import ROUTES from 'constants/routes';
 import classNames from 'classnames';
 import styles from './Extras.module.scss';
 import { TUser } from 'store/user/types';
+import { IPlayer } from 'store/player/types';
 
 export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
   const navigate = useNavigate();
@@ -83,6 +84,17 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
     const hasLoggedUserBet =
       loggedUser && users.some((user) => user.id === loggedUser.id);
 
+    let teamButtonName = isMobile
+      ? extraBet.team.abbreviation
+      : extraBet.team.name;
+    if (
+      extraBet.idExtraType === EXTRA_TYPES.STRIKER &&
+      extraBet.player &&
+      extraBet.player.id
+    ) {
+      teamButtonName = extraBet.player.name;
+    }
+
     return (
       <div className={teamClass} key={extraBet.team.id}>
         <div onClick={() => handleTeamClick(extraBet.team)}>
@@ -91,7 +103,7 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
             isSelected={hasLoggedUserBet}
             colors={extraBet.team.colors}
             logo={`https://assets.omegafox.me/img/countries_crests/${extraBet.team.abbreviationEn.toLowerCase()}.png`}
-            name={isMobile ? extraBet.team.abbreviation : extraBet.team.name}
+            name={teamButtonName}
           />
         </div>
         <div className={styles.betsContainer}>
@@ -109,6 +121,42 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
         </div>
       </div>
     );
+  };
+
+  const renderExtraBetsStriker = (extraBets: TExtraBet[]) => {
+    let currentStriker: IPlayer | null = null;
+    let usersPerStriker: TUser[] = [];
+
+    return extraBets.map((extraBet, index, array) => {
+      if (extraBet.team === null || extraBet.player === null) {
+        return;
+      }
+
+      if (currentStriker === null) {
+        currentStriker = extraBet.player;
+      }
+
+      if (extraBet.player.id === currentStriker.id) {
+        usersPerStriker.push(extraBet.user);
+
+        if (
+          index + 1 === array.length ||
+          (array[index + 1].player as IPlayer).id !== currentStriker.id
+        ) {
+          return renderTeam(extraBet, usersPerStriker);
+        }
+      } else {
+        currentStriker = extraBet.player;
+        usersPerStriker = [extraBet.user];
+
+        if (
+          index + 1 === array.length ||
+          (array[index + 1].player as IPlayer).id !== currentStriker.id
+        ) {
+          return renderTeam(extraBet, usersPerStriker);
+        }
+      }
+    });
   };
 
   const renderExtraBets = (extraBets: TExtraBet[]) => {
@@ -152,7 +200,8 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
       {selectedExtra === EXTRA_TYPES.CHAMPION && renderExtraBets(allChampions)}
       {selectedExtra === EXTRA_TYPES.OFFENSE && renderExtraBets(allOfenses)}
       {selectedExtra === EXTRA_TYPES.DEFENSE && renderExtraBets(allDefenses)}
-      {selectedExtra === EXTRA_TYPES.STRIKER && renderExtraBets(allDefenses)}
+      {selectedExtra === EXTRA_TYPES.STRIKER &&
+        renderExtraBetsStriker(allStrikers)}
     </>
   );
 };

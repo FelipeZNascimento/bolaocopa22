@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 
 // Store
@@ -59,12 +59,15 @@ const emptyForm: TTextField[] = [
 
 export const ForgotPassword = () => {
   const [form, setForm] = useState<TTextField[]>(cloneDeep(emptyForm));
+  // const [loginButton, setLoginButton] = useState(false);
 
   const [toastMessage, setToastMessage] = useState<TToastMessage | null>(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const { email, token } = useParams();
   const [updatePassTrigger, updatePassResult] = useOnUpdatePassTokenMutation();
+
+  const navigate = useNavigate();
 
   const errors: TError[] = useSelector(
     (state: RootState) => state.error.errors
@@ -100,7 +103,7 @@ export const ForgotPassword = () => {
 
       setToastMessage({ text: message, isError: true });
     } else if (updatePassResult.isSuccess) {
-      setToastMessage({ text: 'Operação feita com sucesso', isError: false });
+      setToastMessage(null);
     }
   }, [
     updatePassResult.isLoading,
@@ -145,15 +148,20 @@ export const ForgotPassword = () => {
     return isValid;
   };
 
+  const handleLogin = () => {
+    navigate({
+      pathname: `${ROUTES.HOME.url}#entrar`
+    });
+  };
+
   const handleConfirm = () => {
-    const isFormDisabled = !isFormValid();
-    setIsDisabled(isFormDisabled);
     setToastMessage(null);
 
-    if (isFormDisabled) {
+    if (!isFormValid()) {
       return;
     }
     const newPassword = form.find((item) => item.key === 'password');
+    setIsDisabled(true);
 
     updatePassTrigger({
       email: email || '',
@@ -217,22 +225,32 @@ export const ForgotPassword = () => {
             {!updatePassResult.isSuccess && form.map(renderTextfield)}
             {updatePassResult.isSuccess && (
               <p className={styles.title}>
-                Senha alterada com sucesso! Clique{' '}
-                <Link to={`${ROUTES.HOME.url}#entrar`}>aqui</Link> para fazer
-                login.
+                Senha alterada com sucesso!
               </p>
             )}
             {toastMessage !== null && (
               <p className={messageClass}>{toastMessage.text}</p>
             )}
-            <Button
-              isDisabled={isDisabled}
-              isShadowed={false}
-              variant="confirm"
-              onClick={handleConfirm}
-            >
-              Confirmar
-            </Button>
+            {!updatePassResult.isSuccess && (
+              <Button
+                isDisabled={isDisabled}
+                isShadowed={false}
+                variant="confirm"
+                onClick={handleConfirm}
+              >
+                Confirmar
+              </Button>
+            )}
+            {updatePassResult.isSuccess && (
+              <Button
+                isDisabled={false}
+                isShadowed={false}
+                variant="confirm"
+                onClick={handleLogin}
+              >
+                Login
+              </Button>
+            )}
           </>
         )}
       </div>

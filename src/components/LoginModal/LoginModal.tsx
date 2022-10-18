@@ -251,6 +251,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
       text: 'Se esse endereço de email estiver cadastrado, você receberá instruções para configurar sua nova senha.',
       isError: false
     });
+    setIsDisabled(true);
   };
 
   const handleConfirm = () => {
