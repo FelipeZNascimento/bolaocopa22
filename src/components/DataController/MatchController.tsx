@@ -34,15 +34,15 @@ export const MatchController = () => {
     useOnFetchAllMatchesMutation();
   const dispatch = useDispatch();
 
-  const loggedUser = useSelector(
-    (state: RootState) => state.user.loggedUser
-  ) as unknown as TUser;
-  const prevLoggedUser = usePrevious(loggedUser);
-
   const allMatchesQueryResult = useOnListAllMatchesQuery(null, {
     pollingInterval: 10000,
     skip: skipAllMatchesQuery
   });
+
+  const loggedUser = useSelector(
+    (state: RootState) => state.user.loggedUser
+  ) as unknown as TUser;
+  const prevLoggedUser = usePrevious(loggedUser);
 
   // Trigger matches mutation if user just logged in
   useEffect(() => {
@@ -53,11 +53,7 @@ export const MatchController = () => {
 
   // On match mutation result
   useEffect(() => {
-    dispatch(
-      matchesLoading(
-        listAllMatchesResult.isUninitialized && listAllMatchesResult.isLoading
-      )
-    );
+    dispatch(matchesLoading(listAllMatchesResult.isLoading));
 
     if (!listAllMatchesResult.isLoading && listAllMatchesResult.data) {
       const result = QueryHandler(listAllMatchesResult.data);
