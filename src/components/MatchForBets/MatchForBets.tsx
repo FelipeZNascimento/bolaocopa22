@@ -152,7 +152,6 @@ export const MatchForBets = ({
           id={match.id}
           isEditable={isEditable}
           isError={isError}
-          isHideClock={isMobile}
           isLoading={isLoading}
           clock={{ time: 0, status: match.status }}
           timestamp={parseInt(

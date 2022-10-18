@@ -5,7 +5,7 @@
 @import "styles/paddings.scss";
 
 .match {
-  @include padded(bottom, m);
+  @include padded(bottom, s);
 }
 
 .date {
