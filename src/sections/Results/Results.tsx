@@ -263,7 +263,6 @@ export const Results = () => {
               betValue={hasMatchStarted ? points : null}
               id={match.id}
               isEditable={false}
-              isHideClock={isMobile}
               expandableContent={
                 !hasMatchStarted ? renderMatchInfo : renderBets
               }
