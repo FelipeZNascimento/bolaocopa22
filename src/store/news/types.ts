@@ -1,7 +1,6 @@
 export type TNews = {
   title: string;
-  resume: string;
+  summary: string;
   link: string;
   image: string;
-  date: string;
 };
