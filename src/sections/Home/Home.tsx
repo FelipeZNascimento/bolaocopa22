@@ -279,10 +279,10 @@ export const Home = () => {
             news.map((item) => (
               <NewsCard
                 key={item.link}
-                date={item.date}
+                date={''}
                 image={item.image}
                 link={item.link}
-                resume={item.resume}
+                resume={item.summary}
                 title={item.title}
               />
             ))}
