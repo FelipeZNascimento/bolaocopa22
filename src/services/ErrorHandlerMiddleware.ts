@@ -10,6 +10,7 @@ export const rtkQueryErrorLogger: Middleware =
     // RTK Query uses `createAsyncThunk` from redux-toolkit under the hood, so we're able to utilize these matchers!
     if (isRejectedWithValue(action)) {
       console.warn('We got a rejected action!');
+      console.log(action.payload);
       if (action.payload.data) {
         api.dispatch(
           setError({
@@ -26,7 +27,8 @@ export const rtkQueryErrorLogger: Middleware =
         api.dispatch(
           setError({
             message: 'Erro inesperado. Reinicie a página.',
-            code: action.payload.error
+            code: action.payload.error,
+            showToast: true
           })
         );
 

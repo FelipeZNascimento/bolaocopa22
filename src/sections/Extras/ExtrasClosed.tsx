@@ -13,6 +13,8 @@ import { RootState } from 'store';
 import { TExtraBet } from 'store/bet/types';
 import { ITeam } from 'store/team/types';
 import { IExtrasClosed } from './types';
+import { IPlayer } from 'store/player/types';
+import { TUser } from 'store/user/types';
 
 // Constants
 import { EXTRA_TYPES } from 'constants/extraTypes';
@@ -21,8 +23,9 @@ import ROUTES from 'constants/routes';
 // Styles
 import classNames from 'classnames';
 import styles from './Extras.module.scss';
-import { TUser } from 'store/user/types';
-import { IPlayer } from 'store/player/types';
+
+// Helpers
+import { stringNormalizer } from 'services/helpers';
 
 export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
   const navigate = useNavigate();
@@ -72,7 +75,9 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
 
   const handleTeamClick = (team: ITeam | null) => {
     if (team !== null && teams && teams.find((item) => item.id === team.id)) {
-      navigate({ pathname: `${ROUTES.TEAMS.url}/${team.id}` });
+      navigate({
+        pathname: `${ROUTES.TEAMS.url}/${stringNormalizer(team.name)}`
+      });
     }
   };
 
