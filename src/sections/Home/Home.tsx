@@ -18,7 +18,6 @@ import {
 // Types
 import { TMatch } from 'store/match/types';
 import { TUser } from 'store/user/types';
-import { TBet } from 'store/bet/types';
 import { ITeamProps, TBetValues } from '@omegafox/components';
 import { TNews } from 'store/news/types';
 
@@ -148,13 +147,8 @@ export const Home = () => {
     const matchTimestamp = new Date(match.timestamp).getTime() / 1000;
     let points: TBetValues | null = null;
 
-    const loggedUserBet: TBet | null = loggedUser
-      ? match.bets.find((bet) => bet.user.id === loggedUser.id) || null
-      : null;
+    points = getBetPoints(match.loggedUserBets, match);
 
-    if (loggedUserBet) {
-      points = getBetPoints(loggedUserBet, match);
-    }
     const homeTeam: ITeamProps = {
       id: match.homeTeam.id,
       abbreviationEn: match.homeTeam.abbreviationEn,

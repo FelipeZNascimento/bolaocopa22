@@ -260,7 +260,7 @@ export const Results = () => {
             <Match
               isExpandable
               key={match.id}
-              betValue={hasMatchStarted ? points : null}
+              betValue={points}
               id={match.id}
               isEditable={false}
               expandableContent={

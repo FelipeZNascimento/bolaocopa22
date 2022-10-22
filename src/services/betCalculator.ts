@@ -2,7 +2,11 @@ import { TBet } from 'store/bet/types';
 import { TMatch } from 'store/match/types';
 import { BET_VALUES } from '@omegafox/components';
 
-const getBetPoints = (bet: TBet, match: TMatch) => {
+const getBetPoints = (bet: TBet | null, match: TMatch) => {
+  if (bet === null) {
+    return 0;
+  }
+
   return getBetPointsByScore(
     match.homeTeam.goals,
     match.awayTeam.goals,
