@@ -134,3 +134,16 @@
   @include aligned(center);
   @include font-colored($color-grey5);
 }
+
+.buttonsContainer {
+  @include flex-aligned(space-evenly, center);
+  @include marged(bottom, m);
+  width: 100%;
+
+  .button {
+    width: 60px;
+  }
+  .icon {
+    @include font-sized(l2);
+  }
+}
