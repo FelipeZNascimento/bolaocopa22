@@ -246,24 +246,6 @@ export const Home = () => {
           )}
         </div>
       </div>
-      <div className={styles.groupsSection}>
-        <div className={styles.iconsContainer}>
-          <a href="https://t.me/+rVP220dgf2o0ZDJh">
-            <img
-              alt="Telegram Icon"
-              height={80}
-              src="https://assets.omegafox.me/img/social_icons/telegram.png"
-            />
-          </a>
-          <a href="https://chat.whatsapp.com/7RkUEwV0fcaJT4TNuzklFN">
-            <img
-              alt="WhatsApp Icon"
-              height={80}
-              src="https://assets.omegafox.me/img/social_icons/whatsapp.png"
-            />
-          </a>
-        </div>
-      </div>
       <div className={styles.newsSection}>
         <TitleContainer text="Últimas Notícias" />
         <div className={newsContainerClass}>

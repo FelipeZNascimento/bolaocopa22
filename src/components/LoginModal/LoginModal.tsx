@@ -351,7 +351,7 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
       <Modal
         size="small"
         isOpen={isOpen}
-        title={renderTitle()}
+        subtitle={renderTitle()}
         onClose={handleClose}
       >
         {loginLoading && <Loading text="" image={logo} />}

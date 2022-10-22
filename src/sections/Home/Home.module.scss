@@ -48,22 +48,6 @@
   flex: 1;
 }
 
-.groupsSection {
-  @include flex-aligned(center, center);
-  @include padded(top, m);
-
-  flex-direction: column;
-  width: 100%;
-
-  .iconsContainer {
-    @include flex-aligned(center, center);
-
-    a {
-      @include padded(horizontal, m);
-    }
-  }
-}
-
 .newsSection {
   @include flex-aligned(center, center);
   @include padded(top, m);

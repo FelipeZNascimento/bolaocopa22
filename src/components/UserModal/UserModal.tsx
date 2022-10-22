@@ -322,7 +322,7 @@ export const UserModal = ({ isOpen, onClose }: IModalProps) => {
       <Modal
         size="small"
         isOpen={isOpen}
-        title={'Área do Usuário'}
+        subtitle={'Área do Usuário'}
         onClose={handleClose}
       >
         {isLoading && <Loading text="" image={logo} />}
