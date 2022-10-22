@@ -173,11 +173,12 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
       <div className={contentContainerClass}>
         <div className={contentClass}>
           <p>{singleTeam.name}</p>
-          <img
-            alt="Country flag"
-            src={`https://flagcdn.com/h40/${singleTeam.isoCode.toLowerCase()}.png`}
-          />
-          <br />
+          <p>
+            <img
+              alt="Country flag"
+              src={`https://flagcdn.com/h40/${singleTeam.isoCode.toLowerCase()}.png`}
+            />
+          </p>
           <img
             alt="National football federation crest"
             src={`https://assets.omegafox.me/img/countries_crests/${singleTeam.abbreviationEn.toLowerCase()}.png`}

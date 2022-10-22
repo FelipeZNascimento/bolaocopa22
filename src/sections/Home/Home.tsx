@@ -218,16 +218,13 @@ export const Home = () => {
   return (
     <main className={styles.app}>
       <div className={styles.topSection}>
-        <p className={styles.countdown}>
-          {countdownObject && (
-            <>
-              A Copa começa em {countdownObject.days} dias,{' '}
-              {countdownObject.hours} horas, {countdownObject.minutes} minutos e{' '}
-              {countdownObject.seconds} segundos
-            </>
-          )}
-          {!countdownObject && <>Bem-vindo ao Bolão da Copa do Mundo</>}
-        </p>
+        {countdownObject && (
+          <p className={styles.countdown}>
+            A Copa começa em {countdownObject.days} dias,{' '}
+            {countdownObject.hours} horas, {countdownObject.minutes} minutos e{' '}
+            {countdownObject.seconds} segundos
+          </p>
+        )}
         <p className={styles.title}>Bolão da Copa do Mundo 2022</p>
         <img src={spinner} alt="World Cup Logo" />
         <div>

@@ -26,8 +26,8 @@ export const Groups = () => {
       <div className={contentClass}>
         <iframe
           id={`sofa-standings-embed-${id}-41087`}
-          width="100%"
-          height="330"
+          width="252px"
+          height="360px"
           src={`https://www.sofascore.com/tournament/${id}/41087/standings/tables/embed`}
           frameBorder="0"
           scrolling="no"
@@ -42,9 +42,16 @@ export const Groups = () => {
     );
   };
 
+  const containerClass = classNames(styles.container, {
+    [styles.containerMobile]: isMobile,
+    [styles.containerDesktop]: !isMobile
+  });
+
   return (
-    <div className={styles.container}>
-      {groupsIdsSofascore.map((item) => renderGroup(item))}
+    <div className={styles.fullWidth}>
+      <div className={containerClass}>
+        {groupsIdsSofascore.map((item) => renderGroup(item))}
+      </div>
     </div>
   );
 };
