@@ -11,7 +11,8 @@ import {
   FOOTBALL_MATCH_STATUS,
   TBET_VALUES,
   ITeamProps,
-  TBetValues
+  TBetValues,
+  Tooltip
 } from '@omegafox/components';
 import { Selector } from 'components/index';
 import { Ranking } from 'sections/index';
@@ -64,6 +65,10 @@ export const Results = () => {
   const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
+
+  const loginLoading = useSelector(
+    (state: RootState) => state.user.loginLoading
+  ) as unknown as boolean;
 
   const containerClass = classNames(styles.container, {
     [styles.containerBrowser]: !isMobile,
@@ -223,10 +228,12 @@ export const Results = () => {
           <div className={styles.expandableStarted}>
             {!isMobile && (
               <div className={styles.expandableStartedStadium}>
-                <img
-                  alt="Stadium image"
-                  src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
-                />
+                <Tooltip text={match.stadium.name}>
+                  <img
+                    alt="Stadium image"
+                    src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
+                  />
+                </Tooltip>
               </div>
             )}
             <div className={styles.expandableStartedBets}>
@@ -289,8 +296,8 @@ export const Results = () => {
     <main className={containerClass}>
       <div className={leftSectionClass}>
         <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
-        {!isMatchesLoading && renderMatches()}
-        {isMatchesLoading && <Loading image={spinner} />}
+        {(isMatchesLoading || loginLoading || !matches) && <Loading image={spinner} />}
+        {!isMatchesLoading && !loginLoading && renderMatches()}
       </div>
       {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>

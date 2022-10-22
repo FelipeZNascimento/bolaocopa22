@@ -42,6 +42,7 @@ export const MatchController = () => {
   const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
+
   const prevLoggedUser = usePrevious(loggedUser);
 
   // Trigger matches mutation if user just logged in
@@ -53,8 +54,6 @@ export const MatchController = () => {
 
   // On match mutation result
   useEffect(() => {
-    dispatch(matchesLoading(listAllMatchesResult.isLoading));
-
     if (!listAllMatchesResult.isLoading && listAllMatchesResult.data) {
       const result = QueryHandler(listAllMatchesResult.data);
       dispatch(matchesSet(result));

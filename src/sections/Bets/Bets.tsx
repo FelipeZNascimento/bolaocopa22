@@ -28,6 +28,10 @@ export const Bets = () => {
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
 
+  const loginLoading = useSelector(
+    (state: RootState) => state.user.loginLoading
+  ) as unknown as boolean;
+
   const isMatchesLoading = useSelector(
     (state: RootState) => state.match.matchesLoading
   ) as boolean;
@@ -121,11 +125,13 @@ export const Bets = () => {
             <TitleContainer text="As apostas serão liberadas após confirmação de pagamento." />
           </div>
         )}
+        {(loginLoading || !matches) && <Loading image={spinner} />}
+
         {!isMatchesLoading &&
+          !loginLoading &&
           loggedUser &&
           loggedUser.isActive &&
           renderMatches()}
-        {isMatchesLoading && <Loading image={spinner} />}
       </div>
       {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>
