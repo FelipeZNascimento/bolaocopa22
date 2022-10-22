@@ -9,7 +9,6 @@ import {
   Match,
   Loading,
   FOOTBALL_MATCH_STATUS,
-  TBET_VALUES,
   ITeamProps,
   TBetValues
 } from '@omegafox/components';
@@ -19,7 +18,6 @@ import { Ranking } from 'sections/index';
 // Store
 import { RootState } from 'store';
 import { TMatch } from 'store/match/types';
-import { TBet } from 'store/bet/types';
 import { TUser } from 'store/user/types';
 
 // Styles and images
@@ -29,13 +27,7 @@ import logo from 'img/logo_translucid10.png';
 
 // Constants
 import { WEEKDAY } from 'constants/weekdays';
-
-export const BET_VALUES: TBET_VALUES = {
-  FULL: 5,
-  HALF: 3,
-  MINIMUN: 2,
-  MISS: 0
-};
+import { MatchInternal } from './MatchInternal';
 
 export const Results = () => {
   const [selectedRound, setSelectedRound] = useState(1);
@@ -64,6 +56,10 @@ export const Results = () => {
   const loggedUser = useSelector(
     (state: RootState) => state.user.loggedUser
   ) as unknown as TUser;
+
+  const loginLoading = useSelector(
+    (state: RootState) => state.user.loginLoading
+  ) as unknown as boolean;
 
   const containerClass = classNames(styles.container, {
     [styles.containerBrowser]: !isMobile,
@@ -99,7 +95,7 @@ export const Results = () => {
 
       const newDate = new Date(match.timestamp);
       const matchTimestamp = newDate.getTime() / 1000;
-      const hasMatchStarted = matchTimestamp < currentTimestamp;
+      const isMatchStarted = matchTimestamp < currentTimestamp;
 
       if (!shownDate || newDate.getDate() !== shownDate.getDate()) {
         shownDate = new Date(match.timestamp);
@@ -121,7 +117,7 @@ export const Results = () => {
         logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}_small.png`,
         matchId: match.id,
         name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
-        score: hasMatchStarted ? match.homeTeam.goals : null
+        score: isMatchStarted ? match.homeTeam.goals : null
       };
 
       const awayTeam: ITeamProps = {
@@ -137,116 +133,7 @@ export const Results = () => {
         logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}_small.png`,
         matchId: match.id,
         name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
-        score: hasMatchStarted ? match.awayTeam.goals : null
-      };
-
-      const renderMatchInfo = () => {
-        return (
-          <div key={match.id} className={styles.expandableNotStarted}>
-            <div className={styles.expandableNotStartedContent}>
-              <img
-                alt="Stadium image"
-                src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
-              />
-              <p>{match.stadium.name}</p>
-              <p>{match.stadium.city}</p>
-              <p>{match.stadium.capacity} pessoas</p>
-            </div>
-            <div className={styles.expandableNotStartedContent}>
-              <p>Árbitro: {match.referee.name}</p>
-            </div>
-          </div>
-        );
-      };
-
-      const renderSingleBet = (bet: TBet, userBet = false) => {
-        const singleBetPoints = getBetPoints(bet, match);
-        const betContainerClass = classNames(styles.singleBetContainer, {
-          [styles.singleBetContainerUser]: userBet
-        });
-
-        const betClass = classNames({
-          [styles.singleBetGreen]: singleBetPoints === BET_VALUES.FULL,
-          [styles.singleBetBlue]: singleBetPoints === BET_VALUES.HALF,
-          [styles.singleBetLightBlue]: singleBetPoints === BET_VALUES.MINIMUN,
-          [styles.singleBetRed]: singleBetPoints === BET_VALUES.MISS
-        });
-
-        return (
-          <div className={betContainerClass}>
-            <div className={styles.singleBetOwner}>
-              {userBet ? '>' : ''} {bet.user.nickname}
-            </div>
-            <div className={`${betClass} ${styles.singleBetScore}`}>{`${
-              bet.goalsHome !== null ? bet.goalsHome : 'x'
-            } - ${bet.goalsAway !== null ? bet.goalsAway : 'x'}`}</div>
-            <div className={`${betClass} ${styles.singleBetPoints}`}>
-              {singleBetPoints} Pts.
-            </div>
-          </div>
-        );
-      };
-
-      const renderBets = () => {
-        const matchBetsFull: TBet[] = [];
-        const matchBetsHalf: TBet[] = [];
-        const matchBetsMinimun: TBet[] = [];
-        const matchBetsMiss: TBet[] = [];
-
-        match.bets.forEach((bet) => {
-          if (loggedUser && bet.user.id === loggedUser.id) {
-            return;
-          }
-          const singleBetPoints = getBetPoints(bet, match);
-          if (singleBetPoints === BET_VALUES.FULL) {
-            matchBetsFull.push(bet);
-          } else if (singleBetPoints === BET_VALUES.HALF) {
-            matchBetsHalf.push(bet);
-          } else if (singleBetPoints === BET_VALUES.MINIMUN) {
-            matchBetsMinimun.push(bet);
-          } else {
-            matchBetsMiss.push(bet);
-          }
-        });
-
-        matchBetsHalf.sort(
-          (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
-        );
-        matchBetsMinimun.sort(
-          (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
-        );
-        matchBetsMiss.sort(
-          (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
-        );
-
-        return (
-          <div className={styles.expandableStarted}>
-            {!isMobile && (
-              <div className={styles.expandableStartedStadium}>
-                <img
-                  alt="Stadium image"
-                  src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
-                />
-              </div>
-            )}
-            <div className={styles.expandableStartedBets}>
-              {match.loggedUserBets &&
-                renderSingleBet(match.loggedUserBets, true)}
-              {matchBetsFull.map((bet) => {
-                return renderSingleBet(bet);
-              })}
-              {matchBetsHalf.map((bet) => {
-                return renderSingleBet(bet);
-              })}
-              {matchBetsMinimun.map((bet) => {
-                return renderSingleBet(bet);
-              })}
-              {matchBetsMiss.map((bet) => {
-                return renderSingleBet(bet);
-              })}
-            </div>
-          </div>
-        );
+        score: isMatchStarted ? match.awayTeam.goals : null
       };
 
       return (
@@ -260,17 +147,21 @@ export const Results = () => {
             <Match
               isExpandable
               key={match.id}
-              betValue={hasMatchStarted ? points : null}
+              betValue={points}
               id={match.id}
               isEditable={false}
-              expandableContent={
-                !hasMatchStarted ? renderMatchInfo : renderBets
-              }
+              expandableContent={() => (
+                <MatchInternal
+                  key={match.id}
+                  isMatchStarted={isMatchStarted}
+                  match={match}
+                />
+              )}
               clock={{
                 time: 0,
                 status:
                   match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED &&
-                  hasMatchStarted
+                  isMatchStarted
                     ? FOOTBALL_MATCH_STATUS.FIRST_HALF
                     : match.status
               }}
@@ -289,8 +180,10 @@ export const Results = () => {
     <main className={containerClass}>
       <div className={leftSectionClass}>
         <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
-        {!isMatchesLoading && renderMatches()}
-        {isMatchesLoading && <Loading image={spinner} />}
+        {(isMatchesLoading || loginLoading || !matches) && (
+          <Loading image={spinner} />
+        )}
+        {!isMatchesLoading && !loginLoading && renderMatches()}
       </div>
       {!isMobile && <Ranking isHeader isMinified backgroundImage={logo} />}
     </main>

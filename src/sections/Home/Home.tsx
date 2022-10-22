@@ -18,7 +18,6 @@ import {
 // Types
 import { TMatch } from 'store/match/types';
 import { TUser } from 'store/user/types';
-import { TBet } from 'store/bet/types';
 import { ITeamProps, TBetValues } from '@omegafox/components';
 import { TNews } from 'store/news/types';
 
@@ -148,13 +147,8 @@ export const Home = () => {
     const matchTimestamp = new Date(match.timestamp).getTime() / 1000;
     let points: TBetValues | null = null;
 
-    const loggedUserBet: TBet | null = loggedUser
-      ? match.bets.find((bet) => bet.user.id === loggedUser.id) || null
-      : null;
+    points = getBetPoints(match.loggedUserBets, match);
 
-    if (loggedUserBet) {
-      points = getBetPoints(loggedUserBet, match);
-    }
     const homeTeam: ITeamProps = {
       id: match.homeTeam.id,
       abbreviationEn: match.homeTeam.abbreviationEn,
@@ -224,16 +218,13 @@ export const Home = () => {
   return (
     <main className={styles.app}>
       <div className={styles.topSection}>
-        <p className={styles.countdown}>
-          {countdownObject && (
-            <>
-              A Copa começa em {countdownObject.days} dias,{' '}
-              {countdownObject.hours} horas, {countdownObject.minutes} minutos e{' '}
-              {countdownObject.seconds} segundos
-            </>
-          )}
-          {!countdownObject && <>Bem-vindo ao Bolão da Copa do Mundo</>}
-        </p>
+        {countdownObject && (
+          <p className={styles.countdown}>
+            A Copa começa em {countdownObject.days} dias,{' '}
+            {countdownObject.hours} horas, {countdownObject.minutes} minutos e{' '}
+            {countdownObject.seconds} segundos
+          </p>
+        )}
         <p className={styles.title}>Bolão da Copa do Mundo 2022</p>
         <img src={spinner} alt="World Cup Logo" />
         <div>
@@ -250,24 +241,6 @@ export const Home = () => {
               Entrar
             </Button>
           )}
-        </div>
-      </div>
-      <div className={styles.groupsSection}>
-        <div className={styles.iconsContainer}>
-          <a href="https://t.me/+rVP220dgf2o0ZDJh">
-            <img
-              alt="Telegram Icon"
-              height={80}
-              src="https://assets.omegafox.me/img/social_icons/telegram.png"
-            />
-          </a>
-          <a href="https://chat.whatsapp.com/7RkUEwV0fcaJT4TNuzklFN">
-            <img
-              alt="WhatsApp Icon"
-              height={80}
-              src="https://assets.omegafox.me/img/social_icons/whatsapp.png"
-            />
-          </a>
         </div>
       </div>
       <div className={styles.newsSection}>

@@ -41,7 +41,7 @@ export const ROUTES = {
     id: 6,
     text: 'Grupos',
     url: '/grupos',
-    isHidden: true
+    isHidden: false
   },
   TEAMS: {
     id: 7,

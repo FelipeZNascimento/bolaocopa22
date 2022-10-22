@@ -18,3 +18,8 @@
     @include font-colored($color-qatar-red);
   }
 }
+
+.socialMediaContainerMobile {
+  @include flex-aligned(center, center);
+  flex-direction: column;
+}

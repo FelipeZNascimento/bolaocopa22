@@ -11,7 +11,8 @@ import {
   Navbar as TopNav,
   Sidenav,
   StatusBadge,
-  TNavbarButton
+  TNavbarButton,
+  Tooltip
 } from '@omegafox/components';
 import { LoginModal, UserModal } from '../index';
 
@@ -102,10 +103,26 @@ export const Navbar = () => {
 
   const mountUserSection = () => {
     if (!loggedUser) {
-      return [{ ...loginButton, renderingFunction: renderLoginButton }];
+      return [
+        {
+          id: 1,
+          text: '',
+          url: '',
+          renderingFunction: renderSocialMediaButtons
+        },
+        { ...loginButton, renderingFunction: renderLoginButton }
+      ];
     }
 
-    return [{ ...loginButton, renderingFunction: renderUserButton }];
+    return [
+      {
+        id: 1,
+        text: '',
+        url: '',
+        renderingFunction: renderSocialMediaButtons
+      },
+      { ...loginButton, renderingFunction: renderUserButton }
+    ];
   };
 
   const renderLoginButton = () => {
@@ -132,14 +149,17 @@ export const Navbar = () => {
     };
 
     return (
-      <Button
-        icon={<FontAwesomeIcon className={styles.iconGrey} icon={faUser} />}
-        variant="primary"
-        onClick={handleModalOpen}
-      >
-        {renderStatusBadge()}&nbsp;
-        {loggedUser?.nickname}
-      </Button>
+      <div className={styles.socialMediaContainerMobile}>
+        {isMobile && renderSocialMediaButtons()}
+        <Button
+          icon={<FontAwesomeIcon className={styles.iconGrey} icon={faUser} />}
+          variant="primary"
+          onClick={handleModalOpen}
+        >
+          {renderStatusBadge()}&nbsp;
+          {loggedUser?.nickname}
+        </Button>
+      </div>
     );
   };
 
@@ -149,6 +169,32 @@ export const Navbar = () => {
 
   const renderStatusBadge = () => {
     return <StatusBadge color={loggedUser ? 'green' : 'grey'} />;
+  };
+
+  const renderSocialMediaButtons = () => {
+    return (
+      <div>
+        <Tooltip text="Grupo do Bolão no Telegram">
+          <a href="https://t.me/+rVP220dgf2o0ZDJh">
+            <img
+              alt="Telegram Icon"
+              height={30}
+              src="https://assets.omegafox.me/img/social_icons/telegram.png"
+            />
+          </a>
+        </Tooltip>
+        &nbsp;
+        <Tooltip text="Grupo do Bolão no WhatsApp">
+          <a href="https://chat.whatsapp.com/7RkUEwV0fcaJT4TNuzklFN">
+            <img
+              alt="WhatsApp Icon"
+              height={30}
+              src="https://assets.omegafox.me/img/social_icons/whatsapp.png"
+            />
+          </a>
+        </Tooltip>
+      </div>
+    );
   };
 
   const renderRight = () => {
