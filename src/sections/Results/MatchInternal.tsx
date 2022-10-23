@@ -12,7 +12,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUsersBetweenLines,
   faCircleInfo,
-  faClock
+  faClock,
+  faUser
 } from '@fortawesome/free-solid-svg-icons';
 // Store
 import { useSelector } from 'react-redux';
@@ -79,7 +80,12 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
     return (
       <div className={betContainerClass}>
         <div className={styles.singleBetOwner}>
-          {userBet ? '>' : ''} {bet.user.nickname}
+          {userBet ? (
+            <FontAwesomeIcon icon={faUser} />
+          ) : (
+            ''
+          )}{' '}
+          {bet.user.nickname}
         </div>
         <div className={`${betClass} ${styles.singleBetScore}`}>{`${
           bet.goalsHome !== null ? bet.goalsHome : 'x'
@@ -165,18 +171,6 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
     if (!item.isDisabled) {
       setSelectedSection(item.id);
     }
-  };
-
-  const renderButtonContent = (item: TNavbarButton) => {
-    return (
-      <>
-        <FontAwesomeIcon
-          className={styles.iconGrey}
-          icon={faUsersBetweenLines}
-        />
-        {item.text}
-      </>
-    );
   };
 
   return (

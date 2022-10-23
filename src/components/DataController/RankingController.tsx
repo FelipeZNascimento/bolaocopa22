@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { isMobile } from 'react-device-detect';
 
 // Actions
 import { useGetRankingQuery } from 'store/ranking/actions';
@@ -19,6 +20,7 @@ export const RankingController = () => {
   const { pathname } = useLocation();
 
   const skipRankingQuery =
+    (isMobile && pathname.includes(ROUTES.RANKING.url)) ||
     pathname.includes(ROUTES.EXTRAS.url) ||
     pathname.includes(ROUTES.RULES.url) ||
     pathname.includes(ROUTES.TEAMS.url);
