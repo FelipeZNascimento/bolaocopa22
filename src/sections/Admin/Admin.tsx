@@ -36,7 +36,7 @@ export const Admin = () => {
   useEffect(() => {
     if (getAllResult.isSuccess) {
       const result = QueryHandler(getAllResult.data);
-      if (result) {
+      if (result && result.users) {
         setUsers(result.users);
       }
     }
@@ -136,7 +136,10 @@ export const Admin = () => {
 
   return (
     <div className={styles.container}>
-      <p>{users.length} cadastrados | {users.filter((item) => item.isActive).length} ativos</p>
+      <p>
+        {users.length} cadastrados |{' '}
+        {users.filter((item) => item.isActive).length} ativos
+      </p>
       {(getAllResult.isLoading || updateIsActiveResult.isLoading) && (
         <Loading image={spinner} />
       )}
