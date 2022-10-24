@@ -41,7 +41,7 @@ export const Ranking = ({
 
   useEffect(() => {
     if (!rankingLoading && rankingResult) {
-      const rankingRows = rankingResult.users.map((user) => {
+      const rankingRows = rankingResult.rankingUsers.map((user) => {
         const positionClass = classNames({
           [styles.yellow]: user.position === 1,
           [styles.greyThree]: user.position === 2,

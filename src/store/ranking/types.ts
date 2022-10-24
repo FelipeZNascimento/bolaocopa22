@@ -11,7 +11,7 @@ export type TUserRanking = TUser & {
 
 export type TRankingResult = {
   round: number;
-  users: TUserRanking[];
+  rankingUsers: TUserRanking[];
 };
 export type TInitialState = {
   rankingLoading: boolean;
