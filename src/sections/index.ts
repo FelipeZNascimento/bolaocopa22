@@ -1,3 +1,4 @@
+export { Admin } from 'sections/Admin/Admin';
 export { Bets } from 'sections/Bets/Bets';
 export { Extras } from 'sections/Extras/Extras';
 export { ForgotPassword } from 'sections/ForgotPassword/ForgotPassword';

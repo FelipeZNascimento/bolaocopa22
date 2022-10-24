@@ -1,0 +1,29 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
+.container {
+  @include flex-aligned(center, center);
+  @include padded(vertical, m);
+
+  flex-direction: column;
+  width: 100%;
+}
+
+.content {
+  @include flex-aligned(space-between, center);
+
+  &Mobile {
+    width: 100%;
+  }
+
+  &Desktop {
+    width: 1024px;
+  }
+}
+
+.buttonContainer {
+  @include marged(vertical, m);
+}

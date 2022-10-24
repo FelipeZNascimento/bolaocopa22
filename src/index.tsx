@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { DataController, ErrorToast, Navbar, Startup } from 'components/index';
 import {
+  Admin,
   Bets,
   Extras,
   ForgotPassword,
@@ -45,6 +46,7 @@ root.render(
             <Route path={`${ROUTES.TEAMS.url}/:teamName`} element={<Teams />} />
             <Route path={`${ROUTES.GROUPS.url}/*`} element={<Groups />} />
             <Route path={`${ROUTES.RULES.url}/*`} element={<Rules />} />
+            <Route path={`${ROUTES.ADMIN.url}/*`} element={<Admin />} />
             <Route
               path={`${ROUTES.FORGOT_PASSWORD.url}/:token/:email`}
               element={<ForgotPassword />}

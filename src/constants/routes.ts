@@ -54,6 +54,12 @@ export const ROUTES = {
     text: 'Senha',
     url: '/forgotPassword',
     isHidden: true
+  },
+  ADMIN: {
+    id: 9,
+    text: 'Admin',
+    url: '/admin',
+    isHidden: true
   }
 };
 
