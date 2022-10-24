@@ -2,13 +2,15 @@ import { baseApi } from 'store/base/base';
 import sha256 from 'crypto-js/sha256';
 
 import {
+  getAll as getAllEndpoint,
   login as loginEndpoint,
   logout as logoutEndpoint,
   register as registerEndpoint,
   updateInfo as updateInfoEndpoint,
   updatePass as updatePassEndpoint,
   forgotPassword as forgotPasswordEndpoint,
-  recoverPassword as recoverPasswordEndpoint
+  recoverPassword as recoverPasswordEndpoint,
+  updateIsActive as updateIsActiveEndpoint
 } from 'services/endpoints';
 import { TQuery } from 'store/base/types';
 
@@ -120,7 +122,7 @@ const extendedApi = baseApi.injectEndpoints({
     }),
     onUpdatePassToken: builder.mutation<
       TQuery,
-      { email: string; token: string; newPassword: string, skipToast: boolean }
+      { email: string; token: string; newPassword: string; skipToast: boolean }
     >({
       query: (arg) => {
         const { email, token, newPassword } = arg;
@@ -138,6 +140,36 @@ const extendedApi = baseApi.injectEndpoints({
           credentials: 'include'
         };
       }
+    }),
+    onGetAll: builder.mutation<TQuery, void>({
+      query: () => {
+        return {
+          url: getAllEndpoint(),
+          method: 'get',
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          credentials: 'include'
+        };
+      }
+    }),
+    onUpdateIsActive: builder.mutation<
+      TQuery,
+      { id: number; isActive: boolean }
+    >({
+      query: (arg) => {
+        const { id, isActive } = arg;
+
+        return {
+          url: updateIsActiveEndpoint(),
+          method: 'post',
+          body: { id, isActive },
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          credentials: 'include'
+        };
+      }
     })
   })
 });
@@ -149,5 +181,7 @@ export const {
   useOnRegisterMutation,
   useOnUpdateInfoMutation,
   useOnUpdatePassMutation,
-  useOnUpdatePassTokenMutation
+  useOnUpdatePassTokenMutation,
+  useOnGetAllMutation,
+  useOnUpdateIsActiveMutation
 } = extendedApi;

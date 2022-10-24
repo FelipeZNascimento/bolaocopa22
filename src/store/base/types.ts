@@ -22,7 +22,8 @@ interface IResult {
   seasonStart: number;
   teams: ITeam[];
   round: number;
-  users: TUserRanking[];
+  users: TUser[];
+  rankingUsers: TUserRanking[];
   news: TNews[];
 }
 

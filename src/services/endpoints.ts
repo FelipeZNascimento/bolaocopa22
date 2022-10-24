@@ -6,6 +6,7 @@ export const config = () => '/general/config';
 export const news = () => '/general/news';
 
 // User
+export const getAll = () => '/user/';
 export const register = () => '/user/register';
 export const login = () => '/user/login';
 export const logout = () => '/user/logout';
@@ -14,6 +15,7 @@ export const updatePass = () => '/user/updatePassword';
 export const forgotPassword = (email: string) =>
   `/user/forgotPassword?email=${email}`;
 export const recoverPassword = () => '/user/recoverPassword';
+export const updateIsActive = () => '/user/updateIsActive';
 
 // Match
 export const listAllMatches = () => '/match';
