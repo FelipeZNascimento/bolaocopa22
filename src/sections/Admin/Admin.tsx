@@ -70,7 +70,7 @@ export const Admin = () => {
         flex: 3,
         renderingFunction: () => (
           <div>
-            <b>Nickname</b>
+            <b>Nickname | Email</b>
           </div>
         )
       },
@@ -100,7 +100,11 @@ export const Admin = () => {
             },
             {
               id: 1,
-              renderingFunction: () => <div>{user.nickname}</div>
+              renderingFunction: () => (
+                <div>
+                  {user.nickname} | {user.email}
+                </div>
+              )
             },
             {
               id: 2,
