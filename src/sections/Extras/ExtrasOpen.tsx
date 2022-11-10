@@ -55,7 +55,7 @@ export const ExtrasOpen = ({
             id: player.id,
             name: player.name,
             details: {
-              nameShort: player.team.abbreviation,
+              nameShort: player.team.abbreviationEn,
               colors: player.team.colors,
               id: player.team.id,
               name: player.team.name
