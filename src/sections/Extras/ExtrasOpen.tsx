@@ -27,6 +27,7 @@ import spinner from 'img/spinner.png';
 
 // Constants
 import { EXTRA_TYPES } from 'constants/extraTypes';
+import { PLAYER_POSITIONS } from 'constants/playerPositions';
 
 export const ExtrasOpen = ({
   champion,
@@ -49,13 +50,14 @@ export const ExtrasOpen = ({
     if (!listAllPlayersResult.isLoading && listAllPlayersResult.data) {
       const result = QueryHandler(listAllPlayersResult.data);
       if (result && result.players) {
-        dispatch(setPlayers(result.players));
+        const playersFiltered = result.players.filter((player) => player.position.id !== PLAYER_POSITIONS.UNDEFINED && player.position.id !== PLAYER_POSITIONS.COACH);
+        dispatch(setPlayers(playersFiltered));
         setDropdownList(
-          result.players.map((player) => ({
+          playersFiltered.map((player) => ({
             id: player.id,
             name: player.name,
             details: {
-              nameShort: player.team.abbreviation,
+              nameShort: player.team.abbreviationEn,
               colors: player.team.colors,
               id: player.team.id,
               name: player.team.name
