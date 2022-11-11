@@ -363,11 +363,11 @@ export const LoginModal = ({ isOpen, onClose }: IModalProps) => {
 
             return (
               <TextField
-                defaultValue={item.value || ''}
-                isError={!item.isValid}
-                description={item.description ? item.description : ''}
-                inputName={item.key}
                 key={item.key}
+                defaultValue={item.value || ''}
+                description={item.description ? item.description : ''}
+                isError={!item.isValid}
+                inputName={item.key}
                 placeholder={item.placeholder}
                 type={item.type}
                 onChange={handleChange}

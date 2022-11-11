@@ -143,10 +143,11 @@ export const Extras = () => {
 
   const updateStoreWithNewBets = (idExtraType: number, id: number) => {
     let selectedTeam = null;
-    let selectedPlayer = null;
+    let selectedPlayer: IPlayer | null = null;
 
     if (idExtraType === EXTRA_TYPES.STRIKER) {
-      selectedPlayer = players.find((item) => item.id === id);
+      selectedPlayer = players.find((item) => item.id === id) as IPlayer;
+      selectedTeam = teams.find((team) => team.id === selectedPlayer?.team.id);
     } else {
       selectedTeam = teams.find((team) => team.id === id);
     }
