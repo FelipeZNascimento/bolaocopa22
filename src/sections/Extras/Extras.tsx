@@ -167,7 +167,6 @@ export const Extras = () => {
       (item) => item.idExtraType !== idExtraType
     );
     updatedExtraBets.push(newExtraBet);
-    console.log(updatedExtraBets);
     dispatch(extraBetsUpdated(updatedExtraBets));
   };
 

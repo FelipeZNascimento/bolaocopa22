@@ -20,7 +20,7 @@ export const RankingController = () => {
   const { pathname } = useLocation();
 
   const skipRankingQuery =
-    (isMobile && pathname.includes(ROUTES.RANKING.url)) ||
+    (isMobile && !pathname.includes(ROUTES.RANKING.url)) ||
     pathname.includes(ROUTES.EXTRAS.url) ||
     pathname.includes(ROUTES.RULES.url) ||
     pathname.includes(ROUTES.TEAMS.url);
