@@ -206,7 +206,7 @@ export const Ranking = ({
   }
 
   const renderRanking = () => {
-    if (rankingLoading) {
+    if (rankingLoading || rows.length === 0) {
       return <Loading image={spinner} />;
     }
 

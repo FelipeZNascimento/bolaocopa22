@@ -12,6 +12,7 @@ import styles from './Rules.module.scss';
 // Constants
 import { RULES_SECTIONS } from 'constants/rulesSections';
 import ROUTES from 'constants/routes';
+import match_explained from 'img/match_explained.png';
 
 export const RulesFaq = () => {
   const navigate = useNavigate();
@@ -112,6 +113,25 @@ export const RulesFaq = () => {
         </p>
       </div>
       <div className={styles.faqItem}>
+        <p className={styles.subTitle}>
+          Fiz o registro mas meu nome não aparece no ranking. O que aconteceu?
+        </p>
+        <p>
+          A participação só é confirmada após a confirmação do pagamento da inscrição.
+          Após o registro, o usuário recebe um e-mail com todas as instruções necessárias para efetuar o pagamento (que também podem ser encontradas <a
+            onClick={() =>
+              navigate(
+                `${ROUTES.RULES.url}#${stringNormalizer(
+                  RULES_SECTIONS.SUBSCRIPTION.text
+                )}`
+              )
+            }
+          >
+            aqui
+          </a>).
+        </p>
+      </div>
+      <div className={styles.faqItem}>
         <p className={styles.subTitle}>O que são Apostas Extras?</p>
         <p>
           Além de receber pontos por acertos numa partida (
@@ -178,6 +198,14 @@ export const RulesFaq = () => {
             Apostas Extras
           </a>
           .
+        </p>
+      </div>
+      <div className={styles.faqItem}>
+        <p className={styles.subTitle}>
+          Além do placar, há outros números nas partidas. O que são eles?
+        </p>
+        <p className="align-center">
+          <img alt="Match with explanation arrows" src={match_explained} />
         </p>
       </div>
       <div className={styles.faqItem}>
