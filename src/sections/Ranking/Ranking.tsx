@@ -54,7 +54,7 @@ export const Ranking = ({
         });
 
         const nicknameClass = classNames(styles.ellipsis, {
-          [styles.bold]: user.id === loggedUser.id
+          [styles.bold]: loggedUser && user.id === loggedUser.id
         });
 
         const renderStatusBadge = () => {
