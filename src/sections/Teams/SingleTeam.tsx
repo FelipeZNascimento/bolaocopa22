@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 // Components
-import { Button, TeamButton, Tooltip } from '@omegafox/components';
+import { Button, Loading, TeamButton, Tooltip } from '@omegafox/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAnglesLeft,
@@ -26,13 +26,39 @@ import ROUTES from 'constants/routes';
 import styles from './Teams.module.scss';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
+import { useOnListTeamPlayersQuery } from 'store/team/actions';
+import spinner from 'img/spinner.png';
+import { QueryHandler } from 'services/queryHandler';
+import { IPlayer } from 'store/player/types';
+import { PLAYER_POSITIONS } from 'constants/playerPositions';
 
 interface ISingleTeam {
   singleTeam: ITeam;
 }
 
+interface IClubCountry {
+  id: number;
+  abbreviation: string;
+  abbreviationEn: string;
+  isoCode: string;
+  name: string;
+  nameEn: string;
+}
+interface IPlayerClub {
+  name: string;
+  country: IClubCountry;
+}
+
+interface ITeamPlayers extends IPlayer {
+  club?: IPlayerClub;
+}
+
 export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
   const [frameId, setFrameId] = useState<string>('');
+  const [teamPlayers, setTeamPlayers] = useState<ITeamPlayers[]>([]);
+
+  const teamPlayersQueryResult = useOnListTeamPlayersQuery({ id: singleTeam.id });
+
   const navigate = useNavigate();
 
   (function (el) {
@@ -44,6 +70,19 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
       }
     });
   })(document.getElementById(`sofa-standings-embed-${frameId}-41087`));
+
+  useEffect(() => {
+
+    if (!teamPlayersQueryResult.isFetching
+      && !teamPlayersQueryResult.isLoading
+      && teamPlayersQueryResult.data
+    ) {
+      const result = QueryHandler(teamPlayersQueryResult.data);
+      if (result) {
+        setTeamPlayers(result.players);
+      }
+    }
+  }, [teamPlayersQueryResult.data]);
 
   useEffect(() => {
     if (singleTeam) {
@@ -95,6 +134,20 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
         pathname: `${ROUTES.TEAMS.url}/${stringNormalizer(selectedTeam.name)}`
       });
     }
+  };
+
+  const renderPositionPlayers = (players: ITeamPlayers[]) => {
+    if (players.length === 0) {
+      return;
+    }
+
+    const positionDescription = players[0].position.description;
+    return (
+      <>
+        <h2>{positionDescription}</h2>
+        {players.map((player) => <p className={styles.playerName} key={player.id}>{player.name}</p>)}
+      </>
+    );
   };
 
   let groupTeams: ITeam[] = [];
@@ -172,7 +225,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
       </div>
       <div className={contentContainerClass}>
         <div className={contentClass}>
-          <p>{singleTeam.name}</p>
+          <p className={styles.title}>{singleTeam.name}</p>
           <p>
             <img
               alt="Country flag"
@@ -186,7 +239,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
         </div>
         {!isMobile && (
           <div className={contentClass}>
-            <p>Grupo {singleTeam.group}</p>
+            <p className={styles.title}>Grupo {singleTeam.group}</p>
             {groupTeams.map((team) => (
               <div
                 className={styles.teamGroup}
@@ -207,7 +260,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
           </div>
         )}
         <div className={contentClass}>
-          <p>
+          <p className={styles.title}>
             {singleTeam.confederation.name} (
             {singleTeam.confederation.abbreviation})
           </p>
@@ -241,6 +294,19 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
           </div>
         </div>
       )}
-    </div>
+      <div>
+        <div className={contentContainerClass}>
+          <div className={contentClass}>
+            {teamPlayersQueryResult.isLoading && <Loading image={spinner} />}
+            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.GOALKEEPER))}</p>
+            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.CENTRE_BACK))}</p>
+            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.FULL_BACK))}</p>
+            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.MIDFIELDER))}</p>
+            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.FORWARD))}</p>
+          </div>
+        </div>
+
+      </div>
+    </div >
   );
 };
