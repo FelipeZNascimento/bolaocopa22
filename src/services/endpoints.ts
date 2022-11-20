@@ -32,6 +32,7 @@ export const updateExtraBet = () => '/extraBets';
 // Team
 export const listAllTeams = () => '/team/';
 export const listTeamById = (id: number) => `/team/${id}`;
+export const listTeamPlayers = (id: number) => `/team/${id}/players`;
 
 // Ranking
 export const listRanking = () => '/ranking/';

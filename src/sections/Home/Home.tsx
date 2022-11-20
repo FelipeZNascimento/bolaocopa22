@@ -89,7 +89,11 @@ export const Home = () => {
       const timestamp = parseInt((new Date().getTime() / 1000).toFixed(0));
 
       setCurrentTimestamp(timestamp);
-      setCountdownObject(returnCountdownObject(seasonStart, timestamp));
+      if (timestamp > seasonStart) {
+        setCountdownObject(null);
+      } else {
+        setCountdownObject(returnCountdownObject(seasonStart, timestamp));
+      }
     }, 1000); // 60 * 1000 milsec
 
     return () => clearInterval(interval);
@@ -197,7 +201,7 @@ export const Home = () => {
             time: 0,
             status:
               match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED &&
-              matchTimestamp < currentTimestamp
+                matchTimestamp < currentTimestamp
                 ? FOOTBALL_MATCH_STATUS.FIRST_HALF
                 : match.status
           }}
@@ -225,6 +229,8 @@ export const Home = () => {
             {countdownObject.seconds} segundos
           </p>
         )}
+        {countdownObject === null && (<p className={styles.countdown}>Inscrições encerradas com <b>recorde de inscritos</b>! Obrigado!</p>)}
+
         <p className={styles.title}>Bolão da Copa do Mundo 2022</p>
         <img src={spinner} alt="World Cup Logo" />
         <div>

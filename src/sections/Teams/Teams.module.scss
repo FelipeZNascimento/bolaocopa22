@@ -78,7 +78,7 @@
     max-width: 100px;
   }
 
-  p {
+  .title {
     @include aligned(center);
     @include marged(top, none);
     @include marged(bottom, l);
@@ -97,4 +97,9 @@
 
 .button {
   @include padded(horizontal, s3);
+}
+
+.playerName {
+  @include font-sized(l);
+  @include marged(all, none);
 }
