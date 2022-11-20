@@ -24,12 +24,17 @@ import { TRankingResult } from 'store/ranking/types';
 // Style and images
 import styles from './Ranking.module.scss';
 import spinner from 'img/spinner.png';
+import { TUser } from 'store/user/types';
 
 export const Ranking = ({
   isHeader = true,
   isMinified = false
 }: TRankingProps) => {
   const [rows, setRows] = useState<TTableRow[]>([]);
+
+  const loggedUser = useSelector(
+    (state: RootState) => state.user.loggedUser
+  ) as unknown as TUser;
 
   const rankingResult = useSelector(
     (state: RootState) => state.ranking.rankingResult
@@ -46,6 +51,10 @@ export const Ranking = ({
           [styles.yellow]: user.position === 1,
           [styles.greyThree]: user.position === 2,
           [styles.orange]: user.position === 3
+        });
+
+        const nicknameClass = classNames(styles.ellipsis, {
+          [styles.bold]: user.id === loggedUser.id
         });
 
         const renderStatusBadge = () => {
@@ -70,7 +79,7 @@ export const Ranking = ({
             renderingFunction: () => (
               <div className={styles.nickname} translate="no">
                 &nbsp;{renderStatusBadge()}&nbsp;
-                <span className={styles.ellipsis}>{user.nickname}</span>
+                <span className={nicknameClass}>{user.nickname}</span>
               </div>
             )
           },
