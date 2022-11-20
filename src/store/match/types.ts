@@ -35,6 +35,7 @@ export type TMatch = {
   timestamp: number;
   round: number;
   status: number;
+  clock: string;
   bets: TBet[];
   loggedUserBets: TBet | null;
   homeTeam: ITeam;

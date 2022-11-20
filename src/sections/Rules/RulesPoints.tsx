@@ -223,7 +223,7 @@ export const RulesPoints = () => {
           isEditable={false}
           isExpandable={false}
           clock={{
-            time: 0,
+            time: '0',
             status: FOOTBALL_MATCH_STATUS.FIRST_HALF
           }}
           timestamp={0}
