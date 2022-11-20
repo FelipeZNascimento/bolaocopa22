@@ -62,13 +62,13 @@ export const Ranking = ({
           {
             id: 0,
             renderingFunction: () => (
-              <div className={positionClass}>{user.position}.</div>
+              <div className={positionClass} translate="no">{user.position}.</div>
             )
           },
           {
             id: 1,
             renderingFunction: () => (
-              <div className={styles.nickname}>
+              <div className={styles.nickname} translate="no">
                 &nbsp;{renderStatusBadge()}&nbsp;
                 <span className={styles.ellipsis}>{user.nickname}</span>
               </div>
@@ -78,7 +78,7 @@ export const Ranking = ({
           {
             id: 3,
             renderingFunction: () => (
-              <div className={styles.pointsDetails}>
+              <div className={styles.pointsDetails} translate="no">
                 <span className={styles.green}>{user.full}</span>
               </div>
             )
@@ -86,7 +86,7 @@ export const Ranking = ({
           {
             id: 4,
             renderingFunction: () => (
-              <div className={styles.pointsDetails}>
+              <div className={styles.pointsDetails} translate="no">
                 <span className={styles.blue}>{user.half}</span>
               </div>
             )
@@ -94,7 +94,7 @@ export const Ranking = ({
           {
             id: 5,
             renderingFunction: () => (
-              <div className={styles.pointsDetails}>
+              <div className={styles.pointsDetails} translate="no">
                 <span className={styles.lightBlue}>{user.minimun}</span>
               </div>
             )
@@ -102,7 +102,7 @@ export const Ranking = ({
           {
             id: 6,
             renderingFunction: () => (
-              <div className={styles.pointsDetails}>
+              <div className={styles.pointsDetails} translate="no">
                 <span className={styles.orange}>{user.extras}</span>
               </div>
             )
