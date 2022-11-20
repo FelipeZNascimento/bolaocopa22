@@ -294,18 +294,15 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
           </div>
         </div>
       )}
-      <div>
-        <div className={contentContainerClass}>
-          <div className={contentClass}>
-            {teamPlayersQueryResult.isLoading && <Loading image={spinner} />}
-            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.GOALKEEPER))}</p>
-            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.CENTRE_BACK))}</p>
-            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.FULL_BACK))}</p>
-            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.MIDFIELDER))}</p>
-            <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.FORWARD))}</p>
-          </div>
+      <div className={contentContainerClass}>
+        <div className={contentClass}>
+          {teamPlayersQueryResult.isLoading && <Loading image={spinner} />}
+          <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.GOALKEEPER))}</p>
+          <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.CENTRE_BACK))}</p>
+          <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.FULL_BACK))}</p>
+          <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.MIDFIELDER))}</p>
+          <p>{renderPositionPlayers(teamPlayers.filter((item) => item.position.id === PLAYER_POSITIONS.FORWARD))}</p>
         </div>
-
       </div>
     </div >
   );
