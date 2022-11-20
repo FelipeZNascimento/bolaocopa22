@@ -158,7 +158,7 @@ export const Results = () => {
                 />
               )}
               clock={{
-                time: 0,
+                time: match.clock,
                 status:
                   match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED &&
                   isMatchStarted
