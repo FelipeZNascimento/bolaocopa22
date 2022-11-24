@@ -32,7 +32,7 @@ interface IReferee {
 
 export type TMatch = {
   id: number;
-  timestamp: number;
+  timestamp: string;
   round: number;
   status: number;
   clock: string;
