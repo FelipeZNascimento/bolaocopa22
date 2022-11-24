@@ -102,50 +102,21 @@ export const Home = () => {
   const previousMatches =
     matches &&
     matches
-      .filter((match) => {
-        const matchTimestamp = parseInt(
-          (new Date(match.timestamp).getTime() / 1000).toFixed(0)
-        );
-
-        if (
-          matchTimestamp < currentTimestamp &&
-          match.status === FOOTBALL_MATCH_STATUS.FINAL
-        ) {
-          return match;
-        }
-      })
-      .sort((a, b) => b.timestamp - a.timestamp);
+      .filter((match) => match.status === FOOTBALL_MATCH_STATUS.FINAL)
+      .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 
   const currentMatches =
     matches &&
     matches
-      .filter((match) => {
-        const matchTimestamp = parseInt(
-          (new Date(match.timestamp).getTime() / 1000).toFixed(0)
-        );
-
-        if (
-          matchTimestamp < currentTimestamp &&
-          match.status !== FOOTBALL_MATCH_STATUS.FINAL
-        ) {
-          return match;
-        }
-      })
-      .sort((a, b) => b.timestamp - a.timestamp);
+      .filter((match) => match.status !== FOOTBALL_MATCH_STATUS.FINAL && match.status !== FOOTBALL_MATCH_STATUS.NOT_STARTED)
+      .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 
   const nextMatches =
     matches &&
     matches
-      .filter((match) => {
-        const matchTimestamp = parseInt(
-          (new Date(match.timestamp).getTime() / 1000).toFixed(0)
-        );
-
-        if (matchTimestamp > currentTimestamp) {
-          return match;
-        }
-      })
-      .sort((a, b) => b.timestamp - a.timestamp);
+      .filter((match) => match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED)
+      .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+      console.log(nextMatches);
 
   const renderMatch = (match: TMatch) => {
     const matchTimestamp = new Date(match.timestamp).getTime() / 1000;
