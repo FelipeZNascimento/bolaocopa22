@@ -26,6 +26,7 @@ import styles from './Extras.module.scss';
 
 // Helpers
 import { stringNormalizer } from 'services/helpers';
+import _ from 'lodash';
 
 export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
   const navigate = useNavigate();
@@ -129,74 +130,18 @@ export const ExtrasClosed = ({ selectedExtra }: IExtrasClosed) => {
   };
 
   const renderExtraBetsStriker = (extraBets: TExtraBet[]) => {
-    let currentStriker: IPlayer | null = null;
-    let usersPerStriker: TUser[] = [];
-
-    return extraBets.map((extraBet, index, array) => {
-      if (extraBet.team === null || extraBet.player === null) {
-        return;
-      }
-
-      if (currentStriker === null) {
-        currentStriker = extraBet.player;
-      }
-
-      if (extraBet.player.id === currentStriker.id) {
-        usersPerStriker.push(extraBet.user);
-
-        if (
-          index + 1 === array.length ||
-          (array[index + 1].player as IPlayer).id !== currentStriker.id
-        ) {
-          return renderTeam(extraBet, usersPerStriker);
-        }
-      } else {
-        currentStriker = extraBet.player;
-        usersPerStriker = [extraBet.user];
-
-        if (
-          index + 1 === array.length ||
-          (array[index + 1].player as IPlayer).id !== currentStriker.id
-        ) {
-          return renderTeam(extraBet, usersPerStriker);
-        }
-      }
+    const groupedBets = Object.values(_.groupBy(extraBets, extraBet => extraBet.player?.id)).sort((a, b) => b.length - a.length);
+    return groupedBets.map((groupedBet) => {
+      const usersPerPlayer = groupedBet.map((bet) => bet.user).sort((a, b) => a.nickname.localeCompare((b.nickname)));
+      return renderTeam(groupedBet[0], usersPerPlayer);
     });
   };
 
   const renderExtraBets = (extraBets: TExtraBet[]) => {
-    let currentTeam: ITeam | null = null;
-    let usersPerTeam: TUser[] = [];
-
-    return extraBets.map((extraBet, index, array) => {
-      if (extraBet.team === null) {
-        return;
-      }
-
-      if (currentTeam === null) {
-        currentTeam = extraBet.team;
-      }
-
-      if (extraBet.team.id === currentTeam.id) {
-        usersPerTeam.push(extraBet.user);
-
-        if (
-          index + 1 === array.length ||
-          (array[index + 1].team as ITeam).id !== currentTeam.id
-        ) {
-          return renderTeam(extraBet, usersPerTeam);
-        }
-      } else {
-        currentTeam = extraBet.team;
-        usersPerTeam = [extraBet.user];
-
-        if (
-          index + 1 === array.length ||
-          (array[index + 1].team as ITeam).id !== currentTeam.id
-        ) {
-          return renderTeam(extraBet, usersPerTeam);
-        }
-      }
+    const groupedBets = Object.values(_.groupBy(extraBets, extraBet => extraBet.team?.id)).sort((a, b) => b.length - a.length);
+    return groupedBets.map((groupedBet) => {
+      const usersPerTeam = groupedBet.map((bet) => bet.user).sort((a, b) => a.nickname.localeCompare((b.nickname)));
+      return renderTeam(groupedBet[0], usersPerTeam);
     });
   };
 
