@@ -295,36 +295,57 @@ export const Extras = () => {
       return renderLoading();
     }
 
-    const strikerBet = loggedUserExtraBets.find(
-      (extraBet) => extraBet.idExtraType === EXTRA_TYPES.STRIKER
-    );
+    if (hasSeasonStarted) {
+      //Change this to get correctExtraBets when BE is ready
+      // const strikerBet = loggedUserExtraBets.find(
+      //   (extraBet) => extraBet.idExtraType === EXTRA_TYPES.STRIKER
+      // );
 
-    switch (extraType) {
-      case EXTRA_TYPES.CHAMPION:
-        return renderTeam(
-          loggedUserExtraBets.find(
-            (extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION
-          )?.team || null
-        );
-      case EXTRA_TYPES.OFFENSE:
-        return renderTeam(
-          loggedUserExtraBets.find(
-            (extraBet) => extraBet.idExtraType === EXTRA_TYPES.OFFENSE
-          )?.team || null
-        );
-      case EXTRA_TYPES.DEFENSE:
-        return renderTeam(
-          loggedUserExtraBets.find(
-            (extraBet) => extraBet.idExtraType === EXTRA_TYPES.DEFENSE
-          )?.team || null
-        );
-      case EXTRA_TYPES.STRIKER:
-        return renderPlayer(
-          strikerBet?.team || null,
-          strikerBet?.player?.name || null
-        );
-      default:
-        return null;
+      switch (extraType) {
+        case EXTRA_TYPES.CHAMPION:
+          return renderTeam(null);
+        case EXTRA_TYPES.OFFENSE:
+          return renderTeam(null);
+        case EXTRA_TYPES.DEFENSE:
+          return renderTeam(null);
+        case EXTRA_TYPES.STRIKER:
+          return renderPlayer(null, null);
+        default:
+          return null;
+      }
+    } else {
+
+      const strikerBet = loggedUserExtraBets.find(
+        (extraBet) => extraBet.idExtraType === EXTRA_TYPES.STRIKER
+      );
+
+      switch (extraType) {
+        case EXTRA_TYPES.CHAMPION:
+          return renderTeam(
+            loggedUserExtraBets.find(
+              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION
+            )?.team || null
+          );
+        case EXTRA_TYPES.OFFENSE:
+          return renderTeam(
+            loggedUserExtraBets.find(
+              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.OFFENSE
+            )?.team || null
+          );
+        case EXTRA_TYPES.DEFENSE:
+          return renderTeam(
+            loggedUserExtraBets.find(
+              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.DEFENSE
+            )?.team || null
+          );
+        case EXTRA_TYPES.STRIKER:
+          return renderPlayer(
+            strikerBet?.team || null,
+            strikerBet?.player?.name || null
+          );
+        default:
+          return null;
+      }
     }
   };
 

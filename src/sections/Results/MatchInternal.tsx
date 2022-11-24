@@ -87,9 +87,8 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
           )}{' '}
           {bet.user.nickname}
         </div>
-        <div className={`${betClass} ${styles.singleBetScore}`}>{`${
-          bet.goalsHome !== null ? bet.goalsHome : 'x'
-        } - ${bet.goalsAway !== null ? bet.goalsAway : 'x'}`}</div>
+        <div className={`${betClass} ${styles.singleBetScore}`}>{`${bet.goalsHome !== null ? bet.goalsHome : 'x'
+          } - ${bet.goalsAway !== null ? bet.goalsAway : 'x'}`}</div>
         <div className={`${betClass} ${styles.singleBetPoints}`}>
           {singleBetPoints} Pts.
         </div>
@@ -116,11 +115,26 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
     );
   };
 
+  const renderRealTime = () => {
+    return (
+      <div key={match.id} className={styles.expandableNotStarted}>
+        <div className={styles.expandableNotStartedContent}>
+          <h3>Posse de Bola</h3>
+          <p>{match.homeTeam.possession}% - {match.awayTeam.possession}%</p>
+        </div>
+      </div>
+    );
+  };
+
   const renderMatchBets = () => {
     const matchBetsFull: TBet[] = [];
     const matchBetsHalf: TBet[] = [];
     const matchBetsMinimun: TBet[] = [];
     const matchBetsMiss: TBet[] = [];
+
+    if(match.bets && match.bets.length === 0) {
+      return;
+    }
 
     match.bets.forEach((bet) => {
       if (loggedUser && bet.user.id === loggedUser.id) {
@@ -138,14 +152,17 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
       }
     });
 
+    matchBetsFull.sort(
+      (a, b) => a.user.nickname.localeCompare((b.user.nickname))
+    );
     matchBetsHalf.sort(
-      (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
+      (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway || (a.user.nickname).localeCompare((b.user.nickname))
     );
     matchBetsMinimun.sort(
-      (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
+      (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway || (a.user.nickname).localeCompare((b.user.nickname))
     );
     matchBetsMiss.sort(
-      (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway
+      (a, b) => b.goalsHome - a.goalsHome || b.goalsAway - a.goalsAway || (a.user.nickname).localeCompare((b.user.nickname))
     );
 
     return (
@@ -212,6 +229,7 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
         </div>
         {selectedSection === 0 && renderMatchBets()}
         {selectedSection === 1 && renderMatchInfo()}
+        {selectedSection === 2 && renderRealTime()}
       </div>
     </div>
   );

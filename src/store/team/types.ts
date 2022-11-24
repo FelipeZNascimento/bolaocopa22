@@ -10,6 +10,7 @@ export interface ITeam {
   abbreviationEn: string;
   confederation: IConfederation;
   group: string;
+  possession: string;
 }
 
 export interface IConfederation {
