@@ -116,7 +116,6 @@ export const Home = () => {
     matches
       .filter((match) => match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED)
       .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-      console.log(nextMatches);
 
   const renderMatch = (match: TMatch) => {
     const matchTimestamp = new Date(match.timestamp).getTime() / 1000;
