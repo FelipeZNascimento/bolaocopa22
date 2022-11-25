@@ -30,20 +30,10 @@ import { WEEKDAY } from 'constants/weekdays';
 import { MatchInternal } from './MatchInternal';
 
 export const Results = () => {
-  const [selectedRound, setSelectedRound] = useState(1);
+  const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [currentTimestamp, setCurrentTimestamp] = useState(
     parseInt((new Date().getTime() / 1000).toFixed(0))
   );
-
-  useEffect(() => {
-    const interval = setInterval(function () {
-      const timestamp = parseInt((new Date().getTime() / 1000).toFixed(0));
-
-      setCurrentTimestamp(timestamp);
-    }, 1000); // 60 * 1000 milsec
-
-    return () => clearInterval(interval);
-  }, []);
 
   const matches = useSelector(
     (state: RootState) => state.match.matches
@@ -60,6 +50,28 @@ export const Results = () => {
   const loginLoading = useSelector(
     (state: RootState) => state.user.loginLoading
   ) as unknown as boolean;
+
+  useEffect(() => {
+    const interval = setInterval(function () {
+      const timestamp = parseInt((new Date().getTime() / 1000).toFixed(0));
+
+      setCurrentTimestamp(timestamp);
+    }, 1000); // 60 * 1000 milsec
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (matches && matches.length > 0 && selectedRound === null) {
+      const unfinishedMatches = matches
+        .filter((match) => match.status !== FOOTBALL_MATCH_STATUS.FINAL)
+        .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+
+      if (unfinishedMatches.length > 0) {
+        setSelectedRound(unfinishedMatches[0].round);
+      }
+    }
+  }, [matches]);
 
   const containerClass = classNames(styles.container, {
     [styles.containerBrowser]: !isMobile,
@@ -161,7 +173,7 @@ export const Results = () => {
                 time: match.clock,
                 status:
                   match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED &&
-                  isMatchStarted
+                    isMatchStarted
                     ? FOOTBALL_MATCH_STATUS.FIRST_HALF
                     : match.status
               }}
@@ -179,7 +191,7 @@ export const Results = () => {
   return (
     <main className={containerClass}>
       <div className={leftSectionClass}>
-        <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
+        <Selector selectedRound={selectedRound} onClick={(itemId: number) => setSelectedRound(itemId)} />
         {(isMatchesLoading || loginLoading || !matches) && (
           <Loading image={spinner} />
         )}

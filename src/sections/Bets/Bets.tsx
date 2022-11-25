@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 import classNames from 'classnames';
 
-import { Loading, TitleContainer } from '@omegafox/components';
+import { FOOTBALL_MATCH_STATUS, Loading, TitleContainer } from '@omegafox/components';
 import { MatchForBets, Selector } from 'components';
 import { IBetObject } from 'components/MatchForBets/types';
 import { Ranking } from 'sections/index';
@@ -21,7 +21,7 @@ import spinner from 'img/spinner.png';
 import { cloneDeep } from 'lodash';
 
 export const Bets = () => {
-  const [selectedRound, setSelectedRound] = useState(1);
+  const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const dispatch = useDispatch();
 
   const loggedUser = useSelector(
@@ -39,6 +39,18 @@ export const Bets = () => {
   const matches = useSelector(
     (state: RootState) => state.match.matches
   ) as unknown as TMatch[];
+
+  useEffect(() => {
+    if (matches && matches.length > 0 && selectedRound === null) {
+      const unfinishedMatches = matches
+        .filter((match) => match.status !== FOOTBALL_MATCH_STATUS.FINAL)
+        .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+
+      if (unfinishedMatches.length > 0) {
+        setSelectedRound(unfinishedMatches[0].round);
+      }
+    }
+  }, [matches]);
 
   const containerClass = classNames(styles.container, {
     [styles.containerBrowser]: !isMobile,
@@ -114,7 +126,7 @@ export const Bets = () => {
   return (
     <main className={containerClass}>
       <div className={leftSectionClass}>
-        <Selector onClick={(itemId: number) => setSelectedRound(itemId)} />
+        <Selector selectedRound={selectedRound} onClick={(itemId: number) => setSelectedRound(itemId)} />
         {!loggedUser && (
           <div className={styles.titleContainer}>
             <TitleContainer text="Você precisa estar logado para ter acesso a essa seção." />
