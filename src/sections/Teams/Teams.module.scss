@@ -103,3 +103,35 @@
   @include font-sized(l);
   @include marged(all, none);
 }
+
+.positionIcon {
+  display: inline-block;
+  width: 20px;
+  vertical-align: middle;
+}
+
+.playerName {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.modalContent {
+  @include flex-aligned(center, center);
+}
+
+.pictureContainer {
+  flex: 0;
+
+  .playerImage {
+    &Desktop {
+      height: 300px;
+    }
+    &Mobile {
+      height: 200px;
+    }
+  }
+}
+
+.detailsContainer {
+  flex: 1;
+}

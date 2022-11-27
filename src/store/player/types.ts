@@ -6,8 +6,24 @@ export interface IPosition {
   abbreviation: string;
 }
 
+interface IClubCountry {
+  id: number;
+  abbreviation: string;
+  abbreviationEn: string;
+  isoCode: string;
+  name: string;
+  nameEn: string;
+}
+
+interface IPlayerClub {
+  name: string;
+  country: IClubCountry;
+}
+
 export interface IPlayer {
   id: number;
+  idFifa: number;
+  idFifaPicture: string;
   name: string;
   number: number;
   birth: string;
@@ -15,4 +31,5 @@ export interface IPlayer {
   weigth: number;
   position: IPosition;
   team: ITeam;
+  club?: IPlayerClub;
 }
