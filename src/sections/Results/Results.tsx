@@ -91,101 +91,102 @@ export const Results = () => {
     let shownDate: Date;
     let isDate: boolean;
 
-    return matches.map((match) => {
-      if (
-        match.awayTeam.id === 0 ||
-        match.homeTeam.id === 0 ||
-        match.round !== selectedRound
-      ) {
-        return null;
-      }
+    return matches
+      .filter((match) => match.round === selectedRound)
+      .map((match) => {
+        if (
+          match.awayTeam.id === 0 ||
+          match.homeTeam.id === 0
+        ) {
+          return null;
+        }
 
-      let points: TBetValues | null = null;
-      if (match.loggedUserBets) {
-        points = getBetPoints(match.loggedUserBets, match);
-      }
+        let points: TBetValues | null = null;
+        if (match.loggedUserBets) {
+          points = getBetPoints(match.loggedUserBets, match);
+        }
 
-      const newDate = new Date(match.timestamp);
-      const matchTimestamp = newDate.getTime() / 1000;
-      const isMatchStarted = matchTimestamp < currentTimestamp;
+        const newDate = new Date(match.timestamp);
+        const matchTimestamp = newDate.getTime() / 1000;
+        const isMatchStarted = matchTimestamp < currentTimestamp;
 
-      if (!shownDate || newDate.getDate() !== shownDate.getDate()) {
-        shownDate = new Date(match.timestamp);
-        isDate = true;
-      } else {
-        isDate = false;
-      }
+        if (!shownDate || newDate.getDate() !== shownDate.getDate()) {
+          shownDate = new Date(match.timestamp);
+          isDate = true;
+        } else {
+          isDate = false;
+        }
 
-      const homeTeam: ITeamProps = {
-        id: match.homeTeam.id,
-        align: 'left',
-        abbreviationEn: match.homeTeam.abbreviationEn,
-        bet:
-          loggedUser && match.loggedUserBets
-            ? match.loggedUserBets.goalsHome
-            : null,
-        colors: match.homeTeam.colors,
-        isEditable: false,
-        logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}_small.png`,
-        matchId: match.id,
-        name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
-        score: isMatchStarted ? match.homeTeam.goals : null
-      };
+        const homeTeam: ITeamProps = {
+          id: match.homeTeam.id,
+          align: 'left',
+          abbreviationEn: match.homeTeam.abbreviationEn,
+          bet:
+            loggedUser && match.loggedUserBets
+              ? match.loggedUserBets.goalsHome
+              : null,
+          colors: match.homeTeam.colors,
+          isEditable: false,
+          logo: `https://assets.omegafox.me/img/countries_crests/${match.homeTeam.abbreviationEn.toLowerCase()}_small.png`,
+          matchId: match.id,
+          name: isMobile ? match.homeTeam.abbreviation : match.homeTeam.name,
+          score: isMatchStarted ? match.homeTeam.goals : null
+        };
 
-      const awayTeam: ITeamProps = {
-        id: match.awayTeam.id,
-        align: 'right',
-        abbreviationEn: match.awayTeam.abbreviationEn,
-        bet:
-          loggedUser && match.loggedUserBets
-            ? match.loggedUserBets.goalsAway
-            : null,
-        colors: match.awayTeam.colors,
-        isEditable: false,
-        logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}_small.png`,
-        matchId: match.id,
-        name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
-        score: isMatchStarted ? match.awayTeam.goals : null
-      };
+        const awayTeam: ITeamProps = {
+          id: match.awayTeam.id,
+          align: 'right',
+          abbreviationEn: match.awayTeam.abbreviationEn,
+          bet:
+            loggedUser && match.loggedUserBets
+              ? match.loggedUserBets.goalsAway
+              : null,
+          colors: match.awayTeam.colors,
+          isEditable: false,
+          logo: `https://assets.omegafox.me/img/countries_crests/${match.awayTeam.abbreviationEn.toLowerCase()}_small.png`,
+          matchId: match.id,
+          name: isMobile ? match.awayTeam.abbreviation : match.awayTeam.name,
+          score: isMatchStarted ? match.awayTeam.goals : null
+        };
 
-      return (
-        <span key={match.id}>
-          {isDate && (
-            <p className={styles.date}>
-              {WEEKDAY[shownDate.getDay()]}, {shownDate.toLocaleDateString()}
-            </p>
-          )}
-          <div className={styles.match}>
-            <Match
-              isExpandable
-              key={match.id}
-              betValue={points}
-              id={match.id}
-              isEditable={false}
-              expandableContent={() => (
-                <MatchInternal
-                  key={match.id}
-                  isMatchStarted={isMatchStarted}
-                  match={match}
-                />
-              )}
-              clock={{
-                time: match.clock,
-                status:
-                  match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED &&
-                    isMatchStarted
-                    ? FOOTBALL_MATCH_STATUS.FIRST_HALF
-                    : match.status
-              }}
-              timestamp={parseInt(
-                (new Date(match.timestamp).getTime() / 1000).toFixed(0)
-              )}
-              teams={[homeTeam, awayTeam]}
-            />
-          </div>
-        </span>
-      );
-    });
+        return (
+          <span key={match.id}>
+            {isDate && (
+              <p className={styles.date}>
+                {WEEKDAY[shownDate.getDay()]}, {shownDate.toLocaleDateString()}
+              </p>
+            )}
+            <div className={styles.match}>
+              <Match
+                isExpandable
+                key={match.id}
+                betValue={points}
+                id={match.id}
+                isEditable={false}
+                expandableContent={() => (
+                  <MatchInternal
+                    key={match.id}
+                    isMatchStarted={isMatchStarted}
+                    match={match}
+                  />
+                )}
+                clock={{
+                  time: match.clock,
+                  status:
+                    match.status === FOOTBALL_MATCH_STATUS.NOT_STARTED &&
+                      isMatchStarted
+                      ? FOOTBALL_MATCH_STATUS.FIRST_HALF
+                      : match.status
+                }}
+                timestamp={parseInt(
+                  (new Date(match.timestamp).getTime() / 1000).toFixed(0)
+                )}
+                teams={[homeTeam, awayTeam]}
+              />
+            </div>
+          </span>
+        );
+      });
   };
 
   return (
