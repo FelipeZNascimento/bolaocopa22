@@ -50,7 +50,7 @@
         @include marged(all, none);
       }
 
-      img {
+      &Image {
         width: 150px;
       }
     }
@@ -145,5 +145,46 @@
   }
   .icon {
     @include font-sized(l2);
+  }
+}
+
+.event {
+  &Left {
+    @include flex-aligned(flex-start, center);
+    @include padded(vertical, s3);
+  }
+  &Right {
+    @include flex-aligned(flex-end, center);
+    @include padded(vertical, s3);
+  }
+
+  &Icon {
+    @include padded(horizontal, s2);
+    
+    display: inline-block;
+    flex: 0;
+    vertical-align: middle;
+
+    img {
+      width: 20px;
+    }
+  }
+
+  &Minute {
+    @include font-sized(s);
+    flex: 1;
+  }
+
+  &Player {
+    flex: 6;
+
+    &Left {
+      @extend .eventPlayer;
+      @include aligned(left);
+    }
+    &Right {
+      @extend .eventPlayer;
+      @include aligned(right);
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { ITeam } from 'store/team/types';
 import { TBet } from 'store/bet/types';
+import { IPlayer } from 'store/player/types';
 
 export type TInitialState = {
   matches: null | TMatch[];
@@ -30,16 +31,28 @@ interface IReferee {
   country: ICountry;
 }
 
-export type TMatch = {
+export interface IEvent {
+  description: string;
+  gametime: string;
   id: number;
-  timestamp: string;
-  round: number;
-  status: number;
-  clock: string;
-  bets: TBet[];
-  loggedUserBets: TBet | null;
-  homeTeam: ITeam;
+  idMatch: number;
+  idTeam: number;
+  player: IPlayer;
+  playerTwo: IPlayer | null;
+  type: number;
+}
+
+export type TMatch = {
   awayTeam: ITeam;
-  stadium: IStadium;
+  bets: TBet[];
+  clock: string;
+  events: IEvent[];
+  homeTeam: ITeam;
+  id: number;
+  loggedUserBets: TBet | null;
   referee: IReferee;
+  round: number;
+  stadium: IStadium;
+  status: number;
+  timestamp: string;
 };

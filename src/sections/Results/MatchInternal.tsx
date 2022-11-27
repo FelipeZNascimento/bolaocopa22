@@ -30,6 +30,8 @@ import { TUser } from 'store/user/types';
 // Styles and images
 import styles from './Results.module.scss';
 import { isMobile } from 'react-device-detect';
+import { IEvent } from 'store/match/types';
+import { MATCH_EVENT_TYPES } from 'constants/matchEvents';
 
 export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
   const [selectedSection, setSelectedSection] = useState<number>(
@@ -101,6 +103,7 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
       <div key={match.id} className={styles.expandableNotStarted}>
         <div className={styles.expandableNotStartedContent}>
           <img
+            className={styles.contentImage}
             alt="Stadium image"
             src={`https://assets.omegafox.me/img/stadiums/${match.stadium.id}.png`}
           />
@@ -115,12 +118,58 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
     );
   };
 
+  const getEventIconUrl = (eventType: number, isHome: boolean) => {
+    switch (eventType) {
+      case MATCH_EVENT_TYPES.GOAL: {
+        return isHome
+          ? 'https://assets.omegafox.me/img/icons2018/goal.png'
+          : 'https://assets.omegafox.me/img/icons2018/goal_a.png';
+      }
+      case MATCH_EVENT_TYPES.OWN_GOAL: {
+        return isHome
+          ? 'https://assets.omegafox.me/img/icons2018/own_goal.png'
+          : 'https://assets.omegafox.me/img/icons2018/own_goal_a.png';
+      }
+      case MATCH_EVENT_TYPES.PENALTY_GOAL: {
+        return isHome
+          ? 'https://assets.omegafox.me/img/icons2018/penalty_goal.png'
+          : 'https://assets.omegafox.me/img/icons2018/penalty_goal_a.png';
+      }
+    }
+  };
+
+  const renderEvent = (event: IEvent) => {
+
+    if (event.idTeam === match.homeTeam.id) {
+      return (
+        <div className={styles.eventLeft}>
+          <div className={styles.eventIcon}>
+            <img src={getEventIconUrl(event.type, true)} />
+          </div>
+          <div className={styles.eventMinute}>{event.gametime}</div>
+          <div className={styles.eventPlayerLeft}>{event.player.name}</div>
+        </div>
+      );
+    } else {
+      return (
+        <div className={styles.eventRight}>
+          <div className={styles.eventPlayerRight}>{event.player.name}</div>
+          <div className={styles.eventMinute}>{event.gametime}</div>
+          <div className={styles.eventIcon}>
+            <img src={getEventIconUrl(event.type, false)} />
+          </div>
+        </div>
+      );
+    }
+  };
+
   const renderRealTime = () => {
     return (
       <div key={match.id} className={styles.expandableNotStarted}>
         <div className={styles.expandableNotStartedContent}>
           <h3>Posse de Bola</h3>
           <p>{match.homeTeam.possession}% - {match.awayTeam.possession}%</p>
+          <div>{match.events.map(renderEvent)}</div>
         </div>
       </div>
     );
@@ -132,7 +181,7 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
     const matchBetsMinimun: TBet[] = [];
     const matchBetsMiss: TBet[] = [];
 
-    if(match.bets && match.bets.length === 0) {
+    if (match.bets && match.bets.length === 0) {
       return;
     }
 
