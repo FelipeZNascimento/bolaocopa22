@@ -1,0 +1,42 @@
+@import "styles/alignments.scss";
+@import "styles/colors.scss";
+@import "styles/font-sizes.scss";
+@import "styles/margins.scss";
+@import "styles/paddings.scss";
+
+.positionIcon {
+  display: inline-block;
+  width: 20px;
+  vertical-align: middle;
+}
+
+.modalContent {
+  @include flex-aligned(center, center);
+}
+
+.pictureContainer {
+  flex: 0;
+
+  .playerImage {
+    &Desktop {
+      height: 300px;
+    }
+    &Mobile {
+      height: 200px;
+    }
+  }
+}
+
+.detailsContainer {
+  flex: 1;
+}
+
+.buttonContainer {
+  @include flex-aligned(center, center);
+  @include padded(all, l);
+
+  .button {
+    @include padded(horizontal, l3);
+    flex: 1;
+  }
+}

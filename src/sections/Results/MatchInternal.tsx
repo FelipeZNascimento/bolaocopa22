@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
+import { isMobile } from 'react-device-detect';
 
 // Components
 import {
@@ -15,9 +16,12 @@ import {
   faClock,
   faUser
 } from '@fortawesome/free-solid-svg-icons';
+import { PlayerModal } from 'components/PlayerModal/PlayerModal';
+
 // Store
 import { useSelector } from 'react-redux';
 import { RootState } from 'store';
+import { IEvent } from 'store/match/types';
 
 // Services
 import { getBetPoints } from 'services/betCalculator';
@@ -26,14 +30,16 @@ import { getBetPoints } from 'services/betCalculator';
 import { TMatchInternal } from './types';
 import { TBet } from 'store/bet/types';
 import { TUser } from 'store/user/types';
+import { IPlayer } from 'store/player/types';
 
 // Styles and images
 import styles from './Results.module.scss';
-import { isMobile } from 'react-device-detect';
-import { IEvent } from 'store/match/types';
+
+// Constants
 import { MATCH_EVENT_TYPES } from 'constants/matchEvents';
 
 export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
+  const [selectedPlayer, setSelectedPlayer] = useState<IPlayer | null>(null);
   const [selectedSection, setSelectedSection] = useState<number>(
     isMatchStarted ? 0 : 1
   );
@@ -139,21 +145,27 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
   };
 
   const renderEvent = (event: IEvent) => {
-
-    if (event.idTeam === match.homeTeam.id) {
+    if (
+      (event.idTeam === match.homeTeam.id && event.type !== MATCH_EVENT_TYPES.OWN_GOAL)
+      || (event.idTeam === match.awayTeam.id && event.type === MATCH_EVENT_TYPES.OWN_GOAL)
+    ) {
       return (
         <div className={styles.eventLeft}>
           <div className={styles.eventIcon}>
             <img src={getEventIconUrl(event.type, true)} />
           </div>
           <div className={styles.eventMinute}>{event.gametime}</div>
-          <div className={styles.eventPlayerLeft}>{event.player.name}</div>
+          <div className={styles.eventPlayerLeft}>
+            <a onClick={() => setSelectedPlayer(event.player)}>{event.player.name}</a>
+          </div>
         </div>
       );
     } else {
       return (
         <div className={styles.eventRight}>
-          <div className={styles.eventPlayerRight}>{event.player.name}</div>
+          <div className={styles.eventPlayerRight}>
+            <a onClick={() => setSelectedPlayer(event.player)}>{event.player.name}</a>
+          </div>
           <div className={styles.eventMinute}>{event.gametime}</div>
           <div className={styles.eventIcon}>
             <img src={getEventIconUrl(event.type, false)} />
@@ -240,46 +252,53 @@ export const MatchInternal = ({ match, isMatchStarted }: TMatchInternal) => {
   };
 
   return (
-    <div className={styles.expandableStarted}>
-      <div className={styles.expandableStartedBets}>
-        <div className={styles.buttonsContainer}>
-          {isMobile &&
-            matchInternalSections.map((item) => (
-              <div className={styles.button} key={item.id}>
-                <Button
-                  icon={
-                    <FontAwesomeIcon className={styles.icon} icon={item.icon} />
-                  }
-                  isDisabled={item.isDisabled}
+    <>
+      <PlayerModal
+        isOpen={selectedPlayer !== null}
+        selectedPlayer={selectedPlayer ? { player: selectedPlayer, index: null } : null}
+        onClose={() => setSelectedPlayer(null)}
+      />
+      <div className={styles.expandableStarted}>
+        <div className={styles.expandableStartedBets}>
+          <div className={styles.buttonsContainer}>
+            {isMobile &&
+              matchInternalSections.map((item) => (
+                <div className={styles.button} key={item.id}>
+                  <Button
+                    icon={
+                      <FontAwesomeIcon className={styles.icon} icon={item.icon} />
+                    }
+                    isDisabled={item.isDisabled}
+                    isSelected={selectedSection === item.id}
+                    size="small"
+                    variant="neutral"
+                    onClick={() => handleSectionClick(item)}
+                  >
+                    {isMobile ? '' : item.text}
+                  </Button>
+                </div>
+              ))}
+            {!isMobile &&
+              matchInternalSections.map((item) => (
+                <NavbarButton
+                  isShadowed
+                  key={item.id}
+                  button={{
+                    id: item.id,
+                    isDisabled: item.isDisabled,
+                    text: item.text,
+                    url: item.url
+                  }}
                   isSelected={selectedSection === item.id}
-                  size="small"
-                  variant="neutral"
-                  onClick={() => handleSectionClick(item)}
-                >
-                  {isMobile ? '' : item.text}
-                </Button>
-              </div>
-            ))}
-          {!isMobile &&
-            matchInternalSections.map((item) => (
-              <NavbarButton
-                isShadowed
-                key={item.id}
-                button={{
-                  id: item.id,
-                  isDisabled: item.isDisabled,
-                  text: item.text,
-                  url: item.url
-                }}
-                isSelected={selectedSection === item.id}
-                onClick={handleSectionClick}
-              />
-            ))}
+                  onClick={handleSectionClick}
+                />
+              ))}
+          </div>
+          {selectedSection === 0 && renderMatchBets()}
+          {selectedSection === 1 && renderMatchInfo()}
+          {selectedSection === 2 && renderRealTime()}
         </div>
-        {selectedSection === 0 && renderMatchBets()}
-        {selectedSection === 1 && renderMatchInfo()}
-        {selectedSection === 2 && renderRealTime()}
       </div>
-    </div>
+    </>
   );
 };
