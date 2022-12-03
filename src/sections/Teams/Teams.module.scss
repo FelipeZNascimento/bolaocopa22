@@ -114,24 +114,3 @@
   cursor: pointer;
   text-decoration: underline;
 }
-
-.modalContent {
-  @include flex-aligned(center, center);
-}
-
-.pictureContainer {
-  flex: 0;
-
-  .playerImage {
-    &Desktop {
-      height: 300px;
-    }
-    &Mobile {
-      height: 200px;
-    }
-  }
-}
-
-.detailsContainer {
-  flex: 1;
-}

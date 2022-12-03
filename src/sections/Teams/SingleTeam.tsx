@@ -29,17 +29,22 @@ import classNames from 'classnames';
 import { useOnListTeamPlayersQuery } from 'store/team/actions';
 import spinner from 'img/spinner.png';
 import { QueryHandler } from 'services/queryHandler';
-import { PlayerModal } from './PlayerModal';
+import { PlayerModal } from 'components/PlayerModal/PlayerModal';
 import { IPlayer } from 'store/player/types';
 
 interface ISingleTeam {
   singleTeam: ITeam;
 }
+interface ISelectedPlayer {
+  player: IPlayer;
+  index: number;
+}
 
 export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
   const [frameId, setFrameId] = useState<string>('');
   const [rows, setRows] = useState<TTableRow[]>([]);
-  const [selectedPlayer, setSelectedPlayer] = useState<IPlayer | null>(null);
+  const [players, setPlayers] = useState<IPlayer[]>([]);
+  const [selectedPlayer, setSelectedPlayer] = useState<ISelectedPlayer | null>(null);
 
   const teamPlayersQueryResult = useOnListTeamPlayersQuery({ id: singleTeam.id });
 
@@ -55,8 +60,12 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
     });
   })(document.getElementById(`sofa-standings-embed-${frameId}-41087`));
 
-  const handleModalToggle = (player: IPlayer | null) => {
-    setSelectedPlayer(player);
+  const handleModalToggle = (player: IPlayer | null, index: number | null) => {
+    if (player === null || index === null) {
+      setSelectedPlayer(null);
+    } else {
+      setSelectedPlayer({ player: player, index: index });
+    }
   };
 
   useEffect(() => {
@@ -66,7 +75,8 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
     ) {
       const result = QueryHandler(teamPlayersQueryResult.data);
       if (result) {
-        const playerRows = result.players.map((player) => {
+        setPlayers(result.players);
+        const playerRows = result.players.map((player, index) => {
           const singleRow: TTableRowColumn[] = [
             {
               id: 0,
@@ -91,7 +101,7 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
             {
               id: 2,
               renderingFunction: () => (
-                <div className={styles.playerName} translate="no" onClick={() => handleModalToggle(player)}>{player.name}</div>
+                <div className={styles.playerName} translate="no" onClick={() => handleModalToggle(player, index)}>{player.name}</div>
               )
             },
             {
@@ -222,6 +232,17 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
     navigate({ pathname: ROUTES.TEAMS.url });
   };
 
+  const handleModalChange = (newIndex: number) => {
+    const playersLength = players.length;
+    if (newIndex < 0) {
+      setSelectedPlayer({ player: players[playersLength - 1], index: playersLength - 1 });
+    } else if (newIndex >= playersLength) {
+      setSelectedPlayer({ player: players[0], index: 0 });
+    } else {
+      setSelectedPlayer({ player: players[newIndex], index: newIndex });
+    }
+  };
+
   const handleTeamClick = (teamId: number) => {
     let selectedTeam;
     if (teamId <= 0) {
@@ -263,7 +284,12 @@ export const SingleTeam = ({ singleTeam }: ISingleTeam) => {
 
   return (
     <>
-      <PlayerModal player={selectedPlayer} isOpen={selectedPlayer !== null} onClose={() => handleModalToggle(null)} />
+      <PlayerModal
+        isOpen={selectedPlayer !== null}
+        selectedPlayer={selectedPlayer}
+        onChange={(newIndex) => handleModalChange(newIndex)}
+        onClose={() => handleModalToggle(null, null)}
+      />
       <div className={styles.singleTeamContainer}>
         <div className={singleTeamHeaderClass}>
           <div className={styles.button}>

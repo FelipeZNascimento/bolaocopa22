@@ -26,7 +26,7 @@ import { extraBetsUpdated } from 'store/bet/reducer';
 import { ITeam } from 'store/team/types';
 import { TUser } from 'store/user/types';
 import { TExtraBets } from './types';
-import { TExtraBet } from 'store/bet/types';
+import { TExtraBet, TExtraBetsResults } from 'store/bet/types';
 
 // Constants
 import { EXTRA_TYPES } from 'constants/extraTypes';
@@ -35,6 +35,7 @@ import { EXTRA_TYPES } from 'constants/extraTypes';
 import styles from './Extras.module.scss';
 import spinner from 'img/spinner.png';
 import { IPlayer } from 'store/player/types';
+import { ensureTyping } from 'services/helpers';
 
 const extrasInfo = [
   { id: EXTRA_TYPES.CHAMPION, title: 'Campeão', status: null },
@@ -96,6 +97,10 @@ export const Extras = () => {
   const loggedUserExtraBets = useSelector(
     (state: RootState) => state.bet.loggedUserExtraBets
   ) as unknown as TExtraBet[];
+
+  const extraBetsResults = useSelector(
+    (state: RootState) => state.bet.extraBetsResults
+  ) as unknown as TExtraBetsResults;
 
   const extraBetsLoading = useSelector(
     (state: RootState) => state.bet.extraBetsLoading
@@ -265,10 +270,10 @@ export const Extras = () => {
     }
   };
 
-  const renderTeam = (team: ITeam | null) => {
-    if (!team) {
+  const renderTeam = (teams: ITeam[] | null) => {
+    if (!teams || teams.length === 0) {
       return <FontAwesomeIcon icon={faQuestionCircle} size="lg" />;
-    } else if (team && updateExtraResult.isLoading) {
+    } else if (teams && updateExtraResult.isLoading) {
       return renderLoading();
     } else {
       const statusClass = classNames({
@@ -278,13 +283,14 @@ export const Extras = () => {
 
       return (
         <div className={statusClass}>
-          <TeamButton
+          {teams.map((team) => <TeamButton
+            key={team.id}
             isHoverable={false}
             isBig={false}
             colors={team.colors}
             logo={`https://assets.omegafox.me/img/countries_crests/${team.abbreviationEn.toLowerCase()}.png`}
             name={isMobile ? team.abbreviation : team.name}
-          />
+          />)}
         </div>
       );
     }
@@ -296,47 +302,62 @@ export const Extras = () => {
     }
 
     if (hasSeasonStarted) {
-      //Change this to get correctExtraBets when BE is ready
-      // const strikerBet = loggedUserExtraBets.find(
-      //   (extraBet) => extraBet.idExtraType === EXTRA_TYPES.STRIKER
-      // );
+      const offenseTeams = extraBetsResults.offense.map((extraResult) => ensureTyping(teams.find((team) => team.id === extraResult.idTeam)));
+      const defenseTeams = extraBetsResults.defense.map((extraResult) => ensureTyping(teams.find((team) => team.id === extraResult.idTeam)));
+      const championTeams = extraBetsResults.champion.map((extraResult) => ensureTyping(teams.find((team) => team.id === extraResult.idTeam)));
+      const strikersObject = extraBetsResults.striker.map((extraResult) => {
+        return {
+          team: ensureTyping(teams.find((team) => team.id === extraResult.idTeam)),
+          name: extraResult.nameStriker
+        };
+      });
 
       switch (extraType) {
         case EXTRA_TYPES.CHAMPION:
-          return renderTeam(null);
+          return renderTeam(championTeams.sort((a, b) => a.id - b.id));
         case EXTRA_TYPES.OFFENSE:
-          return renderTeam(null);
+          return renderTeam(offenseTeams.sort((a, b) => a.id - b.id));
         case EXTRA_TYPES.DEFENSE:
-          return renderTeam(null);
+          return renderTeam(defenseTeams.sort((a, b) => a.id - b.id));
         case EXTRA_TYPES.STRIKER:
-          return renderPlayer(null, null);
+          return <>
+            {strikersObject.length > 0
+              ? strikersObject.map((striker) => renderPlayer(striker.team, striker.name))
+              : renderPlayer(null, null)
+            }
+          </>;
         default:
           return null;
       }
     } else {
-
       const strikerBet = loggedUserExtraBets.find(
         (extraBet) => extraBet.idExtraType === EXTRA_TYPES.STRIKER
       );
 
+      const championBet = ensureTyping(loggedUserExtraBets.find(
+        (extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION
+      )).team;
+
+      const offenseBet = ensureTyping(loggedUserExtraBets.find(
+        (extraBet) => extraBet.idExtraType === EXTRA_TYPES.OFFENSE
+      )).team;
+
+      const defenseBet = ensureTyping(loggedUserExtraBets.find(
+        (extraBet) => extraBet.idExtraType === EXTRA_TYPES.DEFENSE
+      )).team;
+
       switch (extraType) {
         case EXTRA_TYPES.CHAMPION:
           return renderTeam(
-            loggedUserExtraBets.find(
-              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.CHAMPION
-            )?.team || null
+            championBet ? [championBet] : null
           );
         case EXTRA_TYPES.OFFENSE:
           return renderTeam(
-            loggedUserExtraBets.find(
-              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.OFFENSE
-            )?.team || null
+            offenseBet ? [offenseBet] : null
           );
         case EXTRA_TYPES.DEFENSE:
           return renderTeam(
-            loggedUserExtraBets.find(
-              (extraBet) => extraBet.idExtraType === EXTRA_TYPES.DEFENSE
-            )?.team || null
+            defenseBet ? [defenseBet] : null
           );
         case EXTRA_TYPES.STRIKER:
           return renderPlayer(

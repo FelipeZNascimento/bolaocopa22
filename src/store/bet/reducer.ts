@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   extraBets: [],
+  extraBetsResults: [],
   loggedUserExtraBets: [],
   extraBetsLoading: false
 };
@@ -15,6 +16,7 @@ export const betSlice = createSlice({
     },
     extraBetsSet: (state, action) => {
       state.extraBets = action.payload.extraBets;
+      state.extraBetsResults = action.payload.extraBetsResults;
       state.loggedUserExtraBets = action.payload.loggedUserExtraBets;
     },
     extraBetsUpdated: (state, action) => {

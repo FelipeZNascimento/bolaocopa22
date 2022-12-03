@@ -22,3 +22,17 @@ export type TExtraBet = {
   player: IPlayer | null;
   timestamp: string | null;
 };
+
+export type TExtraBetsResult = {
+  nameStriker: string | null;
+  idStriker: number | null;
+  idTeam: number | null;
+  idType: number | null;
+}
+
+export type TExtraBetsResults = {
+  offense: TExtraBetsResult[];
+  defense: TExtraBetsResult[];
+  striker: TExtraBetsResult[];
+  champion: TExtraBetsResult[];
+}
